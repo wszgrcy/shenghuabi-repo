@@ -66,10 +66,10 @@ jobs:
         with:
           arch: x64
           vsversion: "2022"
-      # - name: init
-      #   run: |
-      #     git config --global user.name "wszgrcy"
-      #     git config --global user.email "wszgrcy@gmail.com"
+      - name: init
+        run: |
+          git config --global user.name "wszgrcy"
+          git config --global user.email "wszgrcy@gmail.com"
       - name: pre-build-download
         uses: wszgrcy/upload-s3-action@2.0.7
         id: commonPackage
