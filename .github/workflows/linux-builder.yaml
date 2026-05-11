@@ -157,13 +157,16 @@ jobs:
           cp ./.build/linux/deb/amd64/deb/* ./.build/linux/publish/
         working-directory: './vscode'
       - name: github发行
-        uses: wszgrcy/action-gh-release@1.2.0
+        uses: softprops/action-gh-release@v3
         with:
           fail_on_unmatched_files: true
           files: './vscode/.build/linux/publish/**/*.{exe,deb,tar.gz}'
           # repository: wszgrcy/shenghuabi-repo
-          token: ${{secrets.SHB_REPO_UPLOAD}}
+          # token: ${{secrets.SHB_REPO_UPLOAD}}
           tag_name: ${{env.PUBLISH_VERSION}}
+          name: ${{env.PUBLISH_VERSION}}
+          draft: false
+          prerelease: false
       - name: hosts
         run: |
           sudo echo "${{secrets.REMOTE_MANAGEMENT_HOST}}" | sudo tee -a /etc/hosts
