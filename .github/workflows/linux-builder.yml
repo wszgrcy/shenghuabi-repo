@@ -139,9 +139,9 @@ jobs:
         working-directory: "./lib/vscode"
       - name: 构建tar.gz
         run: |
-          tar -czf ./shenghuabi-linux-x64-cuda-${{env.PUBLISH_VERSION}}.tar.gz -C ../lib/VSCode-linux-x64 .
-          rm -rf ../lib/VSCode-linux-x64/resources/app/extensions/shenghuabi/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/libonnxruntime_providers_cuda.so
-          tar -czf ./shenghuabi-linux-x64-cpu-${{env.PUBLISH_VERSION}}.tar.gz -C ../lib/VSCode-linux-x64 .
+          tar -czf ./shenghuabi-linux-x64-cuda-${{env.PUBLISH_VERSION}}.tar.gz -C ../VSCode-linux-x64 .
+          rm -rf ../VSCode-linux-x64/resources/app/extensions/shenghuabi/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/libonnxruntime_providers_cuda.so
+          tar -czf ./shenghuabi-linux-x64-cpu-${{env.PUBLISH_VERSION}}.tar.gz -C ../VSCode-linux-x64 .
         working-directory: "./lib/vscode"
       - name: 复制到文件夹
         run: |
