@@ -2,6 +2,8 @@ name: linux构建
 run-name: shb-linux-builder
 on:
   push:
+    branches:
+      - 'master'
 
 permissions:
   contents: write
@@ -21,9 +23,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
-          cache: 'pnpm'
       - name: install-pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: '10'
           cache: true
