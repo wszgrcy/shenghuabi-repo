@@ -8,15 +8,15 @@
   "categories": [],
   "keywords": [],
   "bugs": {
-    "url": "https://github.com/wszgrcy/code-recycle/issues",
+    "url": "https://github.com/wszgrcy/shenghuabi-repo/issues",
     "email": "wszgrcy@gmail.com"
   },
-  "qna": "https://github.com/wszgrcy/code-recycle/issues",
+  "qna": "https://github.com/wszgrcy/shenghuabi-repo/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wszgrcy/code-recycle.git"
+    "url": "https://github.com/wszgrcy/shenghuabi-repo.git"
   },
-  "homepage": "https://github.com/wszgrcy/code-recycle/blob/main/README.md",
+  "homepage": "https://github.com/wszgrcy/shenghuabi-repo/blob/main/README.md",
   "enabledApiProposals": [
     "chatProvider",
     "defaultChatParticipant",
