@@ -57,9 +57,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version-file: 'shenghuabi/.nvmrc'
-          cache: 'pnpm'
       - name: install-pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: '10'
           cache: true
