@@ -27,7 +27,6 @@ jobs:
         uses: pnpm/action-setup@v6
         with:
           version: '10'
-          cache: true
       - run: pnpm i
         env:
           ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
@@ -61,7 +60,6 @@ jobs:
         uses: pnpm/action-setup@v6
         with:
           version: '10'
-          cache: true
       - run: pnpm i
         working-directory: './shenghuabi'
         env:
