@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "cross-env ENV=dev ng build --watch --configuration development",
-    "build": "node --max-old-space-size=24384 --optimize-for-size ../../node_modules/@angular/cli/bin/ng build",
+    "build": "node --max-old-space-size=24384 --optimize-for-size ./node_modules/@angular/cli/bin/ng build",
     "watch": "cross-env ENV=dev ng build --watch --configuration development",
     "test": "ng test",
     "i18n:init": "ng extract-i18n --output-path src/locale --format xlf",
