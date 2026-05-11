@@ -1,0 +1,334 @@
+<div
+  class="flex flex-col h-full"
+  [class.clickGenerate]="service.globalConfig().options.clickGenerate"
+>
+  <div
+    class="flex items-center gap-2 px-[8px] form-minimum noValid"
+    #topToolbar
+    #child
+  >
+    <button
+      class="btn btn-circle btn-soft btn-primary"
+      matTooltip="导出为图片"
+      (click)="exportImage()"
+    >
+      <span class="material-icons">image</span>
+    </button>
+
+    <button
+      [class]="
+        'btn btn-circle btn-soft btn-ghost'
+          | mergeClass: (!drawLayer().hidden$() ? 'btn-error' : 'btn-accent')
+      "
+      (click)="drawLayer().hidden$() ? openDrawLayer() : drawLayer().close()"
+      [matTooltip]="!drawLayer().hidden$() ? '关闭绘图' : '打开绘图'"
+    >
+      <span class="material-icons">draw</span>
+    </button>
+    @if (!drawLayer().hidden$()) {
+      <button
+        class="btn btn-circle btn-soft btn-primary"
+        (click)="drawLayer().appendDrawNode()"
+        matTooltip="保存绘图"
+      >
+        <span class="material-icons">save</span>
+      </button>
+    }
+    <div class="flex-1"></div>
+    <div class="flex items-center gap-2 justify-center">
+      <div class="join w-50">
+        <button class="btn btn-circle btn-soft btn-ghost join-item btn-sm">
+          <span class="material-icons">search</span>
+        </button>
+        <label class="input join-item flex-1 input-sm">
+          <input
+            type="text"
+            class="grow"
+            placeholder="请输入搜索内容..."
+            [matAutocomplete]="auto"
+            [(ngModel)]="searchContent$"
+          />
+        </label>
+        <mat-autocomplete #auto="matAutocomplete">
+          @for (item of searchResult$(); track $index) {
+            @if (item) {
+              <mat-option
+                (click)="searchChange(item.value)"
+                class="!min-h-[32px]"
+              >
+                <mat-icon color="primary">{{
+                  NodeIconObject[item.type]
+                }}</mat-icon>
+                <div
+                  [innerHTML]="item.label | safeHtml"
+                  class="break-all"
+                ></div>
+              </mat-option>
+            }
+          }
+        </mat-autocomplete>
+      </div>
+
+      <button
+        class="btn btn-circle btn-soft btn-ghost btn-accent"
+        matTooltip="帮助"
+        [matTooltipShowDelay]="0"
+        (click)="toggleHelp()"
+      >
+        <span class="material-icons">help</span>
+      </button>
+      <button
+        class="btn btn-circle btn-soft btn-ghost btn-accent"
+        matTooltip="切换保存仓库"
+        [matTooltipShowDelay]="0"
+        (click)="toggleSidebar(drawer, 'store')"
+      >
+        <span class="material-icons">auto_stories</span>
+      </button>
+      <button
+        class="btn btn-circle btn-soft btn-ghost btn-primary"
+        matTooltip="切换配置"
+        [matTooltipShowDelay]="0"
+        (click)="toggleSidebar(drawer, 'config')"
+      >
+        <span class="material-icons">view_sidebar</span>
+      </button>
+    </div>
+  </div>
+  <mat-drawer-container class="flex-1">
+    <mat-drawer mode="side" [position]="'end'" #drawer>
+      @if (dataInited$() && service.nodes()) {
+        @switch (drawerType()) {
+          @case ('config') {
+            <piying-view
+              class="form-minimum noValid grid gap-2"
+              (modelChange)="nodeFormConfigChanged($event)"
+              [(model)]="configModel"
+              [schema]="schema"
+              [options]="options"
+            ></piying-view>
+          }
+          @case ('store') {
+            <node-store [(list)]="storeList" #storeComp></node-store>
+          }
+        }
+      }
+    </mat-drawer>
+    <mat-drawer-content>
+      <div class="relative h-full" #flowwrapper>
+        <div
+          class="h-full form-minimum"
+          (drop)="dropChanged($event)"
+          (dragover)="dragoverChange($event)"
+        >
+          <react-outlet [component]="ReactFlowProvider">
+            <react-outlet
+              [component]="ReactFlow"
+              #child
+              #reactflow
+              [props]="
+                $any({
+                  config: service.flowConfig$(),
+                  dataInited: dataInited$(),
+                  globalStyle: service.globalStyle$(),
+                })
+              "
+              [runInReact]="context"
+            >
+              <react-outlet
+                [component]="MiniMap"
+                #child
+                [props]="{ pannable: true }"
+              >
+              </react-outlet>
+              <react-outlet
+                #child
+                [component]="Background"
+                [props]="{ variant: BackgroundVariant.Dots }"
+              ></react-outlet>
+              <react-outlet [component]="Controls" #child> </react-outlet>
+            </react-outlet>
+          </react-outlet>
+        </div>
+        <div
+          [matMenuTriggerFor]="menu"
+          #contextMenu
+          class="w-0 h-0 overflow-hidden opacity-0 absolute"
+        ></div>
+        <draw-layer
+          #drawLayerComp
+          class="absolute left-0 right-0 top-0 bottom-0 pointer-events-none"
+        ></draw-layer>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</div>
+
+<mat-menu #menu="matMenu" class="menu-minimum">
+  @if (service.isMultiList$()) {
+    <button mat-menu-item [matMenuTriggerFor]="alignRef">
+      <mat-icon color="accent">near_me</mat-icon>
+      对齐
+    </button>
+  }
+  @switch (service.contextmenuType()) {
+    @case ('pane') {
+      <button
+        mat-menu-item
+        (click)="service.appendNodeUseContextMenuPoint('chat')"
+      >
+        <mat-icon color="primary">chat</mat-icon>
+        添加对话
+      </button>
+      <button
+        mat-menu-item
+        (click)="service.appendNodeUseContextMenuPoint('card')"
+      >
+        <mat-icon color="primary">wysiwyg</mat-icon>
+        添加卡片
+      </button>
+      <button
+        mat-menu-item
+        (click)="
+          service.appendNodeUseContextMenuPoint('card', { open: 'content' })
+        "
+      >
+        <mat-icon color="primary">short_text</mat-icon>
+        添加文本
+      </button>
+      <!-- todo 需要加一个卡片类型文本 -->
+      <button
+        mat-menu-item
+        (click)="service.appendNodeUseContextMenuPoint('image')"
+      >
+        <mat-icon color="primary">image</mat-icon>
+        添加图片
+      </button>
+      <button
+        mat-menu-item
+        (click)="service.pasteNodesByContextMenu('mind-node')"
+      >
+        <mat-icon color="accent">content_paste</mat-icon> 粘贴
+      </button>
+    }
+    @case ('node') {
+      @if (
+        service.selectedNodeList$().length === 1 &&
+        service.selectedNodeList$()[0].type === 'container'
+      ) {
+        <button mat-menu-item (click)="service.unWrapNode()">
+          <mat-icon color="warn">crop_free</mat-icon>
+          解除
+        </button>
+      }
+      @if (
+        service.selectedNodeList$().length === 1 &&
+        service.selectedNodeList$()[0].type !== 'container'
+      ) {
+        <button mat-menu-item (click)="moveToStoreList()">
+          <mat-icon color="accent">store</mat-icon>
+          移动到存储列表
+        </button>
+      }
+      <button mat-menu-item (click)="service.deleteSelected()">
+        <mat-icon color="warn">delete</mat-icon>
+        删除
+      </button>
+
+      @if (service.sourceNodeList().length) {
+        <button mat-menu-item [matMenuTriggerFor]="Source">
+          <mat-icon color="accent">near_me</mat-icon>移动到引用
+        </button>
+      }
+      @if (service.targetNodeList().length) {
+        <button mat-menu-item [matMenuTriggerFor]="target">
+          <mat-icon color="accent">near_me</mat-icon>
+          移动到被引用
+        </button>
+      }
+      @if (service.selectedNodeList$().length === 1) {
+        <button mat-menu-item (click)="layoutNode(1)">
+          <mat-icon color="accent">account_tree</mat-icon>
+          布局子级
+        </button>
+        <button mat-menu-item (click)="layoutNode(9999)">
+          <mat-icon color="accent">account_tree</mat-icon>
+          布局后代
+        </button>
+      }
+      @if (service.isCard$()) {
+        <button mat-menu-item (click)="service.cardToTextGroup()">
+          <mat-icon color="accent">transform</mat-icon> 转换为文本组
+        </button>
+      }
+      <button mat-menu-item (click)="service.copyNodes('mind-node', false)">
+        <mat-icon color="accent">content_copy</mat-icon> 复制
+      </button>
+    }
+    @case ('selection') {
+      @if (service.wrapSupport$()) {
+        <button mat-menu-item (click)="service.wrapNode()">
+          <mat-icon color="primary">crop_free</mat-icon> 外框
+        </button>
+      }
+      <button mat-menu-item (click)="service.textGroupToCard()">
+        <mat-icon color="accent">transform</mat-icon> 转换为卡片
+      </button>
+      <button mat-menu-item (click)="service.copyNodes('mind-node', true)">
+        <mat-icon color="accent">content_copy</mat-icon> 复制选中
+      </button>
+      <button mat-menu-item (click)="service.deleteSelected()">
+        <mat-icon color="warn">delete</mat-icon> 删除
+      </button>
+    }
+    @default {}
+  }
+</mat-menu>
+<mat-menu #Source="matMenu" class="menu-minimum">
+  @for (item of service.sourceNodeList(); track $index) {
+    <button mat-menu-item (click)="service.moveTo(item)">
+      {{ service.getNodeTitle | pure: item }}
+    </button>
+  }
+</mat-menu>
+<mat-menu #target="matMenu" class="menu-minimum">
+  @for (item of service.targetNodeList(); track $index) {
+    <button mat-menu-item (click)="service.moveTo(item)">
+      {{ service.getNodeTitle | pure: item }}
+    </button>
+  }
+</mat-menu>
+<mat-menu #alignRef="matMenu" class="menu-minimum">
+  <button
+    mat-menu-item
+    (click)="service.nodeAlign('left')"
+    class="overflow-hidden"
+  >
+    <mat-icon color="accent">align_horizontal_left</mat-icon>
+    左对齐
+  </button>
+  <button
+    mat-menu-item
+    (click)="service.nodeAlign('right')"
+    class="overflow-hidden"
+  >
+    <mat-icon color="accent">align_horizontal_right</mat-icon>
+    右对齐
+  </button>
+  <button
+    mat-menu-item
+    (click)="service.nodeAlign('top')"
+    class="overflow-hidden"
+  >
+    <mat-icon color="accent">align_vertical_top</mat-icon>
+    上对齐
+  </button>
+  <button
+    mat-menu-item
+    (click)="service.nodeAlign('bottom')"
+    class="overflow-hidden"
+  >
+    <mat-icon color="accent">align_vertical_bottom</mat-icon>
+    下对齐
+  </button>
+</mat-menu>

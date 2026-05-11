@@ -1,0 +1,15 @@
+@let schema = schema$$();
+@if (schema) {
+  <piying-view
+    class="noValid grid gap-2 nowheel nodrag"
+    [schema]="schema"
+    [options]="options"
+    [model]="model$$()"
+    (modelChange)="valueChange($any($event))"
+  ></piying-view>
+} @else if ($any(model$$().data)['config']) {
+  <div
+    class="flex gap-2 flex-col"
+    [valueFormat]="$any(model$$().data)['config']"
+  ></div>
+}

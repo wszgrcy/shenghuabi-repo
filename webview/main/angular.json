@@ -1,0 +1,198 @@
+{
+  "$schema": "../../node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "main-webview": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "allowedCommonJsDependencies": [
+              "png-chunks-extract",
+              "png-chunk-text",
+              "png-chunks-encode",
+              "es6-promise-pool",
+              "pica",
+              "@dagrejs/dagre",
+              "debug",
+              "obliterator/foreach",
+              "obliterator/iterator",
+              "prettier/parser-postcss",
+              "prettier/parser-html",
+              "prettier/parser-babel",
+              "prettier/parser-markdown",
+              "classnames",
+              "deepmerge",
+              "prismjs",
+              "nano-css",
+              "dayjs",
+              "events",
+              "rfdc",
+              "dompurify",
+              "react",
+              "graphology-layout/circlepack",
+              "graphology-communities-louvain",
+              "react-dom",
+              "lodash.throttle",
+              "lodash.debounce",
+              "fuzzy",
+              "canvas-roundrect-polyfill",
+              "@braintree/sanitize-url",
+              "elkjs",
+              "cytoscape-cose-bilkent",
+              "graphology-utils",
+              "use-sync-external-store",
+              "@excalidraw/markdown-to-text",
+              "react-is",
+              "js-cookie",
+              "copy-to-clipboard",
+              "screenfull",
+              "react-universal-interface",
+              "fast-shallow-equal",
+              "ts-easing",
+              "typed-function",
+              "json2mq",
+              "fast-deep-equal",
+              "javascript-natural-sort",
+              "tiny-emitter",
+              "use-sync-external-store",
+              "escape-latex",
+              "seedrandom"
+            ],
+            "define": {
+              "process.env.IS_PREACT": "'false'"
+            },
+            "outputPath": {
+              "base": "../../dist/webview",
+              "browser": ""
+            },
+            "index": {
+              "input": "src/index.html",
+              "preloadInitial": true
+            },
+            "browser": "src/main.ts",
+            "polyfills": [],
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.css",
+              "src/styles.scss",
+              "material-icons/iconfont/filled.css",
+              "@vscode/codicons/dist/codicon.css",
+              "@excalidraw/excalidraw/index.css"
+            ],
+            "scripts": [],
+            "stylePreprocessorOptions": {
+              "includePaths": ["./node_modules", "../../node_modules"]
+            }
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "10MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kB",
+                  "maximumError": "400kB"
+                }
+              ],
+              "outputHashing": "all",
+              "namedChunks": false,
+              "sourceMap": true
+            },
+            "development": {
+              "namedChunks": true,
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-esbuild:dev-server",
+          "configurations": {
+            "options": {
+              "prebundle": false
+            },
+            "production": {
+              "buildTarget": "main-webview:build:production"
+            },
+            "development": {
+              "buildTarget": "main-webview:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular/build:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "polyfills": [],
+            "tsConfig": "tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": ["src/styles.scss"],
+            "scripts": []
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
+  }
+}

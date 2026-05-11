@@ -1,0 +1,174 @@
+<div class="relative h-full" #flowwrapper>
+  <div class="h-full form-minimum">
+    <react-outlet [component]="ReactFlowProvider">
+      <react-outlet
+        [component]="ReactFlow"
+        #child
+        #reactflow
+        [runInReact]="context"
+        [props]="
+          $any({
+            dataInited: dataInited$(),
+            nodeTypes: service.fullNodeTypes$$(),
+          })
+        "
+      >
+        <react-outlet [component]="MiniMap" #child [props]="{ pannable: true }">
+        </react-outlet>
+        <react-outlet
+          #child
+          [component]="Background"
+          [props]="{ variant: BackgroundVariant.Dots }"
+        ></react-outlet>
+        <react-outlet #child [component]="Controls"></react-outlet>
+      </react-outlet>
+    </react-outlet>
+  </div>
+  <div
+    [matMenuTriggerFor]="menu"
+    #contextMenu
+    class="w-0 h-0 overflow-hidden opacity-0 absolute"
+  ></div>
+  <div
+    class="absolute right-0 top-0 bottom-0 z-50 flex flex-col pointer-events-none"
+  >
+    <div class="flex justify-end pointer-events-auto">
+      <button
+        class="btn btn-circle btn-soft btn-accent"
+        matTooltip="帮助"
+        [matTooltipShowDelay]="0"
+        (click)="toggleHelp()"
+      >
+        <span class="material-icons">help</span>
+      </button>
+      <button class="btn btn-soft btn-primary" (click)="validatePanelStatus.set(true)">
+        <mat-icon color="primary" style="transform: rotate(180deg)"
+          >filter_alt</mat-icon
+        >
+        验证
+      </button>
+    </div>
+    <div class="flex-1 flex gap-2 overflow-y-hidden">
+      @if (nodeConfigPanelStatus() && configProps(); as props) {
+        <node-panel
+          [props]="$any(props)"
+          [close$]="nodeConfigPanelStatus"
+        ></node-panel>
+      }
+      @if (validatePanelStatus() && flowData()) {
+        <validate-panel
+          [flowData]="{ flow: flowData() }"
+          [close$]="validatePanelStatus"
+        ></validate-panel>
+      }
+    </div>
+  </div>
+</div>
+
+<mat-menu #menu="matMenu" class="menu-minimum">
+  @switch (service.contextmenuType()) {
+    @case ('pane') {
+      <button mat-menu-item [matMenuTriggerFor]="NodeList">
+        <span>添加节点</span>
+      </button>
+      <button
+        mat-menu-item
+        [matMenuTriggerFor]="pluginNodeList"
+        [disabled]="!service.pluginDisplayList$$().length"
+      >
+        <span>添加插件节点</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="service.pasteNodesByContextMenu('workflow-node')"
+      >
+        <mat-icon color="accent">content_paste</mat-icon> 粘贴
+      </button>
+    }
+    @case ('node') {
+      @if ($any(service.selectedNodeList$()[0])?.type === iterationType) {
+        <button mat-menu-item [matMenuTriggerFor]="NodeList">
+          <span>添加节点</span>
+        </button>
+        <button
+          mat-menu-item
+          [matMenuTriggerFor]="pluginNodeList"
+          [disabled]="!service.pluginDisplayList$$().length"
+        >
+          <span>添加插件节点</span>
+        </button>
+      }
+      @if (service.canUnwrap()) {
+        <button mat-menu-item (click)="service.unWrap()">解除父级</button>
+      }
+      <button mat-menu-item (click)="service.copyNodes('workflow-node', false)">
+        <mat-icon color="accent">content_copy</mat-icon> 复制
+      </button>
+      @if (service.canDelete()) {
+        <button mat-menu-item (click)="service.deleteSelected()">
+          <mat-icon color="warn">delete</mat-icon>
+          删除
+        </button>
+      }
+
+      @if (service.sourceNodeList().length) {
+        <button mat-menu-item [matMenuTriggerFor]="Source">
+          <mat-icon color="accent">near_me</mat-icon>移动到输出
+        </button>
+      }
+      @if (service.targetNodeList().length) {
+        <button mat-menu-item [matMenuTriggerFor]="target">
+          <mat-icon color="accent">near_me</mat-icon>移动到输入
+        </button>
+      }
+    }
+    @case ('selection') {
+      <button mat-menu-item (click)="service.copyNodes('workflow-node', true)">
+        <mat-icon color="accent">content_copy</mat-icon> 复制选中
+      </button>
+      <button mat-menu-item (click)="service.deleteSelected()">
+        <mat-icon color="warn">delete</mat-icon>
+        删除
+      </button>
+    }
+    @default {}
+  }
+</mat-menu>
+<mat-menu #Source="matMenu">
+  @for (item of service.sourceNodeList(); track $index) {
+    <button mat-menu-item (click)="service.moveTo(item)">
+      {{ service.getNodeTitle | pure: item }}
+    </button>
+  }
+</mat-menu>
+<mat-menu #target="matMenu">
+  @for (item of service.targetNodeList(); track $index) {
+    <button mat-menu-item (click)="service.moveTo(item)">
+      {{ service.getNodeTitle | pure: item }}
+    </button>
+  }
+</mat-menu>
+<mat-menu #NodeList="matMenu" class="menu-minimum">
+  @for (item of service.nodeDisplayList$$(); track $index) {
+    <button mat-menu-item (click)="addNode(item.value)">
+      <mat-icon
+        [color]="item.color"
+        [fontIcon]="item.icon.fontIcon!"
+        [fontSet]="item.icon.fontSet!"
+      ></mat-icon>
+      {{ item.label }}
+    </button>
+  }
+</mat-menu>
+<mat-menu #pluginNodeList="matMenu" class="menu-minimum">
+  @for (item of service.pluginDisplayList$$(); track $index) {
+    <button mat-menu-item (click)="addNode(item.value)">
+      <mat-icon
+        [color]="item.color"
+        [fontIcon]="item.icon.fontIcon!"
+        [fontSet]="item.icon.fontSet!"
+      ></mat-icon>
+      {{ item.label }}
+    </button>
+  }
+</mat-menu>

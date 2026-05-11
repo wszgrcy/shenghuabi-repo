@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationDir": "../../plugin-sdk-dist/types",
+    "incremental": false,
+    "paths": {
+      "@shenghuabi/sdk/server": ["./server-fake.ts"]
+    }
+  },
+  "files": ["./index.ts", "./build.ts"],
+  "include": []
+}

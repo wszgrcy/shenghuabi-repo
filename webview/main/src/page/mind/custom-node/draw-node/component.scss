@@ -1,0 +1,9 @@
+:host {
+  ::ng-deep {
+    svg {
+      overflow: visible;
+      // 用于在存储列表中支持
+      width: 100%;
+    }
+  }
+}

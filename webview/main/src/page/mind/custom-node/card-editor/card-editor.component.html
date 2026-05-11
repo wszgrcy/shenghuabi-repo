@@ -1,0 +1,93 @@
+@defer (on viewport) {
+  @switch (openStatus$()) {
+    @case ('title') {
+      <span-input
+        [ngModel]="props().data.title"
+        placeholder="未命名"
+        (ngModelChange)="titleChange($event)"
+        class="nodrag"
+      ></span-input>
+    }
+    @case ('content') {
+      @if (!fullScreen$()) {
+        <text-editor
+          [class]="compClass$() + ' flex-1'"
+          [ngModel]="value$()"
+          (ngModelChange)="editorDataChange($event!)"
+          [editorReadonly]="editorReadonly$()"
+          [disableToolkit]="disableToolkit$()"
+          [util]="util"
+          [plugins]="plugins"
+        ></text-editor>
+      }
+    }
+    @default {
+      <div #root class="h-full default-style">
+        <div class="flex flex-col h-full">
+          <div class="flex density-0 px-[16px] pt-[16px]">
+            <div class="nodrag overflow-hidden flex-1">
+              <input
+                type="text"
+                [ngModel]="props().data['title']"
+                (ngModelChange)="titleChange($event)"
+                class="!outline-0 border-0 p-0 h-full bg-transparent text-[1.2em] w-full"
+                placeholder="未命名"
+              />
+            </div>
+          </div>
+          @if (!fullScreen$()) {
+            <text-editor
+              [class]="compClass$() + ' flex-1 overflow-hidden'"
+              [ngModel]="value$()"
+              (ngModelChange)="editorDataChange($event!)"
+              [editorReadonly]="editorReadonly$()"
+              [disableToolkit]="disableToolkit$()"
+              [util]="util"
+              [plugins]="plugins"
+            ></text-editor>
+          }
+        </div>
+      </div>
+    }
+  }
+  @if (styleRestore | pure) {}
+} @loading {
+  <div class="h-full w-full min-h-1 min-w-1"></div>
+} @placeholder {
+  <div class="h-full w-full min-h-1 min-w-1"></div>
+}
+
+<ng-template #fullscreenTemplate>
+  <div class="w-[100vw] h-[100vh]">
+    <div class="absolute right-0 z-10 pointer-events-none gap-2">
+      <button
+        type="button"
+        class="btn btn-circle btn-soft nodrag pointer-events-auto btn-secondary"
+        (click)="setReadonly(!editorReadonly$())"
+        [matTooltip]="editorReadonly$() ? '编辑' : '只读'"
+      >
+        <span class="material-icons">{{
+          editorReadonly$() ? 'edit' : 'block'
+        }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-circle btn-soft btn-error nodrag pointer-events-auto"
+        (click)="closeFullscreen()"
+        matTooltip="恢复窗口"
+      >
+        <span class="material-icons">cancel_presentation</span>
+      </button>
+    </div>
+    <text-editor
+      class="h-full w-full block editor-max-mode nodrag"
+      [ngModel]="value$()"
+      (ngModelChange)="editorDataChange($event!)"
+      [editorReadonly]="editorReadonly$()"
+      (eventChange)="eventChanged($event)"
+      [disableToolkit]="disableToolkit$()"
+      [util]="util"
+      [plugins]="plugins"
+    ></text-editor>
+  </div>
+</ng-template>

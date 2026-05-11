@@ -1,0 +1,8 @@
+<div class="grid gap-2">
+  @for (item of inputValue() | keyvalue; track $index) {
+    <div class="flex gap-2">
+      <mat-chip>{{ item.key }}</mat-chip>
+      <div class="whitespace-pre-line">{{ item.value }}</div>
+    </div>
+  }
+</div>

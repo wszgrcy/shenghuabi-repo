@@ -1,0 +1,20 @@
+<ng-template #templateRef let-attr="attributes">
+  <div [class]="childrenWrapperClass$$()">
+    @for (item of fixedChildren$$(); track $index) {
+      <div [class]="'card'">
+        <div class="card-body">
+          <h2 class="card-title">
+            {{ item.props()['title'] }}
+          </h2>
+          @if (item.props()['description']) {
+            <p>{{ item.props()['description'] }}</p>
+          }
+        </div>
+
+        <ng-container
+          *ngTemplateOutlet="fieldTemplateRef; context: { $implicit: item }"
+        ></ng-container>
+      </div>
+    }
+  </div>
+</ng-template>

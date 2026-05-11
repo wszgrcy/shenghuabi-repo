@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.base.json",
+  "exclude": [
+    "./**/node_modules",
+    "./webview"
+  ],
+  "files": [
+    "./src/index.ts",
+    "./src/typing.d.ts",
+  ],
+  "include": [
+    "./*.d.ts",
+    "./src/worker/**/*"
+  ],
+  "compilerOptions": {
+    "outDir": "./.tmp-build",
+    "incremental": false
+  }
+}

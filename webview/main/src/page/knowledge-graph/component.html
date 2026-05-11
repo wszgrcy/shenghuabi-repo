@@ -1,0 +1,53 @@
+<div
+  class="w-[300px] absolute right-0 noValid form-minimum z-10 mt-2 mr-2 flex flex-col gap-2 items-end"
+>
+  <div class="flex gap-2 items-center">
+    <button
+      class="btn btn-circle btn-soft btn-primary"
+      (click)="openNew()"
+      matTooltip="添加节点或边"
+    >
+      <span class="material-icons">add</span>
+    </button>
+
+    <div class="join">
+      <button class="btn btn-circle btn-soft btn-ghost join-item btn-sm">
+        <span class="material-icons">search</span>
+      </button>
+      <label class="input join-item flex-1 input-sm">
+        <input
+          type="text"
+          class="grow"
+          placeholder="请输入节点名..."
+          [matAutocomplete]="auto"
+          [(ngModel)]="searchContent$"
+        />
+      </label>
+      <mat-autocomplete #auto="matAutocomplete">
+        @for (item of searchResult$(); track $index) {
+          <mat-option [value]="item" (click)="searchChange(item)">{{
+            item
+          }}</mat-option>
+        }
+      </mat-autocomplete>
+      <button
+        class="btn btn-circle btn-soft btn-accent join-item btn-sm"
+        (click)="openNode($event)"
+        [disabled]="!searchContent$()"
+      >
+        <span class="material-icons">preview</span>
+      </button>
+    </div>
+  </div>
+  <div class="flex flex-col gap-2">
+    <mat-chip> 实体: {{ count$().node }} </mat-chip>
+    <mat-chip> 联系: {{ count$().edge }} </mat-chip>
+  </div>
+</div>
+@if (!inited$()) {
+  <div
+    class="absolute top-0 right-0 bottom-0 left-0 flex items-center justify-center"
+  >
+    <mat-spinner></mat-spinner>
+  </div>
+}

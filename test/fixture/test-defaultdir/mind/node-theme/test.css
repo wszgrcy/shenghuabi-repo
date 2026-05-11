@@ -1,0 +1,312 @@
+/** 默认调整样式 */
+:scope {}
+
+/** 卡片样式调整.可以参考markdown样式 */
+/** 使用来自其他markdown主题时,注意将标签改为类选择器,否则优先级会不够 */
+.article-content {
+
+  /** 分隔符 */
+  .hr {}
+
+  /** 图片 */
+  .image {}
+
+  /** 链接 */
+  .link {}
+
+  /** 段落 */
+  .p {}
+
+  /** 段落中的内容 */
+  .p>* {}
+
+  /** 引用 */
+  .blockquote {}
+
+  /** 表格 */
+  .table {}
+
+  /** 表格单元格 */
+  .tc {}
+
+  /** 表格单元格标题 */
+  .th {}
+
+  /** 表格行 */
+  .tr {}
+
+  /** 表格列新增 */
+  .tableAddColumns {}
+
+  /** 表格行新增 */
+  .tableAddRows {}
+
+  /** 从左到右 */
+  .ltr {}
+
+  /** 从右到左 */
+  .rtl {}
+
+  /** 粗体 */
+  .text-bold {}
+
+  /** 行内代码 */
+  .text-code {}
+
+  /** 斜体 */
+  .text-italic {}
+
+  /** 下标 */
+  .text-subscript {}
+
+  /** 上标 */
+  .text-superscript {}
+
+  /** 下划线 */
+  .text-underline {}
+
+  /** 中划线 */
+  .text-strikethrough {}
+
+  /** 下中划线 */
+  .text-underlineStrikethrough {}
+
+  /** 一级标题 */
+  .h1 {}
+
+  /** 标题的内容 */
+  .h1>* {}
+
+  /** 二级标题 */
+  .h2 {}
+
+  /** 三级标题 */
+  .h3 {}
+
+  /** 四级标题 */
+  .h4 {}
+
+  /** 五级标题 */
+  .h5 {}
+
+  /** 六级标题 */
+  .h6 {}
+
+  /** 无序列表 */
+  .ul {}
+
+  /** 清单列表 */
+  .cl {}
+
+  /** 列表项 */
+  .li {}
+
+  /** 已选中列表项 */
+  .liChecked {}
+
+  /** 未选中列表项 */
+  .liUnChecked {}
+
+  /** 列表项 */
+  .nestedLi {}
+
+  /** 有序列表 */
+  .ol {}
+
+  /** 一级有序列表 */
+  .ol1 {}
+
+  /** 二级有序列表 */
+  .ol2 {}
+
+  /** 三级有序列表 */
+  .ol3 {}
+
+  /** 四级有序列表 */
+  .ol4 {}
+
+  /** 五级有序列表 */
+  .ol5 {}
+
+  /* 全局属性
+ * 页边距 padding: 30px;
+ * 全文字体 font-family: ptima-Regular;
+ * 英文换行 word-break: break-all;
+ */
+
+  /* 段落，下方未标注标签参数均同此处
+ * 上边距 margin-top: 5px;
+ * 下边距 margin-bottom: 5px;
+ * 行高 line-height: 26px;
+ * 词间距 word-spacing: 3px;
+ * 字间距 letter-spacing: 3px;
+ * 对齐 text-align: left;
+ * 颜色 color: #3e3e3e;
+ * 字体大小 font-size: 16px;
+ * 首行缩进 text-indent: 2em;
+ */
+  p {}
+
+  /* 一级标题 */
+  h1 {}
+
+  /* 一级标题内容 */
+  h1 .content {}
+
+  /* 一级标题修饰 请参考有实例的主题 */
+  h1:after {}
+
+  /* 二级标题 */
+  .h2 {
+    border-bottom: 2px solid rgb(239, 112, 96) !important;
+    padding-bottom: 0 !important;
+    font-size: 1.3em;
+  }
+
+  /* 二级标题内容 */
+  .h2>* {
+    display: inline-block;
+    font-weight: bold;
+    background: rgb(239, 112, 96) !important;
+    color: #ffffff;
+    padding: 3px 10px 1px;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    margin-right: 3px;
+  }
+
+  /* 二级标题修饰 请参考有实例的主题 */
+  .h2:after {
+    display: inline-block;
+    content: " ";
+    vertical-align: bottom;
+    border-bottom: 36px solid #efebe9;
+    border-right: 20px solid transparent;
+  }
+
+  /* 三级标题 */
+  h3 {}
+
+  /* 三级标题内容 */
+  h3 .content {}
+
+  /* 三级标题修饰 请参考有实例的主题 */
+  h3:after {}
+
+  /* 无序列表整体样式
+ * list-style-type: square|circle|disc;
+ */
+  ul {}
+
+  /* 有序列表整体样式
+ * list-style-type: upper-roman|lower-greek|lower-alpha;
+ */
+  ol {}
+
+  /* 列表内容，不要设置li
+ */
+  li section {}
+
+  /* 引用
+ * 左边缘颜色 border-left-color: black;
+ * 背景色 background: gray;
+ */
+  blockquote {
+    border-left-color: rgb(239, 112, 96);
+    background: #fff9f9;
+  }
+
+  /* 引用文字 */
+  blockquote p {}
+
+  /* 链接 
+ * border-bottom: 1px solid #009688;
+ */
+  a {
+    color: rgb(239, 112, 96);
+    border-bottom: 1px solid rgb(239, 112, 96);
+  }
+
+  /* 加粗 */
+  strong {}
+
+  /* 斜体 */
+  em {}
+
+  /* 加粗斜体 */
+  em strong {}
+
+  /* 删除线 */
+  del {}
+
+  /* 分隔线
+ * 粗细、样式和颜色
+ * border-top: 1px solid #3e3e3e;
+ */
+  hr {}
+
+  /* 图片
+ * 宽度 width: 80%;
+ * 居中 margin: 0 auto;
+ * 居左 margin: 0 0;
+ */
+  img {}
+
+  /* 图片描述文字 */
+  figcaption {}
+
+  /* 行内代码 */
+  p code,
+  li code {
+    color: rgb(239, 112, 96);
+  }
+
+  /* 非微信代码块
+ * 代码块不换行 display: -webkit-box !important;
+ * 代码块换行 display: block;
+ */
+  pre code {}
+
+  /*
+ * 表格内的单元格
+ * 字体大小 font-size: 16px;
+ * 边框 border: 1px solid #ccc;
+ * 内边距 padding: 5px 10px;
+ */
+  table tr th,
+  table tr td {}
+
+  /* 脚注文字 */
+  .footnote-word {
+    color: #ff3502;
+  }
+
+  /* 脚注上标 */
+  .footnote-ref {
+    color: rgb(239, 112, 96);
+  }
+
+  /* "参考资料"四个字 
+ * 内容 content: "参考资料";
+ */
+  .footnotes-sep:before {}
+
+  /* 参考资料编号 */
+  .footnote-num {}
+
+  /* 参考资料文字 */
+  .footnote-item p {}
+
+  /* 参考资料解释 */
+  .footnote-item p em {}
+
+  /* 行间公式
+ * 最大宽度 max-width: 300% !important;
+ */
+  .block-equation svg {}
+
+  /* 行内公式
+ */
+  .inline-equation svg {}
+}
+

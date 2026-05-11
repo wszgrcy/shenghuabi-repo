@@ -1,0 +1,36 @@
+<div class="flex items-center justify-center h-full w-full">
+  <form [formGroup]="group" class="flex w-[500px] flex-col items-end">
+    <div
+      class="join flex-1"
+      [matTooltip]="'设置向量数据库/知识库等的默认保存位置'"
+      [matTooltipPosition]="'above'"
+    >
+      <label class="input join-item flex-1">
+        配置默认保存位置
+        <input
+          type="text"
+          class="grow"
+          placeholder="指定一些数据的默认保存位置"
+          formControlName="dir"
+          #vd
+        />
+      </label>
+      <button
+        class="btn btn-circle btn-soft btn-ghost btn-primary join-item"
+        (click)="changePath('')"
+      >
+        <span class="material-icons">attach_file</span>
+      </button>
+    </div>
+
+    <div class="w-full text-end">
+      <button
+        class="btn btn-soft btn-primary"
+        [disabled]="!group.controls.dir.value"
+        (click)="next.emit()"
+      >
+        下一步
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,20 @@
+<div class="flex items-center form-minimum">
+  <button
+    class="btn btn-circle btn-soft btn-primary"
+    (click)="selectFile()"
+    type="button"
+    matTooltip="添加图片"
+  >
+    <span class="material-icons">image</span>
+  </button>
+  <mat-chip-set>
+    @for (item of value$(); track $index) {
+      <mat-chip (removed)="remove($index)" color="primary" class="!my-0">
+        <img [src]="item.data" matChipAvatar />
+        <button matChipRemove color="warn">
+          <mat-icon color="warn">cancel</mat-icon>
+        </button>
+      </mat-chip>
+    }
+  </mat-chip-set>
+</div>

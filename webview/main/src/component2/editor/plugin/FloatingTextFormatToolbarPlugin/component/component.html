@@ -1,0 +1,83 @@
+<div class="flex gap-2 form-minimum">
+  <div class="flex items-center">
+    @let item = selectedData | pure: props().blockType;
+    @if (item) {
+      @if (item.textIcon) {
+        <div
+          [class]="item.textIcon.className"
+          class="inline-flex !m-0 !w-auto !h-auto select-none"
+          [matTooltip]="item.label"
+        >
+          {{ item.textIcon.label }}
+        </div>
+      } @else if (item.icon) {
+        <span class="select-none material-icons" [matTooltip]="item.label">{{
+          item.icon
+        }}</span>
+      }
+    }
+    <button
+      class="btn btn-circle btn-soft btn-ghost"
+      [matMenuTriggerFor]="menu"
+    >
+      <span class="material-icons">keyboard_arrow_down</span>
+    </button>
+  </div>
+
+  <mat-menu #menu="matMenu" class="menu-minimum max-h-[300px]">
+    @for (item of service.convertList$(); track $index) {
+      <button
+        mat-menu-item
+        (click)="
+          item.click!(
+            { blockType: props().blockType, editor: props().editor },
+            injector
+          )
+        "
+      >
+        @if (item.textIcon) {
+          <div [class]="item.textIcon.className" class="inline-flex">
+            {{ item.textIcon.label }}
+          </div>
+        } @else if (item.icon) {
+          <mat-icon>{{ item.icon }}</mat-icon>
+        }
+        {{ item.label }}
+      </button>
+    }
+  </mat-menu>
+
+  @for (item of formatTextList; track $index) {
+    <button
+      class="btn btn-circle btn-soft btn-ghost"
+      type="button"
+      (click)="formatText(item.payload)"
+      [class.active]="status$()[item.payload]"
+    >
+      <span class="material-icons"> {{ item.icon }} </span>
+    </button>
+  }
+  @for (items of pluginTool$$(); track $index) {
+    @if (items) {
+      @for (item of items.tools; track $index) {
+        <button
+          class="btn btn-circle btn-soft btn-ghost"
+          type="button"
+          (click)="
+            item.callback(
+              props().status.pluginData[items.name],
+              toolOptions$$()
+            )
+          "
+        >
+          <span class="material-icons"> {{ item.icon }} </span>
+        </button>
+      }
+    }
+  }
+
+  <ng-container
+    [selectlessOutlet]="PiyingView"
+    [selectlessOutletInputs]="piyingInput | pure"
+  ></ng-container>
+</div>

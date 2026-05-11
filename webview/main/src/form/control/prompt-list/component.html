@@ -1,0 +1,23 @@
+<div class="flex gap-2 flex-col">
+  @for (item of value$(); track $index) {
+    <div class="flex gap-2 items-center">
+      <prompt-template
+        class="flex-1 overflow-hidden nodrag"
+        [ngModel]="item"
+        (ngModelChange)="promptChange($event, $index)"
+        [isLast]="true"
+        (addTemplateChange)="addChange($index)"
+        [list]="value$()"
+      ></prompt-template>
+      <div class="flex items-center overflow-hidden">
+        <button
+          class="btn btn-circle btn-soft btn-error"
+          (click)="promptRemove($index)"
+          [disabled]="$count === 1"
+        >
+          <span class="material-icons">remove</span>
+        </button>
+      </div>
+    </div>
+  }
+</div>

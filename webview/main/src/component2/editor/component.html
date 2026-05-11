@@ -1,0 +1,23 @@
+<div class="relative editor-shell">
+  <react-outlet [component]="ComponentMain" [root]="true"> </react-outlet>
+</div>
+
+<div
+  [matMenuTriggerFor]="menu"
+  #contextMenu
+  class="w-0 h-0 overflow-hidden opacity-0 absolute"
+></div>
+<mat-menu #menu="matMenu" class="menu-minimum max-h-[300px]">
+  @for (item of service.insertList$(); track $index) {
+    <button mat-menu-item (click)="item.click!()">
+      @if (item.textIcon) {
+        <div [class]="item.textIcon.className" class="inline-flex">
+          {{ item.textIcon.label }}
+        </div>
+      } @else if (item.icon) {
+        <mat-icon>{{ item.icon }}</mat-icon>
+      }
+      {{ item.label }}
+    </button>
+  }
+</mat-menu>

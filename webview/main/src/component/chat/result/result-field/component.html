@@ -1,0 +1,95 @@
+<div class="relative flex flex-col content-wrapper">
+  @if (thinkContent(); as tkContent) {
+    <div class="relative group/thinkContent">
+      <div
+        [innerHTML]="tkContent | markdown"
+        class="markdown-result flex-1 think-content mb-2"
+      ></div>
+      @if (enableMenu()) {
+        <div
+          class="absolute right-0 hidden group-hover/thinkContent:block top-0"
+        >
+          <button
+            class="btn btn-circle btn-soft btn-primary"
+            [matMenuTriggerFor]="menu"
+          >
+            <span class="material-icons">more_vert</span>
+          </button>
+        </div>
+      }
+    </div>
+  }
+  @if (value()) {
+    <div class="relative group/content">
+      @if (type() === 'plaintext') {
+        <span-input
+          class="text-content flex-1"
+          [(ngModel)]="value"
+          [disabled]="readonly()"
+        ></span-input>
+      } @else {
+        <div
+          [innerHTML]="value() | markdown"
+          class="markdown-result text-content flex-1"
+        ></div>
+      }
+      @if (enableMenu()) {
+        <div class="absolute right-0 hidden group-hover/content:block top-0">
+          <button
+            class="btn btn-circle btn-soft btn-primary"
+            [matMenuTriggerFor]="menu"
+          >
+            <span class="material-icons">more_vert</span>
+          </button>
+        </div>
+      }
+    </div>
+  }
+</div>
+<mat-menu #menu="matMenu" class="!min-w-0">
+  @if (type() === 'markdown') {
+    <button
+      class="btn btn-circle btn-soft btn-accent"
+      (click)="toggle()"
+      matTooltip="切换为纯文本"
+    >
+      <span class="material-icons">short_text</span>
+    </button>
+  } @else {
+    <button
+      class="btn btn-circle btn-soft btn-accent"
+      (click)="toggle()"
+      matTooltip="切换为markdown"
+    >
+      <span class="material-icons">wysiwyg</span>
+    </button>
+  }
+  @if (reChat(); as chat) {
+    <button
+      class="btn btn-circle btn-soft btn-error"
+      (click)="chat()"
+      matTooltip="重新请求此对话"
+    >
+      <span class="material-icons">refresh</span>
+    </button>
+  }
+
+  <button
+    class="btn btn-circle btn-soft btn-ghost btn-primary"
+    [cdkCopyToClipboard]="value()"
+    matTooltip="复制"
+  >
+    <span class="material-icons">content_copy</span>
+  </button>
+  @if (thinkContent()) {
+    <button
+      class="btn btn-circle btn-soft btn-ghost btn-accent"
+      [cdkCopyToClipboard]="thinkContent()!"
+      matTooltip="复制思考内容"
+    >
+      <span class="material-icons">content_copy</span>
+    </button>
+  }
+
+  <ng-content> </ng-content>
+</mat-menu>

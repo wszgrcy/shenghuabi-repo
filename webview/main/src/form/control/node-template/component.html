@@ -1,0 +1,36 @@
+<div class="flex gap-2 items-center">
+  <label class="input">
+    模板名
+    <input
+      type="text"
+      [(ngModel)]="value$"
+      [matAutocomplete]="auto"
+      [placeholder]="'选择或填写模板名'"
+    />
+    <mat-autocomplete
+      autoActiveFirstOption
+      #auto="matAutocomplete"
+      (optionSelected)="optionSelected($event)"
+    >
+      @for (option of filterList$() | async; track option) {
+        <mat-option [value]="option">{{ option }}</mat-option>
+      }
+    </mat-autocomplete>
+  </label>
+  <button
+    class="btn btn-circle btn-soft btn-primary"
+    matTooltip="设置"
+    (click)="set()"
+    [disabled]="!value$() || !(configObject$() | async)?.[value$()]"
+  >
+    <span class="material-icons">download</span>
+  </button>
+  <button
+    class="btn btn-circle btn-soft btn-primary"
+    matTooltip="保存"
+    (click)="save()"
+    [disabled]="!value$()"
+  >
+    <span class="material-icons">save</span>
+  </button>
+</div>

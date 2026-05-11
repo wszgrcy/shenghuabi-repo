@@ -1,0 +1,22 @@
+<!--  先不用 .因为未定好规则 -->
+<div class="default-style input-wrapper">
+  <span-input
+    [ngModel]="label()"
+    (ngModelChange)="valueChange($event)"
+    [placeholder]="'[关系]'"
+    class="flex"
+    [class.label-empty-hidden]="!label()"
+  ></span-input>
+</div>
+
+<div
+  class="form-minimum absolute action-wrapper mt-2"
+  [class.label-empty]="!label()"
+>
+  <mat-icon
+    (click)="deleteItem()"
+    color="warn"
+    class="cursor-pointer edge-delete-btn invisible btn-c-error"
+    >delete</mat-icon
+  >
+</div>

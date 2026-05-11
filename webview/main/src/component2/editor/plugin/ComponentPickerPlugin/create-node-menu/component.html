@@ -1,0 +1,16 @@
+<div
+  class="mat-mdc-menu-panel mat-mdc-elevation-specific menu-minimum mat-elevation-z2 w-max max-h-[300px]"
+>
+  @for (item of props().options; track $index) {
+    <button mat-menu-item (click)="onSelect(item)" class="w-full">
+      @if (item.textIcon) {
+        <div [class]="item.textIcon.className" class="inline-flex">
+          {{ item.textIcon.label }}
+        </div>
+      } @else if (item.icon) {
+        <mat-icon>{{ item.icon }}</mat-icon>
+      }
+      {{ item.label }}
+    </button>
+  }
+</div>

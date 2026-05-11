@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [
+    "./src/export/server.ts",
+    "./src/export/common.ts",
+    "./src/sdk/index.ts",
+    "./src/sdk/build.ts",
+  ],
+  "include": [],
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "stripInternal": true,
+    "rootDir": "./",
+    "outDir": "./plugin-sdk-dist/types",
+    "incremental": false,
+  }
+}

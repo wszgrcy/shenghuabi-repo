@@ -1,0 +1,6 @@
+:host ::ng-deep {
+  .json-formatter-row .json-formatter-string,
+  .json-formatter-row .json-formatter-stringifiable {
+    white-space: pre-line;
+  }
+}

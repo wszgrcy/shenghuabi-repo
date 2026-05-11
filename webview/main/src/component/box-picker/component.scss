@@ -1,0 +1,56 @@
+.radius-block {
+  // background-color: aquamarine;
+}
+.direction-block {
+  border-style: solid;
+  box-sizing: border-box;
+  border-width: 1px;
+  border-color: transparent;
+}
+.direction-block.direction-top-block {
+  border-bottom-color: black;
+}
+.direction-block.direction-right-block {
+  border-left-color: black;
+}
+.direction-block.direction-bottom-block {
+  border-top-color: black;
+}
+.direction-block.direction-left-block {
+  border-right-color: black;
+}
+.x-block {
+  border-width: 1px;
+  border-color: black;
+}
+.x-left-block {
+  border-left-color: transparent;
+}
+.x-right-block {
+  border-right-color: transparent;
+}
+.y-block {
+  border-width: 1px;
+  border-color: black;
+}
+
+.y-top-block {
+  border-top-color: transparent;
+}
+.y-bottom-block {
+  border-bottom-color: transparent;
+}
+.direction-block:hover {
+  // background-color: var(--vscode-button-background);;
+  background-color: var(--vscode-button-hoverBackground);
+}
+.direction-top,
+.direction-left,
+.direction-right,
+.direction-bottom,
+.direction-axis,
+.direction-x,
+.direction-y,
+.direction-global {
+  background-color: var(--vscode-button-background);
+}

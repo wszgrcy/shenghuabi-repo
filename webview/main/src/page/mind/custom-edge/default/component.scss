@@ -1,0 +1,22 @@
+:host {
+  position: relative;
+  span-input {
+    background-color: var(
+      --xy-edge-label-background-color,
+      var(--xy-edge-label-background-color-default)
+    );
+  }
+  .label-empty-hidden {
+    visibility: hidden;
+  }
+  // 点中后持续激活
+  span-input:has(*:focus) {
+    visibility: visible !important;
+  }
+
+  .action-wrapper:not(.label-empty) {
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+}

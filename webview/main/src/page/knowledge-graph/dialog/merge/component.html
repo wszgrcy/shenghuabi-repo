@@ -1,0 +1,154 @@
+<h2 mat-dialog-title>
+  <div class="inline-flex items-center w-full">
+    <div>
+      {{ title }}
+    </div>
+    <div class="flex-1"></div>
+  </div>
+</h2>
+<mat-dialog-content class="custom-scrollbar !pt-2">
+  <div class="flex flex-col gap-2">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>合并节点</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-listbox
+          [multiple]="true"
+          [selectable]="true"
+          [(ngModel)]="selectedNodeList$"
+        >
+          @for (item of openList$(); track $index) {
+            <mat-chip-option [value]="item">
+              <div class="flex items-center">
+                {{ item }}
+                <mat-icon (click)="viewNode($event, item)"
+                  >remove_red_eye</mat-icon
+                >
+              </div>
+            </mat-chip-option>
+          }
+          @for (item of mergeExtraList$(); track $index) {
+            <mat-chip-option [value]="item">
+              <div class="flex items-center">
+                {{ item }}
+                <mat-icon (click)="viewNode($event, item)"
+                  >remove_red_eye</mat-icon
+                >
+              </div>
+            </mat-chip-option>
+          }
+        </mat-chip-listbox>
+      </mat-card-content>
+      <mat-card-actions>
+        <div class="flex gap-2 items-center">
+          <div class="join w-[200px]">
+            <input
+              type="text"
+              placeholder="请输入节点名..."
+              class="input join-item"
+              [matAutocomplete]="auto"
+              [(ngModel)]="searchContent$"
+            />
+            <mat-autocomplete #auto="matAutocomplete">
+              @for (item of searchResult$(); track $index) {
+                <mat-option
+                  [value]="item"
+                  (onSelectionChange)="addExtraMergeNode(item)"
+                  >{{ item }}</mat-option
+                >
+              }
+            </mat-autocomplete>
+            <button
+              class="btn btn-circle btn-soft btn-ghost join-item"
+              (click)="addExtraMergeNode(searchContent$())"
+            >
+              <span class="material-icons">add</span>
+            </button>
+          </div>
+          <button
+            class="btn btn-circle btn-soft btn-primary"
+            matTooltip="合并节点"
+            (click)="mergeNode()"
+            [disabled]="mergeLoading$() || !selectedNodeList$().length"
+          >
+            <span class="material-icons">check</span>
+          </button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>拆分节点</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-listbox
+          [multiple]="true"
+          [selectable]="true"
+          [(ngModel)]="splitSelectedNodeList$"
+        >
+          @for (item of splitList$$(); track $index) {
+            <mat-chip-option [value]="item">
+              <div class="flex items-center">
+                {{ item }}
+                @if (nodeExist | pure: item) {
+                  <mat-icon (click)="viewNode($event, item)"
+                    >remove_red_eye</mat-icon
+                  >
+                }
+              </div>
+            </mat-chip-option>
+          }
+          @for (item of splitExtraList$(); track $index) {
+            <mat-chip-option [value]="item">
+              <div class="flex items-center">
+                {{ item }}
+                @if (nodeExist | pure: item) {
+                  <mat-icon (click)="viewNode($event, item)"
+                    >remove_red_eye</mat-icon
+                  >
+                }
+              </div>
+            </mat-chip-option>
+          }
+        </mat-chip-listbox>
+      </mat-card-content>
+      <mat-card-actions>
+        <div class="flex gap-2 items-center">
+          <div class="join w-[200px]">
+            <input
+              type="text"
+              placeholder="请输入节点名..."
+              class="input join-item"
+              [matAutocomplete]="auto2"
+              [(ngModel)]="splitSearchContent$"
+            />
+            <mat-autocomplete #auto2="matAutocomplete">
+              @for (item of splitSearchResult$(); track $index) {
+                <mat-option
+                  [value]="item"
+                  (onSelectionChange)="addSplitExtraNode(item)"
+                  >{{ item }}</mat-option
+                >
+              }
+            </mat-autocomplete>
+            <button
+              class="btn btn-circle btn-soft btn-ghost join-item"
+              (click)="addSplitExtraNode(splitSearchContent$())"
+            >
+              <span class="material-icons">add</span>
+            </button>
+          </div>
+          <button
+            class="btn btn-circle btn-soft btn-primary"
+            matTooltip="拆分节点"
+            (click)="splitNode()"
+            [disabled]="splitLoading$() || !splitSelectedNodeList$().length"
+          >
+            <span class="material-icons">check</span>
+          </button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</mat-dialog-content>

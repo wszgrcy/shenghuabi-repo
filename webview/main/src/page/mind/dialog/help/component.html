@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>帮助</h2>
+<mat-dialog-content class="custom-scrollbar !pt-2">
+  @for (item of list; track $index) {
+    <div class="flex items-center gap-4">
+      <div>{{ item.label }}</div>
+      <div class="flex-1"></div>
+      <div>
+        <mat-chip-set>
+          @for (keyItem of item.shortcut; track $index) {
+            <mat-chip>
+              {{ keyItem }}
+            </mat-chip>
+          }
+        </mat-chip-set>
+      </div>
+    </div>
+  }
+</mat-dialog-content>

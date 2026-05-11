@@ -1,0 +1,19 @@
+<div class="noValid px-2 pt-2 form-minimum">
+  <piying-view
+    [schema]="schema"
+    [(model)]="model"
+    [options]="options"
+    class="grid gap-2"
+    #formly
+  ></piying-view>
+  <button
+    type="submit"
+    class="btn btn-soft w-full mt-4"
+    [disabled]="
+      formly.form$$()?.pristine || formly.form$$()?.invalid || loading()
+    "
+    (click)="submit()"
+  >
+    导入字典
+  </button>
+</div>

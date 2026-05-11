@@ -1,0 +1,182 @@
+name: linux构建
+run-name: shb-linux-builder
+on:
+  push:
+
+permissions:
+  contents: write
+env:
+  VSCODE_VERSION: '1.103.2'
+  ACTIONS_STEP_DEBUG: true
+  __platform: 'linux'
+  __arch: 'x64'
+  SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+  channel: stable
+
+jobs:
+  check-version-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+      - name: install-pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+          cache: true
+      - run: pnpm i
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      - id: check
+        run: |
+          npm run check-version
+    outputs:
+      should-build: ${{ steps.check.outputs.needUpdate }}
+      version: ${{ steps.check.outputs.version }}
+
+  update-release:
+    env:
+      PUBLISH_VERSION: ${{ needs.check-version-branch.outputs.version }}
+    needs: check-version-branch
+    if: ${{ needs.check-version-branch.outputs.should-build == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt update
+          sudo apt-get install build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev
+      - uses: actions/checkout@v6
+        with:
+          path: './shenghuabi'
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: 'shenghuabi/.nvmrc'
+          cache: 'pnpm'
+      - name: install-pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+          cache: true
+      - run: pnpm i
+        working-directory: './shenghuabi'
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      - name: init
+        run: |
+          git config --global user.name "wszgrcy"
+          git config --global user.email "wszgrcy@gmail.com"
+      - name: pre-build-download
+        uses: wszgrcy/upload-s3-action@2.0.6
+        id: commonPackage
+        with:
+          mode: download
+          aws_key_id: ${{secrets.S3_ID}}
+          aws_secret_access_key: ${{secrets.S3_KEY}}
+          endpoint: ${{secrets.S3_ENDPOINT}}
+          aws_bucket: 'shenghuabi-repo'
+          source_dir: ${{env.VSCODE_VERSION}}/${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
+          destination_dir: './pre-build'
+
+      - name: unzip
+        uses: wszgrcy/actions-pkg@1.2.5
+        if: ${{ steps.commonPackage.outputs.exist=='true' }}
+        with:
+          mode: unzip
+          unzipDir: ./vscode
+          zipPath: ./pre-build/${{env.VSCODE_VERSION}}/${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
+          strip: 1
+          cleanUnzipDir: false
+      - name: 添加提交
+        if: ${{ steps.commonPackage.outputs.exist=='true' }}
+        run: |
+          cd vscode
+          rm -rf .git
+          git init
+          git add .
+          git commit -m '1'
+
+      - name: vscode仓库(如果不存在)
+        if: ${{ steps.commonPackage.outputs.exist=='false' }}
+        uses: actions/checkout@v6
+        with:
+          repository: 'microsoft/vscode'
+          path: './vscode'
+          ref: ${{env.VSCODE_VERSION}}
+
+      - name: vscode构建
+        if: ${{ steps.commonPackage.outputs.exist=='false' }}
+        run: npm run build:common-package
+        working-directory: './shenghuabi'
+      - name: zip
+        uses: wszgrcy/actions-pkg@1.2.5
+        if: ${{ steps.commonPackage.outputs.exist=='false' }}
+        id: zipPreBuild
+        with:
+          mode: zip
+          unzipDir: ./vscode
+          zipPath: ./${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
+          zstdLevel: '15'
+          cleanPaths: |
+            ./.git/**/*
+          cleanUnzipDir: false
+
+      - name: 预构建上传
+        uses: wszgrcy/upload-s3-action@2.0.6
+        if: ${{ steps.commonPackage.outputs.exist=='false' }}
+        with:
+          mode: upload
+          aws_key_id: ${{secrets.S3_ID}}
+          aws_secret_access_key: ${{secrets.S3_KEY}}
+          endpoint: ${{secrets.S3_ENDPOINT}}
+          aws_bucket: 'shenghuabi-repo'
+          source_dir: ${{steps.zipPreBuild.outputs.zipFilePath}}
+          destination_dir: './${{env.VSCODE_VERSION}}'
+      - name: 通用output
+        run: npm run build:vscode-output
+        working-directory: './shenghuabi'
+      - name: 构建
+        run: npm run move:extension
+        working-directory: './shenghuabi'
+      - name: 构建deb
+        run: npm run package:linux:deb
+        working-directory: './vscode'
+      - name: 构建tar.gz
+        run: |
+          tar -czf ./shenghuabi-linux-x64-cuda-${{env.PUBLISH_VERSION}}.tar.gz -C ../VSCode-linux-x64 .
+          rm -rf ../VSCode-linux-x64/resources/app/extensions/shenghuabi/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/libonnxruntime_providers_cuda.so
+          tar -czf ./shenghuabi-linux-x64-cpu-${{env.PUBLISH_VERSION}}.tar.gz -C ../VSCode-linux-x64 .
+        working-directory: './vscode'
+      - name: 复制到文件夹
+        run: |
+          mkdir ./.build/linux/publish
+          cp ./shenghuabi-linux-x64-cuda-${{env.PUBLISH_VERSION}}.tar.gz ./.build/linux/publish/
+          cp ./shenghuabi-linux-x64-cpu-${{env.PUBLISH_VERSION}}.tar.gz ./.build/linux/publish/
+          cp ./.build/linux/deb/amd64/deb/* ./.build/linux/publish/
+        working-directory: './vscode'
+      - name: github发行
+        uses: wszgrcy/action-gh-release@1.2.0
+        with:
+          fail_on_unmatched_files: true
+          files: './vscode/.build/linux/publish/**/*.{exe,deb,tar.gz}'
+          # repository: wszgrcy/shenghuabi-repo
+          token: ${{secrets.SHB_REPO_UPLOAD}}
+          tag_name: ${{env.PUBLISH_VERSION}}
+      - name: hosts
+        run: |
+          sudo echo "${{secrets.REMOTE_MANAGEMENT_HOST}}" | sudo tee -a /etc/hosts
+
+      - uses: wszgrcy/curl-actions@1.0.3
+        if: ${{ env.channel=='stable' }}
+        with:
+          url: http://shenghuabi-management.local/api/version-management/publish
+          headers: |
+            Accept: */*
+            token: ${{secrets.SHB_PUBLISH_TOKEN}}
+            Content-Type: application/json
+          body: |
+            {"version":"${{env.PUBLISH_VERSION}}","platform":"linux_x64","list":["shenghuabi-linux-x64-cuda-${{github.ref_name}}.tar.gz","shenghuabi-linux-x64-cpu-${{github.ref_name}}.tar.gz","shenghuabi-linux-x64-${{github.ref_name}}.setup.deb"]}

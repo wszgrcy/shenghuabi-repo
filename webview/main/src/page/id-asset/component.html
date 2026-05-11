@@ -1,0 +1,7 @@
+@if (data | async; as data) {
+  @switch (data.type) {
+    @case ('dict') {
+      <div class="m-4" [innerHTML]="data['data']['content'] | safeHtml"></div>
+    }
+  }
+}

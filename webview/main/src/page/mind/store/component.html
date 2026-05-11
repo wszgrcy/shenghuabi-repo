@@ -1,0 +1,83 @@
+<div class="flex flex-col gap-4 p-4">
+  @for (item of list(); track $index) {
+    <div
+      class="item-container flex flex-col gap-2 overflow-hidden"
+      #dragContainer
+    >
+      <div class="flex items-center gap-2">
+        <button
+          class="btn btn-circle btn-soft btn-accent drag-btn"
+          draggable="true"
+          (dragstart)="dragstartChanged($event, dragContainer, $index)"
+        >
+          <span class="material-icons">drag_handle</span>
+        </button>
+        <button
+          class="btn btn-circle btn-soft btn-accent"
+          (click)="changeConfig($index)"
+        >
+          <span class="material-icons">settings</span>
+        </button>
+        <button
+          class="btn btn-circle btn-soft btn-error"
+          (click)="deleteItem($index)"
+        >
+          <span class="material-icons">delete</span>
+        </button>
+      </div>
+      <div>
+        @switch (item.type) {
+          @case ('card') {
+            <card-editor
+              [props]="$any(item)"
+              (dataChange)="dataChanged($event, $index)"
+            ></card-editor>
+          }
+          @case ('chat') {
+            <ai-chat-node
+              [props]="$any(item)"
+              (dataChange)="dataChanged($event!, $index)"
+              [inStore]="true"
+            >
+            </ai-chat-node>
+          }
+
+          @case ('image') {
+            <image-node
+              [props]="$any(item)"
+              (dataChange)="dataChanged($event!, $index)"
+              [inStore]="true"
+            >
+            </image-node>
+          }
+          @case ('draw') {
+            <draw-node [props]="$any(item)" [inStore]="true"> </draw-node>
+          }
+        }
+      </div>
+    </div>
+  }
+  <div class="flex flex-1">
+    <button
+      class="btn btn-soft flex items-center flex-1"
+      (click)="append(defaultAddType())"
+    >
+      <mat-icon>add</mat-icon>
+      {{ $any(data)[defaultAddType()] }}
+    </button>
+    <button
+      class="btn btn-circle btn-soft btn-accent"
+      [matMenuTriggerFor]="menu"
+    >
+      <span class="material-icons">more_vert</span>
+    </button>
+  </div>
+</div>
+
+<mat-menu #menu="matMenu">
+  @for (item of data | keyvalue; track $index) {
+    <button mat-menu-item (click)="append(item.key)">
+      <span>{{ item.value }}</span>
+    </button>
+  }
+</mat-menu>

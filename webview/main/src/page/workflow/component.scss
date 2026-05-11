@@ -1,0 +1,148 @@
+@use '@angular/material' as mat;
+@use 'sass:meta';
+
+@mixin xyflow {
+  @include meta.load-css('../../../node_modules/@xyflow/react/dist/style');
+}
+:host ::ng-deep {
+  @include xyflow();
+
+  .react-flow__handle {
+    width: 16px;
+    height: 16px;
+    border: none;
+  }
+  .custom-node-component {
+    background-color: var(--vscode-editorWidget-background);
+    @include mat.elevation(1);
+    &:hover {
+      @include mat.elevation(3);
+    }
+  }
+  .workflow-exclude-useage {
+    .custom-node-component {
+      outline: 2px solid var(--vscode-minimap-errorHighlight) !important;
+    }
+  }
+  .custom-node-wrapper {
+  }
+  // 激活resize后的框宽度，默认的太窄不好选择
+  // .react-flow__resize-control.top.line {
+  //   border-top-width: 2px !important;
+  // }
+  // .react-flow__resize-control.right.line {
+  //   border-right-width: 2px !important;
+  // }
+  // .react-flow__resize-control.bottom.line {
+  //   border-bottom-width: 2px !important;
+  // }
+  // .react-flow__resize-control.left.line {
+  //   border-left-width: 2px !important;
+  // }
+  // .react-flow__handle.target {
+  //   background-color: blue;
+  // }
+  // .react-flow__handle.source {
+  //   background-color: orange;
+  // }
+  .react-flow__resize-control {
+    background-color: transparent !important;
+    opacity: 0;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none;
+  }
+  .selected {
+    .react-flow__resize-control {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .resize-handle {
+      transform: rotate(90deg);
+      color: var(--vscode-sash-hoverBorder);
+    }
+    .custom-node-component {
+      outline: solid var(--vscode-sash-hoverBorder);
+    }
+  }
+  // 线删除
+  .default-edge-label-renderer:has(*:hover) {
+    .edge-delete-btn {
+      visibility: visible;
+    }
+  }
+  // todo 是否搞一个更好看的样式
+  .drag-hover {
+    .drag-hover-mask {
+      opacity: 0.2;
+      background-color: #000;
+    }
+  }
+  // 要不然看不到边
+  .react-flow__nodes {
+    z-index: -1 !important;
+  }
+
+  .label-hint {
+    width: 1.5rem;
+    height: 1rem;
+    transform: translate(-50%, -50%);
+    position: absolute;
+  }
+  .handle-wrapper-left {
+    top: 50%;
+    left: -6px;
+  }
+  .handle-wrapper-right {
+    top: 50%;
+    right: -6px;
+  }
+  .react-flow__handle-left {
+    left: unset;
+    top: unset;
+    right: 3px;
+    transform: translate(0, 50%);
+  }
+  .react-flow__handle-right {
+    left: unset;
+    top: unset;
+    left: 3px;
+    transform: translate(0, 50%);
+  }
+
+  .json-formatter-row .json-formatter-string,
+  .json-formatter-row .json-formatter-stringifiable {
+    white-space: pre-line;
+  }
+  // todo 提取公共样式
+  .toolbar-icon {
+    border-radius: 4px;
+    padding: 4px;
+    &:hover {
+      // todo 等改系统主题
+      background-color: var(--vscode-toolbar-activeBackground);
+      // opacity: 0.08;
+    }
+  }
+  .node-toolbar {
+    background-color: var(--mat-app-background-color);
+    // padding: 2px;
+    border-color: transparent;
+  }
+  .ant-segmented-item-label {
+    padding: 0;
+  }
+  .ant-segmented {
+    padding: 0;
+  }
+  .ant-segmented-item-label {
+    min-height: 0;
+    line-height: 0;
+  }
+  // 框选禁止选中
+  .react-flow__pane.selection {
+    * {
+      user-select: none !important;
+    }
+  }
+}

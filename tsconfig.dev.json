@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "exclude": [
+    "./**/node_modules",
+    "./webview"
+  ],
+  "include": [
+    "./src/**/*.ts",
+    "./*.d.ts"
+  ],
+  "compilerOptions": {}
+}

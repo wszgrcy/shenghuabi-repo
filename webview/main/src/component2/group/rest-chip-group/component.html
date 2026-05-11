@@ -1,0 +1,57 @@
+@if (props$$()['title']; as title) {
+  <div class="text-center">
+    {{ title }}
+  </div>
+}
+
+<mat-chip-set>
+  <div class="flex gap-2 items-center flex-wrap">
+    <div class="flex items-center flex-wrap">
+      @for (child of fixedChildren$$(); track child) {
+        <mat-chip
+          color="primary"
+          (click)="switch($index)"
+          [class.bg-activated]="activate$() === $index"
+        >
+          {{ findDisplayValue$$ | pure: child }}
+        </mat-chip>
+      }
+      @for (child of restChildren$$(); track child) {
+        <mat-chip
+          (removed)="remove(child)"
+          color="primary"
+          (click)="switch($index + fixedChildren$$().length)"
+          [class.bg-activated]="
+            activate$() === $index + fixedChildren$$().length
+          "
+        >
+          {{ findDisplayValue$$ | pure: child }}
+          <button matChipRemove color="warn" type="button" [disabled]="false">
+            <mat-icon color="warn">cancel</mat-icon>
+          </button>
+        </mat-chip>
+      }
+    </div>
+    @if (resolvedKeyList$$().length) {
+      <mat-form-field appearance="outline">
+        <mat-select
+          (ngModelChange)="selectionChanged($event)"
+          [placeholder]="placeholder()!"
+          [(ngModel)]="selected$"
+        >
+          @for (item of resolvedKeyList$$(); track $index) {
+            <mat-option [value]="item">{{ item }} </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+  </div>
+</mat-chip-set>
+@if (children$$()!.length) {
+  <ng-container
+    *ngTemplateOutlet="
+      fieldTemplateRef;
+      context: { $implicit: children$$()![activate$()] }
+    "
+  ></ng-container>
+}

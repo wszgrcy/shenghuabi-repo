@@ -1,0 +1,94 @@
+@switch (mode()) {
+  @case ('file') {
+    <div class="flex gap-2 items-center flex-wrap">
+      <button
+        class="btn btn-circle btn-soft btn-primary"
+        (click)="changePath()"
+      >
+        <span class="material-icons">{{ icon() }}</span>
+      </button>
+      @for (item of value$(); track item; let i = $index) {
+        <mat-chip (removed)="removeItem(i)" color="primary">
+          {{ item }}
+          <button matChipRemove color="warn">
+            <mat-icon color="warn">cancel</mat-icon>
+          </button>
+        </mat-chip>
+      }
+    </div>
+  }
+  @case ('card') {
+    <div class="flex gap-2 items-center flex-wrap">
+      <button
+        class="btn btn-circle btn-soft btn-primary"
+        (click)="changePath()"
+      >
+        <span class="material-icons">attach_file</span>
+      </button>
+      @for (item of value$(); track item; let i = $index) {
+        <mat-chip (removed)="removeItem(i)" color="primary">
+          {{ item.label }}
+          <button matChipRemove color="warn">
+            <mat-icon color="warn">cancel</mat-icon>
+          </button>
+        </mat-chip>
+      }
+    </div>
+  }
+  <!-- @case ('custom') {
+    <div class="flex gap-2 items-center flex-wrap">
+      <button class="btn btn-circle btn-soft btn-primary" (click)="changePath()">
+        <span class="material-icons">{{ icon() }}</span>
+      </button>
+      @for (item of value(); track item; let i = $index) {
+        <mat-chip (removed)="removeItem(i)" color="primary">
+          {{ item.label }}
+          <button matChipRemove color="warn">
+            <mat-icon color="warn">cancel</mat-icon>
+          </button>
+        </mat-chip>
+      }
+    </div>
+  } -->
+  @case ('default') {
+    <div class="join w-full">
+      <label class="input join-item flex-1">
+        {{ label() }}
+        <input
+          type="text"
+          class="grow"
+          [placeholder]="placeholder() ?? ''"
+          [ngModel]="value$()"
+          (ngModelChange)="valueChange($event)"
+        />
+      </label>
+      <button
+        class="btn btn-circle btn-soft btn-ghost btn-primary join-item"
+        (click)="changePath()"
+      >
+        <span class="material-icons">attach_file</span>
+      </button>
+    </div>
+  }
+  @case ('vscode') {
+    <div class="join w-full">
+      <label class="input join-item flex-1">
+        {{ label() }}
+        <input
+          type="text"
+          class="grow"
+          [placeholder]="placeholder() ?? ''"
+          [ngModel]="value$()"
+          (ngModelChange)="valueChange($event)"
+        />
+        <span class="badge badge-neutral badge-xs">Optional</span>
+      </label>
+      <button
+        class="btn btn-circle btn-soft btn-ghost btn-primary join-item"
+        (click)="changePath()"
+      >
+        <span class="material-icons">attach_file</span>
+      </button>
+    </div>
+  }
+}

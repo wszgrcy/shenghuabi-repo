@@ -1,0 +1,317 @@
+:host ::ng-deep {
+  ::selection {
+    background-color: rgba(0, 0, 0, 0.16);
+  }
+  // 等待vscode升级.目前chrome 124不支持round语法
+  // --bg-contrast-red: calc(var(--node-theme-background-color-red) / 255);
+  // // --bg-contrast-red1: min(calc(var( --bg-contrast-red) - 0.03928),0 )
+  // --bg-contrast-less: calc(var(--bg-contrast-red) / 12.92);
+  // --bg-contrast-more: calc(var(--bg-contrast-red) / 12.92);
+
+  // 大于-1 负数或者小于1的一个正数
+  // 目前 min 可以为0 -1不能为1,因为数值始终小于1
+  // max 0 1 不能为-1,
+  // --aaa: calc(var(--bg-contrast-red) - 0.03928);
+  // --xxx: round(up, min(1, max(0, var(--aaa))), 1px);
+  // --sdf: round(
+  //   up,
+  //   round(down, min(var(--bg-contrast-red), 0.03928), 0.03928),
+  //   1
+  // );
+
+  // 重置用于主题适配
+  * {
+    &::after {
+      white-space: normal;
+    }
+    &::before {
+      white-space: normal;
+    }
+  }
+  @container style(--default-theme: 'open') {
+    // 主题
+    .ltr {
+      text-align: left;
+    }
+    .rtl {
+      text-align: right;
+    }
+    .p {
+      margin: 0;
+      position: relative;
+    }
+    // 行内样式
+    .text-bold {
+      font-weight: bold;
+    }
+    .text-italic {
+      font-style: italic;
+    }
+    .text-underline {
+      text-decoration: underline;
+    }
+    .text-strikethrough {
+      text-decoration: line-through;
+    }
+    .text-underlineStrikethrough {
+      text-decoration: underline line-through;
+    }
+    .text-subscript {
+      line-height: 0;
+    }
+    .text-superscript {
+      line-height: 0;
+    }
+    .text-code {
+      padding: 1px 3px;
+      border-radius: 4px;
+      font-family: var(
+        --vscode-editor-font-family,
+        'SF Mono',
+        Monaco,
+        Menlo,
+        Consolas,
+        'Ubuntu Mono',
+        'Liberation Mono',
+        'DejaVu Sans Mono',
+        'Courier New',
+        monospace
+      );
+      font-size: 1em;
+      line-height: 1.357em;
+      color: var(--vscode-textPreformat-foreground);
+      background-color: var(--vscode-textPreformat-background);
+    }
+    // 分隔符
+    .hr {
+      border: 0;
+      height: 1px;
+      border-bottom: 1px solid;
+    }
+    // 链接
+    .link {
+      color: rgb(33, 111, 219);
+      text-decoration: none;
+    }
+    .link:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    // 代码
+    .code {
+      font-family: Menlo, Consolas, Monaco, monospace;
+      display: block;
+      padding: 8px 8px 8px 52px;
+      line-height: 1.53;
+      font-size: 13px;
+      margin: 0;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      overflow-x: auto;
+      position: relative;
+      tab-size: 4;
+      background-color: var(--vscode-textCodeBlock-background);
+    }
+    .code:before {
+      content: attr(data-gutter);
+      position: absolute;
+      background-color: #eee;
+      left: 0;
+      top: 0;
+      border-right: 1px solid #ccc;
+      padding: 8px;
+      color: #777;
+      white-space: pre-wrap;
+      text-align: right;
+      min-width: 25px;
+    }
+    // 列表
+    .ol1 {
+      list-style-position: outside;
+    }
+    .ol2 {
+      list-style-type: upper-alpha;
+      list-style-position: outside;
+    }
+    .ol3 {
+      list-style-type: lower-alpha;
+      list-style-position: outside;
+    }
+    .ol4 {
+      list-style-type: upper-roman;
+      list-style-position: outside;
+    }
+    .ol5 {
+      list-style-type: lower-roman;
+      list-style-position: outside;
+    }
+    .ul {
+      list-style-position: outside;
+    }
+    .cl {
+      padding-left: 16px;
+    }
+    .liChecked,
+    .liUnChecked {
+      position: relative;
+      padding-left: 24px;
+      padding-right: 24px;
+      list-style-type: none;
+      outline: none;
+    }
+    .liChecked {
+      text-decoration: line-through;
+    }
+    .liUnChecked:before,
+    .liChecked:before {
+      content: 'check_box_outline_blank';
+
+      left: 0;
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      cursor: pointer;
+      display: block;
+      background-size: cover;
+      position: absolute;
+    }
+    .liChecked:before {
+      content: 'check_box';
+    }
+    .liUnChecked[dir='rtl']:before,
+    .liChecked[dir='rtl']:before {
+      left: auto;
+      right: 0;
+    }
+
+    .nestedLi {
+      list-style-type: none;
+    }
+    .nestedLi:before,
+    .nestedLi:after {
+      display: none;
+    }
+    .ul,
+    .ol {
+      margin-bottom: 0.7em;
+    }
+    .li .p {
+      margin-bottom: 0.7em;
+    }
+    // 标题
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6,
+    .p,
+    .ol,
+    .ul {
+      margin-top: 0;
+    }
+    .h1,
+    .h2,
+    .hr,
+    .tc {
+      border-color: var(--md-hr-border-color);
+    }
+
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6 {
+      font-weight: 600;
+      margin-top: 24px;
+      margin-bottom: 16px;
+      line-height: 1.25;
+    }
+
+    .h1 {
+      font-size: 2em;
+      margin-top: 0;
+      padding-bottom: 0.3em;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+    }
+
+    .h2 {
+      font-size: 1.5em;
+      padding-bottom: 0.3em;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+    }
+
+    .h3 {
+      font-size: 1.25em;
+    }
+
+    .h4 {
+      font-size: 1em;
+    }
+
+    .h5 {
+      font-size: 0.875em;
+    }
+
+    .h6 {
+      font-size: 0.85em;
+    }
+    // 表格部分
+    .table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      overflow-y: scroll;
+      overflow-x: scroll;
+      table-layout: fixed;
+      width: max-content;
+      margin-bottom: 0.7em;
+    }
+    .th {
+      background-color: #f2f3f5;
+      text-align: start;
+      border-bottom: 1px solid;
+    }
+
+    .tc,
+    .th {
+      padding: 5px 10px;
+    }
+    .tc {
+      border: 1px solid #bbb;
+      width: 75px;
+      min-width: 75px;
+      vertical-align: top;
+      text-align: start;
+      padding: 6px 8px;
+      position: relative;
+      outline: none;
+    }
+    .th {
+      border-color: var(--md-th-border-color);
+    }
+    // 引用
+    .blockquote {
+      margin: 0;
+      padding: 0px 16px 0 10px;
+      border-left-width: 5px;
+      border-left-style: solid;
+      border-radius: 2px;
+
+      background: var(--vscode-textBlockQuote-background);
+      border-color: var(--vscode-textBlockQuote-border);
+    }
+  }
+}
+// 编辑部分
+:host:not(.editor-readonly) ::ng-deep {
+  .table {
+    margin: 0px 25px 30px 0px;
+  }
+  .hr.selected {
+    outline: 1px solid var(--vscode-focusBorder);
+    user-select: none;
+  }
+}

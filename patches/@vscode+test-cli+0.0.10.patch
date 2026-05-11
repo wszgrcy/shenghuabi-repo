@@ -1,0 +1,12 @@
+diff --git a/node_modules/@vscode/test-cli/out/cli/coverage.mjs b/node_modules/@vscode/test-cli/out/cli/coverage.mjs
+index 41bd8c1..752d909 100644
+--- a/node_modules/@vscode/test-cli/out/cli/coverage.mjs
++++ b/node_modules/@vscode/test-cli/out/cli/coverage.mjs
+@@ -47,6 +47,7 @@ export class Coverage {
+                 src: this.getSourcesDirectories(),
+                 all: cfg.includeAll,
+                 excludeNodeModules: true,
++                excludeAfterRemap:true,
+                 // not yet in the .d.ts for c8:
+                 //@ts-ignore
+                 mergeAsync: true,

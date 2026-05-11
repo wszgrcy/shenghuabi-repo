@@ -1,0 +1,19 @@
+packages:
+  - src
+  - webview/main
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@sentry/cli'
+  - '@swc/core'
+  - core-js
+  - electron
+  - esbuild
+  - lmdb
+  - msgpackr-extract
+  - onnxruntime-node
+  - protobufjs
+  - sharp
+
+overrides:
+  '@huggingface/transformers>onnxruntime-node': '1.20.1'

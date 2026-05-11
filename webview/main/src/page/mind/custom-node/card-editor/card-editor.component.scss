@@ -1,0 +1,29 @@
+:host {
+  // 因为多了加号，所以占用一下外部空间
+
+  span-input {
+    cursor: text;
+    line-height: 1;
+    box-sizing: border-box;
+    padding: 6px 12px;
+    ::ng-deep {
+      .span-placeholder {
+        top: 6px;
+        left: 16px;
+      }
+    }
+  }
+  input {
+    color: inherit;
+  }
+  text-editor {
+    cursor: text;
+  }
+  // 左侧工具禁用时回调样式
+  .editor-display-first {
+    text-editor {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+}

@@ -1,0 +1,16 @@
+<button
+  class="btn btn-soft btn-primary"
+  (click)="hint()"
+  [disabled]="this.loading$()"
+  [matTooltip]="'已配置'"
+  [matTooltipDisabled]="!needCheck$() || !checkStatus$()"
+>
+  @if (needCheck$()) {
+    @if (checkStatus$()) {
+      <mat-icon> check </mat-icon>
+    } @else {
+      <mat-icon> help </mat-icon>
+    }
+  }
+  <ng-content></ng-content>
+</button>

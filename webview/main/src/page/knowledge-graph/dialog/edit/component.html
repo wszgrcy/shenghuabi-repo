@@ -1,0 +1,92 @@
+<h2 mat-dialog-title>
+  <div class="inline-flex items-center w-full">
+    <div>[{{ type }}]{{ title }}</div>
+    <div class="flex-1"></div>
+    <div>
+      <button
+        class="btn btn-circle btn-soft btn-accent"
+        (click)="openNew()"
+        matTooltip="添加实体或联系"
+      >
+        <span class="material-icons">add</span>
+      </button>
+      <button
+        class="btn btn-circle btn-soft btn-ghost"
+        (click)="openMerge()"
+        matTooltip="合并/拆分"
+      >
+        <span class="material-icons">merge</span>
+      </button>
+      <button
+        class="btn btn-circle btn-soft btn-error"
+        (click)="deleteThis()"
+        matTooltip="删除此实体"
+      >
+        <span class="material-icons">delete</span>
+      </button>
+      <!-- <button
+        mat-icon-button
+        [matContextMenuTriggerFor]="menu"
+        matTooltip="菜单(删除)"
+      >
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu"> </mat-menu> -->
+    </div>
+  </div>
+</h2>
+<mat-dialog-content class="custom-scrollbar !pt-2 form-minimum noValid">
+  <h3>来源</h3>
+  <ul>
+    @for (item of nodeDescriptionList$$(); track $index) {
+      @let pageIndex = nodePage$().start + $index;
+      <li class="relative group/description">
+        <button
+          class="btn btn-circle btn-soft btn-error invisible group-hover/description:visible !absolute"
+          (click)="deleteNodeDescription(pageIndex)"
+          matTooltip="删除此节点描述"
+          style="transform: translateX(-100%)"
+        >
+          <span class="material-icons">delete</span>
+        </button>
+        <span-input
+          [ngModel]="item.description"
+          [matTooltip]="getNodeTooltip | pure: item"
+          [matTooltipPosition]="'above'"
+          (ngModelChange)="nodeDescriptionChange(pageIndex, $event)"
+          class="!inline-flex"
+        ></span-input>
+        <div
+          class="absolute right-0 top-0 invisible"
+          [class.!visible]="
+            nodeEditStatus$()[pageIndex]?.description &&
+            item.description !== nodeEditStatus$()[pageIndex]!.description
+          "
+        >
+          <button
+            class="btn btn-circle btn-soft btn-accent"
+            [disabled]="nodeEditStatus$()[pageIndex]?.loading"
+            (click)="changeDescription(pageIndex)"
+          >
+            <span class="material-icons">check</span>
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+  <mat-paginator
+    #paginator
+    (page)="nodePageChange($event)"
+    [showFirstLastButtons]="true"
+    [length]="nodeData().node.list.length"
+    [pageSize]="nodePage$().size"
+    [pageIndex]="nodePage$().index"
+  >
+  </mat-paginator>
+  <h3>关系</h3>
+
+  <ng-container
+    [selectlessOutlet]="PiyingView"
+    [selectlessOutletInputs]="piyingInput"
+  ></ng-container>
+</mat-dialog-content>

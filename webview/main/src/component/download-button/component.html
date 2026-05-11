@@ -1,0 +1,28 @@
+<div class="grid gap-2">
+  <div class="flex gap-2 items-center">
+    <!-- @if (loading$()) {
+      <div class="*:!h-full">
+        <mat-spinner></mat-spinner>
+      </div>
+    } -->
+    <button
+      class="btn btn-soft flex-1"
+      (click)="download()"
+      [disabled]="loading$()"
+    >
+      {{ label() }}
+    </button>
+    <button
+      class="btn btn-circle btn-soft btn-primary"
+      (click)="openDir()"
+      [disabled]="!dir()"
+      [matTooltipDisabled]="!dir()"
+      [matTooltip]="'打开' + dir()"
+    >
+      <span class="material-icons">folder</span>
+    </button>
+  </div>
+  @if (loading$() || info()) {
+    <app-process [info]="info()"></app-process>
+  }
+</div>

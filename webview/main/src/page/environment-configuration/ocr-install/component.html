@@ -1,0 +1,111 @@
+<div
+  class="noValid max-w-[1200px] m-auto flex flex-col gap-4 my-4"
+  [formGroup]="group"
+>
+  <div formGroupName="ocr" class="flex flex-col gap-2 justify-center">
+    <div>OCR(图像转文本)</div>
+    <div class="flex gap-2 items-center">
+      <div class="join flex-1">
+        <label class="input join-item flex-1">
+          保存位置
+          <input
+            type="text"
+            class="grow"
+            placeholder="请输入文件夹路径"
+            formControlName="dir"
+            #vd
+          />
+        </label>
+        <button
+          class="btn btn-circle btn-soft btn-ghost btn-primary join-item"
+          (click)="changePath('ocr')"
+        >
+          <span class="material-icons">attach_file</span>
+        </button>
+      </div>
+
+      <button
+        class="btn btn-circle btn-soft btn-ghost"
+        (click)="openFolder(vd.value)"
+      >
+        <span class="material-icons">folder_open</span>
+      </button>
+      <ng-container
+        *ngTemplateOutlet="
+          installStatus;
+          context: {
+            status: ocrStatus$()?.installStatus || undefined,
+          }
+        "
+      ></ng-container>
+
+      <button
+        class="btn btn-soft"
+        (click)="downloadModel()"
+        [disabled]="
+          !ocrStatus$() || ocrStatus$()?.installStatus === 'installed'
+        "
+      >
+        ①下载
+      </button>
+    </div>
+
+    <ng-container
+      *ngTemplateOutlet="progress; context: { status$: ocrDownloadStatus$ }"
+    ></ng-container>
+  </div>
+  <div class="w-full text-end"></div>
+</div>
+<!-- 模板区域 -->
+
+<ng-template #progress let-status$="status$">
+  @if (status$(); as status) {
+    <div class="">
+      <div>
+        @switch (status.type) {
+          @case ('error') {
+            下载失败
+          }
+          @case ('end') {
+            下载完成
+          }
+          @case ('message') {
+            {{ status.message }}
+          }
+          @default {
+            下载中...
+          }
+        }
+      </div>
+      <mat-progress-bar
+        class="mt-2"
+        mode="buffer"
+        [color]="progressColor | pure: status"
+        [value]="status.value"
+        [bufferValue]="status.value"
+      ></mat-progress-bar>
+    </div>
+  }
+</ng-template>
+<ng-template #installStatus let-status="status">
+  <div
+    class="flex items-center cursor-pointer"
+    (click)="showChannel('ocr')"
+    matTooltip="查看日志"
+  >
+    @switch (status) {
+      @case ('installed') {
+        <mat-icon color="primary">done</mat-icon>已安装
+      }
+      @case ('uninstalled') {
+        <mat-icon color="warn">close</mat-icon>未安装
+      }
+      @case ('failed') {
+        <mat-icon color="warn">close</mat-icon>安装失败
+      }
+      @default {
+        <mat-icon color="accent">question_mark</mat-icon>未知
+      }
+    }
+  </div>
+</ng-template>

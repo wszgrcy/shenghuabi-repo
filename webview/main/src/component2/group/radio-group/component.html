@@ -1,0 +1,15 @@
+<div class="flex flex-col gap-2">
+  <mat-radio-group (change)="activateChanged($event.value)">
+    @for (item of children$$(); track $index) {
+      <mat-radio-button [value]="$index" [checked]="$index === index$()">{{
+        item.props()['title']
+      }}</mat-radio-button>
+    }
+  </mat-radio-group>
+
+  @let activatedChild = children$$()[index$()];
+
+  <ng-container
+    *ngTemplateOutlet="fieldTemplateRef; context: { $implicit: activatedChild }"
+  ></ng-container>
+</div>

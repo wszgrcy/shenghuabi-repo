@@ -1,0 +1,31 @@
+<div class="gap-2 items-center grid grid-cols-[auto_1fr_auto] overflow-hidden">
+  @if (obj[props().type!]; as item) {
+    <mat-icon
+      [color]="item.color"
+      [fontIcon]="item.icon?.fontIcon!"
+      [fontSet]="item.icon?.fontSet!"
+    ></mat-icon>
+  } @else {
+    <mat-icon
+      [color]="'warn'"
+      [fontIcon]="'codicon-warning'"
+      fontSet="codicon"
+    ></mat-icon>
+  }
+  <div class="overflow-hidden">
+    <input
+      [ngModel]="inputTitle()"
+      (ngModelChange)="valueChange($event)"
+      class="bg-transparent !outline-none p-0 border-0 text-[1.2em] font-bold"
+    />
+  </div>
+  @if (obj[props().type!]; as item) {
+    <mat-icon
+      class="cursor-help"
+      [shMarkdownTooltipShowDelay]="50"
+      [shMarkdownTooltip]="item.help!"
+      color="accent"
+      >help</mat-icon
+    >
+  }
+</div>

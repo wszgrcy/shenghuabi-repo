@@ -1,0 +1,10 @@
+:host {
+  ::ng-deep {
+    prompt-list {
+      span-input {
+        max-height: 300px;
+        overflow: auto;
+      }
+    }
+  }
+}

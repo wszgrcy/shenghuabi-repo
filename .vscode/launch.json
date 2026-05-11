@@ -1,0 +1,55 @@
+// A launch configuration that compiles the extension and then opens it inside a new window
+// Use IntelliSense to learn about possible attributes.
+// Hover to view descriptions of existing attributes.
+// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "${workspaceFolder}/fixture",
+        "--extensionDevelopmentPath=${workspaceFolder}/dist",
+        "--enable-proposed-api",
+        "wszgrcy.shenghuabi"
+        // "--enable-proposed-api"
+      ],
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js",
+        "${workspaceFolder}/dist/**/*.mjs"
+      ],
+      // "preLaunchTask": "watch-native"
+    },
+    {
+      "name": "端口开发监听",
+      "type": "node",
+      "request": "attach",
+      "port": 5870,
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js",
+        "${workspaceFolder}/dist/**/*.mjs"
+      ],
+      // "preLaunchTask": "watch-native"
+    },
+    {
+      "name": "vscode:测试",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "${workspaceFolder}/test/fixture/workspace",
+        "--disable-extensions",
+        "--extensionDevelopmentPath=${workspaceFolder}/test-dist",
+        "--extensionTestsPath=${workspaceFolder}/test-dist/test/index",
+        "--enable-proposed-api=ChenYang.shenghuabi"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/test-dist/**/*.js"
+      ],
+      "preLaunchTask": "tasks: watch-tests"
+    }
+  ]
+}

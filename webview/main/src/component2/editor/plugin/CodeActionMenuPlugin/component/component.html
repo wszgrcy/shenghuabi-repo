@@ -1,0 +1,31 @@
+<div
+  class="flex gap-2 form-minimum items-center absolute noValid"
+  [ngStyle]="props().position"
+>
+  <mat-form-field appearance="outline" class="w-[180px]">
+    <mat-select
+      [ngModel]="lang"
+      (ngModelChange)="changeLanguage($event)"
+      [panelClass]="'code-toolkit-language-options'"
+    >
+      @for (item of CODE_LANGUAGE_FRIENDLY_NAME_MAP | keyvalue; track item) {
+        <mat-option [value]="item.key">{{ item.value }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <button
+    class="btn btn-circle btn-soft btn-ghost"
+    (click)="copyData()"
+    matTooltip="复制"
+  >
+    <span class="material-icons">content_copy</span>
+  </button>
+  <button
+    class="btn btn-circle btn-soft btn-ghost"
+    (click)="formatCode()"
+    [disabled]="!lang || !PRETTIER_OPTIONS_BY_LANG[lang]"
+    matTooltip="格式化"
+  >
+    <span class="material-icons">data_object</span>
+  </button>
+</div>

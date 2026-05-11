@@ -1,0 +1,10 @@
+@defer (when !hidden$()) {
+  <div class="w-full h-full pointer-events-auto" [hidden]="hidden$()">
+    @if (Excalidraw$() | async; as Excalidraw) {
+      <react-outlet
+        [component]="Excalidraw"
+        [runInReact]="context"
+      ></react-outlet>
+    }
+  </div>
+}

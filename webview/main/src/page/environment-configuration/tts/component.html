@@ -1,0 +1,17 @@
+<mat-tab-group class="h-full">
+  <mat-tab label="安装">
+    <ng-template matTabContent
+      ><app-python-addon-install></app-python-addon-install>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="TTS配置">
+    <ng-template matTabContent>
+      <app-indexTTS></app-indexTTS>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="配音表">
+    <ng-template matTabContent
+      ><app-player-list></app-player-list>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

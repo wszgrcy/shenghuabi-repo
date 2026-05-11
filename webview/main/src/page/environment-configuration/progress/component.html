@@ -1,0 +1,23 @@
+@if (info(); as info) {
+  <div class="flex flex-col">
+    @let value = info.type === 'end' ? 100 : info.value;
+    <mat-progress-bar
+      class="mb-2"
+      [mode]="mode()"
+      [color]="color()"
+      [value]="value"
+      [bufferValue]="value"
+    ></mat-progress-bar>
+    <div>
+      @switch (info.type) {
+        @case ('error') {
+          ❌
+        }
+        @case ('end') {
+          ✔️
+        }
+      }
+      {{ info.message }}
+    </div>
+  </div>
+}

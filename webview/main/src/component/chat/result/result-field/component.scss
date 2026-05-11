@@ -1,0 +1,53 @@
+.markdown-result {
+  word-break: break-all;
+  ::ng-deep {
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    ul {
+      margin: 0;
+    }
+    table {
+      border-collapse: collapse;
+      td,
+      th {
+        border: 1px solid black;
+      }
+    }
+    code {
+      text-wrap: wrap;
+    }
+    // todo 等marked修复后
+  }
+}
+.think-content {
+  display: block;
+  // margin: 0;
+  padding: 0px 16px 0 10px;
+  border-left-width: 5px;
+  border-left-style: solid;
+  border-radius: 2px;
+
+  background: var(--vscode-textBlockQuote-background);
+  border-color: var(--vscode-textBlockQuote-border);
+}
+// 内容加边框
+:host(.content-border) {
+  .text-content {
+    border-color: var(--mat-sys-outline);
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    padding: 6px 16px;
+    box-sizing: border-box;
+  }
+}
+:host(.content-right) {
+  .content-wrapper {
+    text-align: end;
+  }
+}

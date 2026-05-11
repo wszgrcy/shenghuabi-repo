@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    "module": "ES2022",
+    "target": "es2024",
+    "lib": [
+      "ES2020",
+      "ES2022",
+      "ES2023",
+      "ES2024"
+    ],
+    "incremental": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "Bundler",
+    "importHelpers": true,
+    "useDefineForClassFields": false,
+    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": false,
+    "skipDefaultLibCheck": true,
+    "noErrorTruncation": true,
+    "paths": {
+      "@i18n": [
+        "./src/i18n"
+      ],
+      "@global": [
+        "./script/metadata/index.ts"
+      ],
+      "@polyfill/*": [
+        "./src/polyfill/*"
+      ],
+      "@share/util/*": [
+        "./src/util/*"
+      ],
+      "@share/valibot": [
+        "./src/share/valibot/main-index.ts"
+      ],
+      "@share/valibot/define": [
+        "./src/share/valibot/define.ts"
+      ],
+      "@shenghuabi/sdk/server": [
+        "./src/export/server.ts"
+      ]
+    }
+  }
+}

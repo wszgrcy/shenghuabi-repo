@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>
+  <div class="inline-flex items-center w-full">
+    <div>新增节点</div>
+    <div class="flex-1"></div>
+    <div>
+      <button
+        class="btn btn-circle btn-success btn-soft btn-ghost"
+        (click)="save()"
+        matTooltip="保存"
+        [disabled]="formly.form$$()?.invalid || loading$()"
+      >
+        <span class="material-icons">check</span>
+      </button>
+    </div>
+  </div>
+</h2>
+<mat-dialog-content class="custom-scrollbar !pt-2 form-minimum noValid">
+  <piying-view
+    #formly
+    class="grid gap-2"
+    [(model)]="model"
+    [schema]="schema"
+    [options]="options"
+  ></piying-view>
+</mat-dialog-content>

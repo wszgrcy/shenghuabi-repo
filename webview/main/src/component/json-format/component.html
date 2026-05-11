@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>数据格式</h2>
+<mat-dialog-content class="mat-typography">
+  <div [valueFormat]="props"></div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button class="btn btn-soft" [cdkCopyToClipboard]="props | json">复制</button>
+  <button class="btn btn-error" mat-dialog-close>关闭</button>
+</mat-dialog-actions>

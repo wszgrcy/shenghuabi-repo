@@ -1,0 +1,20 @@
+out
+dist
+node_modules
+.vscode-test/
+*.vsix
+fixture/**
+/build
+*.log
+l10n/*.cancel.json
+test-dist
+.nyc_output
+coverage
+/i18n
+/i18n-merge
+/.parser
+/plugin-sdk-dist
+# Sentry Config File
+.env.sentry-build-plugin
+.tmp-build
+.traceDist

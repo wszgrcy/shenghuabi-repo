@@ -1,0 +1,136 @@
+<div [class]="childrenWrapperClass$$()">
+  @for (item of children$$(); track $index; let itemIndex = $index) {
+    <div class="relative group/array">
+      @if (enableLineInsert()) {
+        <div
+          class="absolute z-1 pointer-events-none select-none *:pointer-events-auto"
+        >
+          <div
+            class="invisible group-hover/array:visible z-1"
+            style="transform: translate(-100%, -50%)"
+          >
+            <button
+              class="btn btn-circle btn-soft btn-ghost"
+              (click)="insert($index)"
+            >
+              <span class="material-icons">add</span>
+            </button>
+          </div>
+          <div
+            class="top-0 left-0 right-0 bottom-0 py-10 relative -z-10"
+            style="transform: translate(-100%, -100%)"
+          ></div>
+        </div>
+      }
+      <mat-card appearance="outlined" [class]="status$$()">
+        <mat-card-header>
+          <mat-card-title>{{ item.props()['title'] }}</mat-card-title>
+          <mat-card-subtitle>{{
+            item.props()['description']
+          }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <ng-container
+            *ngTemplateOutlet="fieldTemplateRef; context: { $implicit: item }"
+          ></ng-container>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <ng-template #btnMenu let-action="action">
+            <button
+              mat-menu-item
+              (click)="loadFn(action, item, itemIndex)"
+              [disabled]="action.disable?.(item, itemIndex) ?? loading$()"
+              [matTooltip]="action.tooltip"
+            >
+              {{ action.label }}
+            </button>
+          </ng-template>
+          <ng-template #btn let-action="action">
+            @if (action.icon) {
+              <button
+                class="btn btn-circle btn-soft btn-primary"
+                (click)="loadFn(action, item, itemIndex)"
+                [disabled]="action.disable?.(item, itemIndex) ?? loading$()"
+                [matTooltip]="action.tooltip"
+              >
+                <span class="material-icons">{{ action.icon }}</span>
+              </button>
+            } @else {
+              <button
+                class="btn btn-soft"
+                [class.btn-primary]="action.color === 'primary'"
+                (click)="loadFn(action, item, itemIndex)"
+                [disabled]="action.disable?.(item, itemIndex) ?? loading$()"
+                [matTooltip]="action.tooltip"
+              >
+                {{ action.label }}
+              </button>
+            }
+          </ng-template>
+
+          @for (action of actions(); track $index) {
+            @if (action.type === 'list') {
+              <button
+                class="btn btn-soft"
+                [class.btn-primary]="action.color === 'primary'"
+                [matMenuTriggerFor]="menu"
+                [disabled]="action.disable?.(item, itemIndex) ?? loading$()"
+              >
+                {{ action.label }}
+              </button>
+              <mat-menu #menu="matMenu">
+                @if (
+                  action.children$$! | pure: item : itemIndex | async;
+                  as children
+                ) {
+                  @for (item of children; track $index) {
+                    <ng-container
+                      *ngTemplateOutlet="btnMenu; context: { action: item }"
+                    ></ng-container>
+                  }
+                }
+              </mat-menu>
+            } @else if (action.type === 'audio') {
+              @if (
+                action.url$$
+                  ? (action.url$$ | pure: item : itemIndex | async)
+                  : undefined;
+                as url2
+              ) {
+                @defer {
+                  <audio controls [src]="url2"></audio>
+                }
+              }
+            } @else {
+              <ng-container
+                *ngTemplateOutlet="btn; context: { action: action }"
+              ></ng-container>
+            }
+          }
+          <button
+            class="btn btn-circle btn-soft btn-ghost"
+            (click)="insert($index)"
+            matTooltip="向上插入"
+          >
+            <span class="material-icons">vertical_align_top</span>
+          </button>
+          <button
+            class="btn btn-circle btn-soft btn-ghost"
+            (click)="insert($index + 1)"
+            matTooltip="向下插入"
+          >
+            <span class="material-icons">vertical_align_bottom</span>
+          </button>
+          <button
+            class="btn btn-circle btn-soft btn-error"
+            (click)="remove($index)"
+          >
+            <span class="material-icons">delete</span>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  }
+  <button class="btn btn-soft btn-primary" type="button" (click)="add()">添加</button>
+</div>

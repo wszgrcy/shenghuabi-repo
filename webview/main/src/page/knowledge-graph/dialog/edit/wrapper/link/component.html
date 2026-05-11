@@ -1,0 +1,14 @@
+<ng-template #templateRef let-attr="attributes">
+  @if (!editable$$()) {
+    @let title = field()['context']['title'];
+    @if (title === field().form.control?.value$$()) {
+      {{ title }}
+    } @else {
+      <a href="" (click)="openOther(title, $event)">{{
+        field().form.control?.value$$()
+      }}</a>
+    }
+  } @else {
+    <ng-container insertField></ng-container>
+  }
+</ng-template>

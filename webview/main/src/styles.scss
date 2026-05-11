@@ -1,0 +1,295 @@
+@use './m3-theme';
+@use '@angular/material' as mat;
+@use './reset';
+// @use './tailwind-custom';
+@layer hover {
+  .mat-elevation-z4 {
+    @include mat.elevation(4);
+  }
+}
+html,
+body {
+  height: 100%;
+  // font-size: var(--vscode-editor-font-size);
+  padding: 0;
+  margin: 0;
+}
+
+// 颜色调整
+$color: var(--vscode-editor-foreground);
+$bgColor: var(--vscode-editor-background);
+input {
+  color: $color;
+}
+.noValid {
+  .mat-mdc-form-field-subscript-wrapper.mat-mdc-form-field-bottom-align {
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden;
+  }
+}
+
+.mdc-tooltip__surface {
+  text-align: left;
+  white-space: pre-wrap;
+  overflow: auto !important;
+}
+// 用于操作悬浮
+
+.select-no-arrow {
+  .mat-mdc-select-arrow-wrapper {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+}
+// 表示控件是一个临时。用虚线框
+.form-field-temp {
+  mat-form-field {
+    .mdc-notched-outline__leading {
+      border-style: dotted none dotted dotted;
+    }
+    .mdc-notched-outline__trailing {
+      border-style: dotted dotted dotted none;
+    }
+    .mdc-notched-outline__notch {
+      border-style: none none dotted dotted;
+    }
+  }
+}
+// 用于Border样式
+.styled-component-item {
+  .mdc-list-item__primary-text {
+    width: 100% !important;
+  }
+}
+
+// 行hover的时候显示一些操作
+.line-hover {
+  .line-hover-action {
+    display: none;
+  }
+  &:hover {
+    .line-hover-action {
+      display: flex;
+    }
+  }
+}
+
+body,
+html {
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--vscode-scrollbarSlider-background) transparent;
+}
+.custom-scrollbar {
+  scrollbar-width: thin !important;
+}
+.editor-max-mode {
+  background-color: var(--vscode-editor-background);
+}
+// todo 样式没问题，但是不知道为什么会销毁
+.hex-color-input {
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  // background: #eee;
+  outline: none;
+  font: inherit;
+  text-transform: uppercase;
+  text-align: center;
+}
+// 如果在flow中需要使用nodrag
+.span-replace-input {
+  min-height: 36px;
+  border-color: var(--mat-sys-outline);
+
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 4px;
+
+  padding: 6px 16px;
+  box-sizing: border-box;
+  &:has(span:focus) {
+    border-color: var(--vscode-focusBorder);
+  }
+}
+.mat-border-like {
+  border-color: var(--mat-sys-outline);
+
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 4px;
+
+  &:has(span:focus) {
+    border-color: var(--vscode-focusBorder);
+    border-width: 1px;
+    padding: 5px 15px;
+  }
+  padding: 6px 16px;
+}
+// 对话输入多了太占用高度
+input-form {
+  mat-form-field {
+    textarea {
+      max-height: 150px;
+      overflow: auto;
+      scrollbar-width: thin !important;
+    }
+  }
+}
+.mat-drawer-inner-container {
+  scrollbar-width: thin !important;
+}
+.vscode-dark {
+  --md-hr-border-color: rgba(255, 255, 255, 0.18);
+  --md-th-border-color: rgba(255, 255, 255, 0.69);
+}
+.vscode-light {
+  --md-hr-border-color: rgba(0, 0, 0, 0.18);
+  --md-th-border-color: rgba(0, 0, 0, 0.69);
+}
+body {
+  --default-theme: 'open';
+}
+.mdc-tooltip.mat-mdc-tooltip.tooltip-wrapper {
+  .mat-mdc-tooltip-surface {
+    scrollbar-width: thin !important;
+    max-width: 500px;
+  }
+}
+.json-formatter-row span.json-formatter-string {
+  white-space: pre-wrap;
+}
+
+// vscode 图标
+.mat-icon.codicon {
+  font-size: 24px !important;
+}
+// 用于mat form-field修复
+.mdc-notched-outline__notch > label {
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+html {
+  --mat-sys-primary: rgb(54 97 142);
+  --mat-sys-surface-tint: rgb(54 97 142);
+  --mat-sys-on-primary: rgb(255 255 255);
+  --mat-sys-primary-container: rgb(209 228 255);
+  --mat-sys-on-primary-container: rgb(26 73 117);
+  --mat-sys-secondary: rgb(83 95 112);
+  --mat-sys-on-secondary: rgb(255 255 255);
+  --mat-sys-secondary-container: rgb(215 227 248);
+  --mat-sys-on-secondary-container: rgb(59 72 88);
+  --mat-sys-tertiary: rgb(107 87 120);
+  --mat-sys-on-tertiary: rgb(255 255 255);
+  --mat-sys-tertiary-container: rgb(243 218 255);
+  --mat-sys-on-tertiary-container: rgb(82 63 95);
+  --mat-sys-error: rgb(186 26 26);
+  --mat-sys-on-error: rgb(255 255 255);
+  --mat-sys-error-container: rgb(255 218 214);
+  --mat-sys-on-error-container: rgb(147 0 10);
+  --mat-sys-background: rgb(248 249 255);
+  --mat-sys-on-background: rgb(25 28 32);
+  --mat-sys-surface: rgb(248 249 255);
+  --mat-sys-on-surface: rgb(25 28 32);
+  --mat-sys-surface-variant: rgb(223 226 235);
+  --mat-sys-on-surface-variant: rgb(67 71 78);
+  --mat-sys-outline: rgb(115 119 127);
+  --mat-sys-outline-variant: rgb(195 198 207);
+  --mat-sys-shadow: rgb(0 0 0);
+  --mat-sys-scrim: rgb(0 0 0);
+  --mat-sys-inverse-surface: rgb(46 49 53);
+  --mat-sys-inverse-on-surface: rgb(239 240 247);
+  --mat-sys-inverse-primary: rgb(160 202 253);
+  --mat-sys-primary-fixed: rgb(209 228 255);
+  --mat-sys-on-primary-fixed: rgb(0 29 54);
+  --mat-sys-primary-fixed-dim: rgb(160 202 253);
+  --mat-sys-on-primary-fixed-variant: rgb(26 73 117);
+  --mat-sys-secondary-fixed: rgb(215 227 248);
+  --mat-sys-on-secondary-fixed: rgb(16 28 43);
+  --mat-sys-secondary-fixed-dim: rgb(187 199 219);
+  --mat-sys-on-secondary-fixed-variant: rgb(59 72 88);
+  --mat-sys-tertiary-fixed: rgb(243 218 255);
+  --mat-sys-on-tertiary-fixed: rgb(37 20 49);
+  --mat-sys-tertiary-fixed-dim: rgb(215 190 228);
+  --mat-sys-on-tertiary-fixed-variant: rgb(82 63 95);
+  --mat-sys-surface-dim: rgb(216 218 224);
+  --mat-sys-surface-bright: rgb(248 249 255);
+  --mat-sys-surface-container-lowest: rgb(255 255 255);
+  --mat-sys-surface-container-low: rgb(242 243 250);
+  --mat-sys-surface-container: rgb(236 238 244);
+  --mat-sys-surface-container-high: rgb(230 232 238);
+  --mat-sys-surface-container-highest: rgb(225 226 232);
+}
+
+.vscode-dark {
+  --mat-sys-primary: rgb(160 202 253);
+  --mat-sys-surface-tint: rgb(160 202 253);
+  --mat-sys-on-primary: rgb(0 50 88);
+  --mat-sys-primary-container: rgb(26 73 117);
+  --mat-sys-on-primary-container: rgb(209 228 255);
+  --mat-sys-secondary: rgb(187 199 219);
+  --mat-sys-on-secondary: rgb(37 49 64);
+  --mat-sys-secondary-container: rgb(59 72 88);
+  --mat-sys-on-secondary-container: rgb(215 227 248);
+  --mat-sys-tertiary: rgb(215 190 228);
+  --mat-sys-on-tertiary: rgb(59 41 72);
+  --mat-sys-tertiary-container: rgb(82 63 95);
+  --mat-sys-on-tertiary-container: rgb(243 218 255);
+  --mat-sys-error: rgb(255 180 171);
+  --mat-sys-on-error: rgb(105 0 5);
+  --mat-sys-error-container: rgb(147 0 10);
+  --mat-sys-on-error-container: rgb(255 218 214);
+  --mat-sys-background: rgb(17 20 24);
+  --mat-sys-on-background: rgb(225 226 232);
+  --mat-sys-surface: rgb(17 20 24);
+  --mat-sys-on-surface: rgb(225 226 232);
+  --mat-sys-surface-variant: rgb(67 71 78);
+  --mat-sys-on-surface-variant: rgb(195 198 207);
+  --mat-sys-outline: rgb(141 145 153);
+  --mat-sys-outline-variant: rgb(67 71 78);
+  --mat-sys-shadow: rgb(0 0 0);
+  --mat-sys-scrim: rgb(0 0 0);
+  --mat-sys-inverse-surface: rgb(225 226 232);
+  --mat-sys-inverse-on-surface: rgb(46 49 53);
+  --mat-sys-inverse-primary: rgb(54 97 142);
+  --mat-sys-primary-fixed: rgb(209 228 255);
+  --mat-sys-on-primary-fixed: rgb(0 29 54);
+  --mat-sys-primary-fixed-dim: rgb(160 202 253);
+  --mat-sys-on-primary-fixed-variant: rgb(26 73 117);
+  --mat-sys-secondary-fixed: rgb(215 227 248);
+  --mat-sys-on-secondary-fixed: rgb(16 28 43);
+  --mat-sys-secondary-fixed-dim: rgb(187 199 219);
+  --mat-sys-on-secondary-fixed-variant: rgb(59 72 88);
+  --mat-sys-tertiary-fixed: rgb(243 218 255);
+  --mat-sys-on-tertiary-fixed: rgb(37 20 49);
+  --mat-sys-tertiary-fixed-dim: rgb(215 190 228);
+  --mat-sys-on-tertiary-fixed-variant: rgb(82 63 95);
+  --mat-sys-surface-dim: rgb(17 20 24);
+  --mat-sys-surface-bright: rgb(54 57 62);
+  --mat-sys-surface-container-lowest: rgb(11 14 19);
+  --mat-sys-surface-container-low: rgb(25 28 32);
+  --mat-sys-surface-container: rgb(29 32 36);
+  --mat-sys-surface-container-high: rgb(39 42 47);
+  --mat-sys-surface-container-highest: rgb(50 53 58);
+}
+
+.mat-mdc-tab-body-wrapper {
+  height: 100%;
+}
+
+.mat-mdc-form-field-infix:not(:has(mat-select)) {
+  width: 100% !important;
+}
+
+command-button {
+  .mdc-button__label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "name": "@shenghuabi/sdk",
+  "version": "0.3.21",
+  "peerDependencies": {},
+  "dependencies": {
+    "static-injector": "6.1.2",
+    "valibot": "1.4.0",
+    "rxjs": "7.8.2",
+    "@xyflow/react": "12.4.4",
+    "file-type": "^21.0.0",
+    "graphology": "0.26.0",
+    "graphology-types": "0.24.8",
+    "@qdrant/qdrant-js": "1.12.0",
+    "@trpc/server": "11.16.0",
+    "@types/node": "^22.0.0",
+    "rfdc": "1.4.1",
+    "dayjs": "^1.11.13",
+    "lodash-es": "4.17.21",
+    "fast-equals": "5.2.2",
+    "@piying/valibot-visit": "^1.1.6",
+    "@angular/core": ">=21.0.0",
+    "@shenghuabi/crunker": "1.0.12",
+    "@shenghuabi/han2number": "1.0.12",
+    "@shenghuabi/knowledge": "1.0.24",
+    "@shenghuabi/llama": "1.0.12",
+    "@shenghuabi/openai": "1.0.12",
+    "@shenghuabi/python-addon": "1.0.12",
+    "@shenghuabi/workflow": "1.0.12",
+    "@piying/view-angular-core": "2.9.4",
+    "@piying/view-angular": "2.9.4"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./types/src/sdk/index.d.ts",
+      "default": "./index.js"
+    },
+    "./build": {
+      "types": "./types/src/sdk/build.d.ts",
+      "default": "./build.js"
+    },
+    "./server": {
+      "types": "./types/src/export/server.d.ts"
+    },
+    "./componentDefine": {
+      "types": "./types/src/export/common.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}

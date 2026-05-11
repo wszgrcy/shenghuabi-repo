@@ -1,0 +1,14 @@
+Package: @@NAME@@
+Version: @@VERSION@@
+Section: devel
+Depends: @@DEPENDS@@
+Recommends: @@RECOMMENDS@@
+Priority: optional
+Architecture: @@ARCHITECTURE@@
+Maintainer: Chen Yang <wszgrcy@gmail.com>
+Homepage: https://shenghuabi.top/
+Installed-Size: @@INSTALLEDSIZE@@
+Provides: @@NAME@@
+Conflicts: @@NAME@@
+Replaces: @@NAME@@
+Description: 智能写作编辑器

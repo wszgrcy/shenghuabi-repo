@@ -1,0 +1,49 @@
+@if (props$$()['title']; as title) {
+  <div class="text-center">
+    {{ title }}
+  </div>
+}
+<div class="grid gap-2">
+  @for (child of children$$(); track child; let i = $index) {
+    <div class="relative group/array">
+      @if (enableLineInsert()) {
+        <div
+          class="absolute z-1 pointer-events-none select-none *:pointer-events-auto"
+        >
+          <div
+            class="invisible group-hover/array:visible z-1"
+            style="transform: translate(-100%, -50%)"
+          >
+            <button
+              class="btn btn-circle btn-soft btn-ghost"
+              (click)="insert(i)"
+            >
+              <span class="material-icons">add</span>
+            </button>
+          </div>
+          <div
+            class="top-0 left-0 right-0 bottom-0 py-10 relative -z-10"
+            style="transform: translate(-100%, -100%)"
+          ></div>
+        </div>
+      }
+      <div class="flex items-center gap-2 *:nth-1:flex-1">
+        <ng-container
+          *ngTemplateOutlet="fieldTemplateRef; context: { $implicit: child }"
+        ></ng-container>
+
+        <div class="form-minimum">
+          <button
+            class="btn btn-circle btn-soft btn-error"
+            type="button"
+            (click)="remove(i)"
+            [disabled]="minLength() ? $count <= minLength()! : false"
+          >
+            <span class="material-icons">remove</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+  <button class="btn btn-soft btn-primary" type="button" (click)="add()">添加</button>
+</div>

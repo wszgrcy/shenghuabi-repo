@@ -1,0 +1,7 @@
+{
+  "extension": [".ts"],
+  "reporter": ["html", "text"],
+  "exclude": ["**/*.spec.ts", "src/antlr", "script"],
+  "exclude-after-remap": true,
+  "all": false
+}

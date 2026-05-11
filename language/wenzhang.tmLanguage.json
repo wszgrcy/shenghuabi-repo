@@ -1,0 +1,352 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "wenzhang",
+    "patterns": [
+        {
+            "include": "#line"
+        }
+    ],
+    "repository": {
+        "line": {
+            "match": ".*",
+            "captures": {
+                "0": {
+                    "patterns": [
+                        {
+                            "include": "#baseToken"
+                        },
+                        {
+                            "include": "#yinhaoToken"
+                        }
+                    ]
+                }
+            }
+        },
+        "numberToken": {
+            "name": "neirong neirong.shuzi",
+            "match": "\\d+"
+        },
+        "zhToken": {
+            "name": "neirong neirong.hanzi",
+            "match": "\\p{Hani}+"
+        },
+        "wordToken": {
+            "name": "neirong neirong.qita",
+            "match": "((?![\\d\\p{Hani}])\\w)+"
+        },
+        "neirong": {
+            "patterns": [
+                {
+                    "include": "#numberToken"
+                },
+                {
+                    "include": "#zhToken"
+                },
+                {
+                    "include": "#wordToken"
+                }
+            ]
+        },
+        "pozhehaoToken": {
+            "match": "————",
+            "name": "biaohao biaohao.pozhe"
+        },
+        "shengluehaoToken": {
+            "match": "……",
+            "name": "biaohao biaohao.shenglue"
+        },
+        "duanhengxianToken": {
+            "match": "-",
+            "name": "biaohao biaohao.duanheng"
+        },
+        "yizixianToken": {
+            "match": "——",
+            "name": "biaohao biaohao.yizi"
+        },
+        "bolangxianToken": {
+            "match": "~",
+            "name": "biaohao biaohao.bolang"
+        },
+        "jiangefuToken": {
+            "match": "·",
+            "name": "biaohao biaohao.jiange"
+        },
+        "douhaoToken": {
+            "name": "dianhao dianhao.nei dianhao.nei.dou",
+            "match": "，"
+        },
+        "dunhaoToken": {
+            "name": "dianhao dianhao.nei dianhao.nei.dun",
+            "match": "、"
+        },
+        "maohaoToken": {
+            "name": "dianhao dianhao.nei dianhao.nei.mao",
+            "match": "："
+        },
+        "fenhaoToken": {
+            "name": "dianhao dianhao.nei dianhao.nei.fen",
+            "match": "；"
+        },
+        "juhaoToken": {
+            "name": "dianhao dianhao.nei dianhao.mo.ju",
+            "match": "。"
+        },
+        "wenhaoToken": {
+            "name": "dianhao dianhao.mo dianhao.mo.wen",
+            "match": "？"
+        },
+        "tanhaoToken": {
+            "name": "dianhao dianhao.mo dianhao.mo.tan",
+            "match": "！"
+        },
+        "dianhao": {
+            "patterns": [
+                {
+                    "include": "#douhaoToken"
+                },
+                {
+                    "include": "#dunhaoToken"
+                },
+                {
+                    "include": "#maohaoToken"
+                },
+                {
+                    "include": "#fenhaoToken"
+                },
+                {
+                    "include": "#juhaoToken"
+                },
+                {
+                    "include": "#wenhaoToken"
+                },
+                {
+                    "include": "#tanhaoToken"
+                }
+            ]
+        },
+        "biaohao": {
+            "patterns": [
+                {
+                    "include": "#pozhehaoToken"
+                },
+                {
+                    "include": "#shengluehaoToken"
+                },
+                {
+                    "include": "#duanhengxianToken"
+                },
+                {
+                    "include": "#yizixianToken"
+                },
+                {
+                    "include": "#bolangxianToken"
+                },
+                {
+                    "include": "#jiangefuToken"
+                }
+            ]
+        },
+        "baseToken": {
+            "name": "baseToken",
+            "comment": "",
+            "patterns": [
+                {
+                    "include": "#biaohao"
+                },
+                {
+                    "include": "#dianhao"
+                },
+                {
+                    "include": "#neirong"
+                }
+            ]
+        },
+        "yinhaoToken": {
+            "name": "yinhao",
+            "comment": "",
+            "patterns": [
+                {
+                    "include": "#shuang-yinhao"
+                },
+                {
+                    "include": "#dan-yinhao"
+                },
+                {
+                    "include": "#zhijiao-yinhao1"
+                },
+                {
+                    "include": "#zhijiao-yinhao2"
+                },
+                {
+                    "include": "#shuang-shuminghao"
+                },
+                {
+                    "include": "#dan-shuminghao"
+                },
+                {
+                    "include": "#fang-kuohao"
+                },
+                {
+                    "include": "#yuan-kuohao"
+                },
+                {
+                    "include": "#liujiao-kuohao"
+                },
+                {
+                    "include": "#fangtou-kuohao"
+                }
+            ]
+        },
+        "shuang-yinhao": {
+            "name": "shuang-yinhao",
+            "comment": "",
+            "begin": "“",
+            "end": "”",
+            "patterns": [
+                {
+                    "include": "#yinhaoToken"
+                },
+                {
+                    "include": "#baseToken"
+                }
+            ],
+            "contentName": "shuang-yinhao-neirong"
+        },
+        "dan-yinhao": {
+            "name": "dan-yinhao",
+            "comment": "",
+            "begin": "‘",
+            "end": "’",
+            "patterns": [
+                {
+                    "include": "#yinhaoToken"
+                },
+                {
+                    "include": "#baseToken"
+                }
+            ],
+            "contentName": "dan-yinhao-neirong"
+        },
+        "zhijiao-yinhao1": {
+            "name": "zhijiao-yinhao1",
+            "comment": "",
+            "begin": "「",
+            "end": "」",
+            "patterns": [
+                {
+                    "include": "#yinhaoToken"
+                },
+                {
+                    "include": "#baseToken"
+                }
+            ],
+            "contentName": "zhijiao-yinhao1-neirong"
+        },
+        "zhijiao-yinhao2": {
+            "name": "zhijiao-yinhao2",
+            "comment": "",
+            "begin": "『",
+            "end": "』",
+            "patterns": [
+                {
+                    "include": "#yinhaoToken"
+                },
+                {
+                    "include": "#baseToken"
+                }
+            ],
+            "contentName": "zhijiao-yinhao2-neirong"
+        },
+        "shuang-shuminghao": {
+            "name": "shuang-shuminghao",
+            "comment": "",
+            "begin": "《",
+            "end": "》",
+            "patterns": [
+                {
+                    "include": "#yinhaoToken"
+                },
+                {
+                    "include": "#baseToken"
+                }
+            ],
+            "contentName": "shuang-shuminghao-neirong"
+        },
+        "dan-shuminghao": {
+            "name": "dan-shuminghao",
+            "comment": "",
+            "begin": "\\<",
+            "end": "\\>",
+            "patterns": [
+                {
+                    "include": "#yinhaoToken"
+                },
+                {
+                    "include": "#baseToken"
+                }
+            ],
+            "contentName": "dan-shuminghao-neirong"
+        },
+        "fang-kuohao": {
+            "name": "fang-kuohao",
+            "comment": "",
+            "begin": "\\[",
+            "end": "\\]",
+            "patterns": [
+                {
+                    "include": "#yinhaoToken"
+                },
+                {
+                    "include": "#baseToken"
+                }
+            ],
+            "contentName": "fang-kuohao-neirong"
+        },
+        "yuan-kuohao": {
+            "name": "yuan-kuohao",
+            "comment": "",
+            "begin": "（",
+            "end": "）",
+            "patterns": [
+                {
+                    "include": "#yinhaoToken"
+                },
+                {
+                    "include": "#baseToken"
+                }
+            ],
+            "contentName": "yuan-kuohao-neirong"
+        },
+        "liujiao-kuohao": {
+            "name": "liujiao-kuohao",
+            "comment": "",
+            "begin": "〔",
+            "end": "〕",
+            "patterns": [
+                {
+                    "include": "#yinhaoToken"
+                },
+                {
+                    "include": "#baseToken"
+                }
+            ],
+            "contentName": "liujiao-kuohao-neirong"
+        },
+        "fangtou-kuohao": {
+            "name": "fangtou-kuohao",
+            "comment": "",
+            "begin": "【",
+            "end": "】",
+            "patterns": [
+                {
+                    "include": "#yinhaoToken"
+                },
+                {
+                    "include": "#baseToken"
+                }
+            ],
+            "contentName": "fangtou-kuohao-neirong"
+        }
+    },
+    "scopeName": "source.wenzhang"
+}

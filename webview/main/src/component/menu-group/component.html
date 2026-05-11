@@ -1,0 +1,24 @@
+<ng-container
+  *ngTemplateOutlet="groupTemplate; context: { context: groupList() }"
+></ng-container>
+<ng-template #groupTemplate let-context="context">
+  @for (item of context; track $index) {
+    @if (item.group) {
+      <mat-menu #menu3Template="matMenu">
+        <ng-container
+          *ngTemplateOutlet="groupTemplate; context: { context: item.children }"
+        ></ng-container>
+      </mat-menu>
+      <button mat-menu-item [matMenuTriggerFor]="menu3Template">
+        {{ item.label }}
+      </button>
+    } @else {
+      <button
+        mat-menu-item
+        (click)="callbackGroup()['click'](item.data?.click)"
+      >
+        {{ item.label }}
+      </button>
+    }
+  }
+</ng-template>

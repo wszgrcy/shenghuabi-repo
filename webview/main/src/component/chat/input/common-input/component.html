@@ -1,0 +1,43 @@
+<mat-menu #menu="matMenu">
+  @for (item of imageList$(); track $index) {
+    <div class="flex w-[150px] gap-2">
+      <img [src]="item" class="flex-1 overflow-hidden" />
+      <mat-icon
+        class="cursor-pointer"
+        color="warn"
+        (click)="removeImage($index)"
+        >close</mat-icon
+      >
+    </div>
+  }
+  <button class="btn btn-circle btn-soft btn-ghost" (click)="addImage()">
+    <span class="material-icons">add</span>
+  </button></mat-menu
+>
+
+<div class="join w-full">
+  <button
+    class="btn btn-ghost btn-circle join-item btn-sm"
+    matPrefix
+    [matMenuTriggerFor]="menu"
+    (click)="stopDefault($event)"
+    type="button"
+  >
+    <span
+      class="material-icons"
+      [class]="imageList$().length ? 'text-error' : undefined"
+      >image</span
+    >
+  </button>
+
+  <span-input
+    class="grow join-item input input-sm"
+    name="common"
+    placeholder="进行普通对话"
+    [(ngModel)]="input$"
+    [enterSubmit]="true"
+    (submitChange)="submitChange.emit()"
+    (paste)="pasteChange($event)"
+  >
+  </span-input>
+</div>

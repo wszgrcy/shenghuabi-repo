@@ -1,0 +1,18 @@
+{
+    "extends": "../../tsconfig.build.json",
+    "files": [
+        "./index.ts",
+        "./preload.ts",
+        "./worker.ts"
+    ],
+    "exclude": [],
+    "compilerOptions": {
+        "lib": [
+            "ES2022",
+            "dom",
+            "WebWorker",
+            "ES2023",
+            "ESNext"
+        ],
+    }
+}

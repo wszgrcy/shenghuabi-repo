@@ -1,0 +1,67 @@
+<div class="noValid form-minimum">
+  <div class="action-show flex flex-col">
+    @for (data of result(); track $index) {
+      <div>
+        @if (isAudioResult | pure: data) {
+          <audio [src]="audioUrl | pure: data.value | async" controls></audio>
+        } @else if (isChatResult | pure: data) {
+          @let content = $any(data.extra).content;
+          @let thinkContent = $any(data.extra).thinkContent;
+          <result-field
+            [value]="content"
+            [thinkContent]="thinkContent"
+            class="content-border"
+          >
+            <ng-container>
+              @if (insertCodeAction()) {
+                <button
+                  class="btn btn-circle btn-soft btn-ghost"
+                  (click)="insertRight($index)"
+                  matTooltip="替换"
+                >
+                  <span class="material-icons">chevron_right</span>
+                </button>
+              }
+            </ng-container>
+          </result-field>
+        } @else {
+          @if (isStringResult | pure: data.value) {
+            <result-field [value]="data.value" class="content-border">
+            </result-field>
+          } @else {
+            <div [valueFormat]="data.value"></div>
+          }
+        }
+        <!-- 元数据 -->
+        @if (data.extra?.references?.length) {
+          <div class="flex gap-2 items-center my-2">
+            <div>
+              <mat-chip-set>
+                @for (item of data.extra!.references!; track $index) {
+                  <mat-chip
+                    color="primary"
+                    [shMarkdownTooltip]="metadataTooltip | pure: item"
+                  >
+                    @if (item.reference?.type === 'url') {
+                      <a
+                        [href]="$any(item.reference!).url"
+                        class="!outline-none !no-underline"
+                      >
+                        {{ metadataItem | pure: item }}</a
+                      >
+                    } @else {
+                      {{ metadataItem | pure: item }}
+                    }
+                  </mat-chip>
+                }
+              </mat-chip-set>
+            </div>
+          </div>
+        }
+        @if (!$last) {
+          <mat-divider class="!my-2"> </mat-divider>
+        }
+      </div>
+    }
+  </div>
+</div>

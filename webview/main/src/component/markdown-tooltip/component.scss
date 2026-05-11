@@ -1,0 +1,37 @@
+@use 'sass:meta';
+
+@mixin dark {
+  @include meta.load-css(
+    '../../../node_modules/github-markdown-css/github-markdown-dark'
+  );
+}
+@mixin light {
+  @include meta.load-css(
+    '../../../node_modules/github-markdown-css/github-markdown-light'
+  );
+}
+::ng-deep body.vscode-light ng-component {
+  @include dark();
+}
+::ng-deep body.vscode-dark ng-component {
+  @include light();
+}
+:host .markdown-body ::ng-deep {
+  min-height: unset;
+  code {
+    color: inherit;
+  }
+  blockquote {
+    background-color: transparent;
+  }
+}
+
+:host .markdown-body {
+  padding: 4px 8px;
+  scrollbar-width: thin !important;
+  overflow: auto;
+  max-height: 400px;
+  max-width: 300px;
+  border-radius: 4px;
+  box-sizing: border-box;
+}

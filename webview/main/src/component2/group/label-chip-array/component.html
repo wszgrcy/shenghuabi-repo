@@ -1,0 +1,43 @@
+<mat-chip-grid #chipGrid>
+  <div class="flex gap-2 items-center flex-wrap">
+    <div class="flex items-center flex-wrap">
+      @for (child of children$$(); track child) {
+        <mat-chip-row
+          (removed)="remove($index)"
+          color="primary"
+          (click)="switch($index)"
+          [class.bg-activated]="$index === activate$()"
+        >
+          {{ (findDisplayValue$$ | pure: child)() }}
+          <button
+            matChipRemove
+            color="warn"
+            type="button"
+            [disabled]="minLength() ? $count <= minLength() : false"
+          >
+            <mat-icon color="warn">cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      }
+    </div>
+    <mat-form-field appearance="outline">
+      <input
+        matInput
+        [placeholder]="placeholder()!"
+        [matChipInputFor]="chipGrid"
+        [matChipInputSeparatorKeyCodes]="list"
+        [matChipInputAddOnBlur]="true"
+        (matChipInputTokenEnd)="add($event)"
+      />
+    </mat-form-field>
+  </div>
+</mat-chip-grid>
+
+@if (children$$()!.length) {
+  <ng-container
+    *ngTemplateOutlet="
+      fieldTemplateRef;
+      context: { $implicit: children$$()![activate$()] }
+    "
+  ></ng-container>
+}

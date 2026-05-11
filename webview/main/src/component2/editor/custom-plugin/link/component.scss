@@ -1,0 +1,65 @@
+:host.icon-help {
+  --after-icon: 'help';
+}
+:host.icon-chat {
+  --after-icon: 'chat';
+}
+:host.icon-edit_note {
+  --after-icon: 'edit_note';
+}
+:host.icon-wysiwyg {
+  --after-icon: 'wysiwyg';
+}
+:host.icon-short_text {
+  --after-icon: 'short_text';
+}
+:host.icon-image {
+  --after-icon: 'image';
+}
+
+:host ::ng-deep > :hover {
+  cursor: pointer;
+  // text-decoration: underline;
+}
+:host::after {
+  opacity: 0.6;
+  vertical-align: text-top;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  // font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'liga';
+  content: var(--after-icon);
+}
+// .material-icons {
+//   font-family: 'Material Icons';
+//   font-weight: normal;
+//   font-style: normal;
+//   line-height: 1;
+//   letter-spacing: normal;
+//   text-transform: none;
+//   display: inline-block;
+//   white-space: nowrap;
+//   word-wrap: normal;
+//   direction: ltr;
+//   -webkit-font-smoothing: antialiased;
+//   -moz-osx-font-smoothing: grayscale;
+//   text-rendering: optimizeLegibility;
+//   font-feature-settings: 'liga';
+// }
+// mat-icon.material-icons {
+//   height: auto;
+//   width: auto;
+// }

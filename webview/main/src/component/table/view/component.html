@@ -1,0 +1,13 @@
+<div mat-dialog-title>查看</div>
+<div mat-dialog-content class="imat-c-on-surface density-0">
+  <piying-view
+    [schema]="data.schema"
+    [options]="options"
+    [model]="data$()"
+    (modelChange)="model$.set($event)"
+    #formly
+  ></piying-view>
+</div>
+<div mat-dialog-actions class="!tw-justify-end tw-flex">
+  <button class="btn btn-error" mat-dialog-close>关闭</button>
+</div>

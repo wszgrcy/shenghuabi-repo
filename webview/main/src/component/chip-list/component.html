@@ -1,0 +1,23 @@
+<mat-chip-set>
+  @for (item of value$(); track $index) {
+    <mat-chip (removed)="itemRemove($index)">
+      <div class="flex items-center form-minimum" (click)="viewConfig($index)">
+        {{ item.model }}
+
+        <button matChipRemove>
+          <mat-icon color="warn">cancel</mat-icon>
+        </button>
+      </div>
+    </mat-chip>
+  }
+</mat-chip-set>
+
+<div class="flex gap-2 items-center">
+  <button
+    class="btn btn-circle btn-soft btn-primary"
+    (click)="viewConfig()"
+    matTooltip="添加新模型"
+  >
+    <span class="material-icons">add</span>
+  </button>
+</div>

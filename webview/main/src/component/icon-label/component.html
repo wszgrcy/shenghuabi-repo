@@ -1,0 +1,15 @@
+<div
+  class="flex items-center"
+  [class.cursor-pointer]="!!clicked()"
+  (click)="onClicked()"
+>
+  @let item = options()[status() ? status()! : defaultStatus()];
+  @if (item) {
+    <mat-icon
+      [color]="item.color"
+      [fontIcon]="item.icon.fontIcon!"
+      [fontSet]="item.icon.fontSet!"
+    ></mat-icon
+    >{{ item.label }}
+  }
+</div>

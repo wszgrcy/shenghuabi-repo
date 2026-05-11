@@ -1,0 +1,45 @@
+<button mat-menu-item (click)="copyCell()">
+  <mat-icon color="primary">content_copy</mat-icon>
+  复制
+</button>
+<hr />
+@if (props().cellMerge) {
+  @if (props().canMergeCells) {
+    <button mat-menu-item (click)="props().mergeTableCellsAtSelection()">
+      <mat-icon color="primary">merge</mat-icon>
+      合并单元格
+    </button>
+  } @else {
+    <button mat-menu-item (click)="props().unmergeTableCellsAtSelection()">
+      <mat-icon color="warn">merge</mat-icon>
+      取消合并
+    </button>
+  }
+}
+<hr />
+<button mat-menu-item (click)="props().insertTableRowAtSelection(false)">
+  向上插入行
+</button>
+<button mat-menu-item (click)="props().insertTableRowAtSelection(true)">
+  向下插入行
+</button>
+<hr />
+<button mat-menu-item (click)="props().insertTableColumnAtSelection(false)">
+  向左插入列
+</button>
+<button mat-menu-item (click)="props().insertTableColumnAtSelection(true)">
+  向右插入列
+</button>
+<hr />
+<button mat-menu-item (click)="props().deleteTableColumnAtSelection()">
+  <mat-icon color="warn">delete</mat-icon>
+  删除列
+</button>
+<button mat-menu-item (click)="props().deleteTableRowAtSelection()">
+  <mat-icon color="warn">delete</mat-icon>
+  删除行
+</button>
+<button mat-menu-item (click)="props().deleteTableAtSelection()">
+  <mat-icon color="warn">delete</mat-icon>
+  删除整个表格
+</button>

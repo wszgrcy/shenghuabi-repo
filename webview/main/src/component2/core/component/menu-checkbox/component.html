@@ -1,0 +1,28 @@
+<button
+  class="btn btn-circle btn-soft btn-ghost btn-sm"
+  [matMenuTriggerFor]="menu"
+  [matTooltip]="description() || item().description || ''"
+>
+  @if (item(); as item) {
+    <mat-icon [color]="item.color || 'primary'">{{ item.icon }}</mat-icon>
+  }
+</button>
+
+<mat-menu #menu="matMenu">
+  <ng-template matMenuContent>
+    <div>
+      @for (item of options(); track $index) {
+        <button
+          class="btn btn-circle btn-soft btn-ghost"
+          (click)="buttonClicked(item.value, $index)"
+          [matTooltipDisabled]="!item.description"
+          [matTooltip]="item.description!"
+          [disabled]="loading$() && (item.disabled ? item.disabled() : false)"
+        >
+          <mat-icon [color]="item.color || 'primary'">{{ item.icon }}</mat-icon>
+        </button>
+      }
+      <ng-content select=".extra-menu"></ng-content>
+    </div>
+  </ng-template>
+</mat-menu>

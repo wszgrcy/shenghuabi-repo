@@ -1,0 +1,65 @@
+<div class="form-minimum noValid flex flex-col gap-2">
+  @if (result().input; as value) {
+    <div class="flex items-center gap-2">
+      <div class="flex-1">
+        <div class="w-fit ml-auto">
+          @for (item of value; track $index) {
+            @switch (item.type) {
+              @case ('text') {
+                <result-field
+                  class="flex-1 overflow-hidden"
+                  [value]="$any(item).text"
+                  [readonly]="true"
+                  [enableMenu]="false"
+                ></result-field>
+              }
+              @case ('image_url') {
+                <div>
+                  <img [src]="$any(item).image_url.url" alt="" />
+                </div>
+              }
+            }
+          }
+        </div>
+      </div>
+
+      <button
+        class="btn btn-circle btn-soft btn-primary"
+        [matMenuTriggerFor]="userMenu"
+      >
+        <span class="material-icons">account_circle</span>
+      </button>
+    </div>
+  }
+  @if (result().result; as value) {
+    <div class="flex items-center gap-2">
+      <button
+        class="btn btn-circle btn-soft btn-accent"
+        [matMenuTriggerFor]="aiMenu"
+      >
+        <span class="material-icons">precision_manufacturing</span>
+      </button>
+      <result-field
+        class="flex-1 overflow-hidden content-border"
+        [value]="resultContent | pure: value"
+        [thinkContent]="resultThinkContent | pure: value"
+        [reChat]="refresh"
+        [readonly]="true"
+      ></result-field>
+    </div>
+  }
+</div>
+
+<mat-menu #userMenu="matMenu">
+  <button
+    class="btn btn-circle btn-soft btn-ghost"
+    [cdkCopyToClipboard]="result().input | getChatItemContent"
+  >
+    <span class="material-icons">content_copy</span>
+  </button>
+</mat-menu>
+<mat-menu #aiMenu="matMenu">
+  <button class="btn btn-circle btn-soft btn-ghost" (click)="refresh()">
+    <span class="material-icons">refresh</span>
+  </button>
+</mat-menu>

@@ -1,0 +1,58 @@
+@defer (on viewport) {
+  <div #root class="h-full min-h-[48px] default-style p-[16px] cursor-auto">
+    <ai-chat #aiChat class="nodrag">
+      <div class="title-action flex gap-2">
+        <button
+          class="btn btn-circle btn-soft btn-ghost"
+          [matMenuTriggerFor]="menu"
+        >
+          <span class="material-icons">more_vert</span>
+        </button>
+      </div>
+      @if (canBuildNode() && !inStore()) {
+        <button
+          class="btn btn-circle btn-soft btn-ghost build-node-btn"
+          (click)="buildNode()"
+          [matTooltip]="'构建节点'"
+          type="button"
+        >
+          <span class="material-icons">build</span>
+        </button>
+      }
+    </ai-chat>
+  </div>
+  <mat-menu #menu="matMenu">
+    @if (!inStore() && canBuildNode()) {
+      <button mat-menu-item (click)="deleteSourceNode()">
+        <mat-icon color="warn">delete</mat-icon>
+        <span>删除生成节点</span>
+      </button>
+      <button mat-menu-item (click)="removeSourceEdge()">
+        <mat-icon color="primary">check</mat-icon>
+        <span>取消生成关联</span>
+      </button>
+    }
+    <button
+      mat-menu-item
+      [matMenuTriggerFor]="saveMenuTemplateRef"
+      [disabled]="!this.comp()!.firstItem$()"
+    >
+      <span>保存到</span>
+    </button>
+    <button mat-menu-item [matMenuTriggerFor]="loadTemplate">
+      <span>读取模板</span>
+    </button>
+  </mat-menu>
+  <mat-menu #saveMenuTemplateRef="matMenu">
+    <button mat-menu-item (click)="saveToPrompt('codeAction')">选中处理</button>
+    <button mat-menu-item (click)="saveToPrompt('commonChat')">通用对话</button>
+  </mat-menu>
+  <mat-menu #loadTemplate="matMenu">
+    <menu-group
+      [groupList]="(list() | async) || []"
+      [callbackGroup]="callbackGroup"
+    ></menu-group>
+  </mat-menu>
+} @placeholder {
+  <div class="w-full h-full"></div>
+}

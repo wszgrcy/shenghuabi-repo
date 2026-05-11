@@ -1,0 +1,7 @@
+<ng-template #templateRef let-attr="attributes">
+  @if (!editable$$()) {
+    {{ field().form.control?.value$$() }}
+  } @else {
+    <ng-container insertField></ng-container>
+  }
+</ng-template>

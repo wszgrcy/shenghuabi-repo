@@ -1,0 +1,14 @@
+@if (Define$(); as define) {
+  <piying-view
+    [schema]="define"
+    [options]="options"
+    [model]="model$()"
+    (modelChange)="valueChange($any($event))"
+    class="form-minimum noValid px-6 py-4 block"
+  >
+  </piying-view>
+} @else {
+  <div class="flex overflow-hidden justify-center">
+    <mat-spinner></mat-spinner>
+  </div>
+}

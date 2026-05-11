@@ -1,0 +1,139 @@
+<div class="flex flex-col gap-2 h-full noValid form-minimum">
+  @if (provider.display.title) {
+    <!-- 标题部分 -->
+    <div class="pt-[4px] noValid flex w-full items-center gap-2">
+      @if (firstItem$().mode) {
+        <menu-checkbox
+          [options]="CHAT_TYPE_LIST"
+          [ngModel]="firstItem$().mode"
+          (ngModelChange)="modeChange($event)"
+          [description]="menuTooltip()"
+        >
+          <div class="extra-menu">
+            <button
+              class="btn btn-circle btn-soft btn-ghost"
+              (click)="changeModelConfigName()"
+              [matTooltip]="
+                firstItem$().modelConfigName
+                  ? '已选择模型配置:' + firstItem$().modelConfigName
+                  : '请选择模型配置'
+              "
+            >
+              <span class="material-icons">settings</span>
+            </button>
+          </div>
+        </menu-checkbox>
+      }
+      <label class="floating-label flex-1">
+        <input
+          type="text"
+          placeholder="未命名"
+          class="input input-sm"
+          [(ngModel)]="title"
+        />
+        <span>标题</span>
+      </label>
+
+      <button
+        class="btn btn-circle btn-soft btn-warning btn-sm"
+        (click)="reset(false)"
+        [matTooltip]="'停止请求'"
+      >
+        <span class="material-icons">stop</span>
+      </button>
+      <button
+        class="btn btn-circle btn-soft btn-error btn-sm"
+        (click)="reset(true)"
+        [matTooltip]="'重置对话'"
+      >
+        <span class="material-icons">refresh</span>
+      </button>
+      <ng-content select=".title-action"></ng-content>
+    </div>
+  }
+  <div class="flex flex-col flex-1 overflow-auto custom-scrollbar gap-2">
+    @if (mode$$() === 'template') {
+      @let template = firstItem$().template;
+      @for (item of template; track $index; let i = $index) {
+        <div class="flex gap-2 line-hover relative">
+          <prompt-template
+            class="flex-1 overflow-hidden"
+            [ngModel]="item"
+            [isLast]="$last"
+            (ngModelChange)="templateChange(i, $event)"
+            (addTemplateChange)="addTemplate()"
+            [list]="template"
+          >
+            @if ($count !== 1) {
+              <button
+                class="btn btn-circle btn-soft btn-ghost btn-error"
+                (click)="templateRemove(i)"
+                class="extra-menu-after"
+              >
+                <span class="material-icons">remove</span>
+              </button>
+            }
+          </prompt-template>
+        </div>
+      }
+    }
+    @if (mode$$() === 'workflow' || mode$$() === 'template') {
+      @if (chatResult$(); as item) {
+        <workflow-input [inputValue]="lastData"></workflow-input>
+        <workspace-chat-result
+          [result]="item!"
+          [insertCodeAction]="codeAction()"
+          [context]="$any(item).context"
+        ></workspace-chat-result>
+      }
+    }
+    @for (item of list$(); track $index) {
+      <common-chat-result
+        [result]="item"
+        [index]="$index"
+        [commonChat]="commonChat"
+      ></common-chat-result>
+    }
+    <div class="flex-1"></div>
+  </div>
+
+  <!-- 不同对话部分，有工具栏和显示的历史 -->
+
+  @if (loading$()) {
+    <mat-progress-bar mode="buffer"></mat-progress-bar>
+  }
+  <form ngForm (ngSubmit)="chatAll()" class="chat-input-form">
+    <div class="flex nodrag items-end">
+      @let defulatType = useChatType$$() === 'default';
+      @if (!defulatType) {
+        <input-form
+          name="agent"
+          [(ngModel)]="firstItem$"
+          [inputList]="inputNameList()"
+          (keyEnter)="chatAll()"
+          class="flex-1"
+          [disableInputObject]="disableInputObject()"
+        ></input-form>
+      } @else {
+        <!-- 需要封装也就是新绑定 -->
+        <chat-common-input
+          name="common"
+          class="flex-1"
+          [(ngModel)]="commonInput"
+          (submitChange)="chatAll()"
+        ></chat-common-input>
+      }
+
+      <div class="flex gap-2">
+        <ng-content select=".build-node-btn"></ng-content>
+        <button
+          class="btn btn-circle btn-soft btn-ghost btn-sm"
+          type="submit"
+          [disabled]="loading$()"
+        >
+          <span class="material-icons">send</span>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

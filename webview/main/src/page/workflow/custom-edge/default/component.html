@@ -1,0 +1,23 @@
+<!--  先不用 .因为未定好规则 -->
+<div class="default-style" [style.display]="'none'">
+  <span class="input-sizer" #parent>
+    <input
+      type="text"
+      #input
+      size="1"
+      (input)="change(input.value, true)"
+      placeholder=""
+      [ngModel]="$any(props()).data?.value || ''"
+      class="bg-transparent text-center"
+    />
+  </span>
+</div>
+
+<div class="form-minimum flex">
+  <mat-icon
+    (click)="deleteItem()"
+    color="warn"
+    class="cursor-pointer edge-delete-btn invisible btn-c-error"
+    >delete</mat-icon
+  >
+</div>

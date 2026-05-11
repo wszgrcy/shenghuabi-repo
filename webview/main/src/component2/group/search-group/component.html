@@ -1,0 +1,30 @@
+<div class="grid gap-2">
+  <label class="input">
+    {{ searchLabel() }}
+    <input
+      [placeholder]="searchPlaceholder()"
+      [ngModel]="searchContent$()"
+      (ngModelChange)="valueChange($event)"
+    />
+  </label>
+  @for (field of field$$().children!(); track field.id || $index) {
+    @defer (on viewport) {
+      <div
+        [class.hidden]="
+          canHidden
+            | pure
+              : searchContent$()
+              : field.props()['title']
+              : field.props()['description']
+              : field.keyPath
+        "
+      >
+        <ng-container
+          *ngTemplateOutlet="fieldTemplateRef; context: { $implicit: field }"
+        ></ng-container>
+      </div>
+    } @placeholder {
+      <div [class.height]="minHeight()"></div>
+    }
+  }
+</div>

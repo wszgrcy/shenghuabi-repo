@@ -1,0 +1,118 @@
+<div class="flex flex-col gap-2">
+  <div
+    #mic
+    style="border: 1px solid #ddd; border-radius: 4px"
+    [class.hidden-wave]="hasAudio$()"
+  ></div>
+  <div
+    [audioPlayer]="defaultConfig"
+    #audioPlayer="audioPlayer"
+    style="border: 1px solid #ddd; border-radius: 4px"
+    [class.!border-yellow-500]="audioPlayer.toLarge$()"
+    [class.!border-2]="audioPlayer.toLarge$()"
+    [class.hidden-wave]="!hasAudio$()"
+    [data]="data$()"
+    (audioChange)="audioChanged($event)"
+    (finish)="isPlaying$.set(false)"
+    [maxDuration]="maxDuration()"
+    [matTooltip]="maxDurationTooltip()"
+    [matTooltipDisabled]="!audioPlayer.toLarge$()"
+    [matTooltipPosition]="'above'"
+  ></div>
+
+  <div class="flex items-center gap-2">
+    @if (!hasAudio$()) {
+      <button
+        class="btn btn-circle btn-soft btn-ghost"
+        (click)="toggleRecord()"
+      >
+        <span class="material-icons">
+          {{ isRecording$() ? 'stop' : 'fiber_manual_record' }}
+        </span>
+      </button>
+    } @else {
+      <button class="btn btn-circle btn-soft btn-ghost" (click)="togglePlay()">
+        <span class="material-icons">{{
+          isPlaying$() ? 'stop' : 'play_arrow'
+        }}</span>
+      </button>
+    }
+
+    @if (isRecording$()) {
+      <button
+        class="btn btn-circle btn-soft btn-ghost"
+        (click)="pasuseRecord()"
+      >
+        <span class="material-icons">
+          {{ isPasuseRecord$() ? 'play_arrow' : 'pause' }}
+        </span>
+      </button>
+    }
+    @if (!hasAudio$()) {
+      <select class="select" [(ngModel)]="device$">
+        @for (item of (deviceList$$ | async) || []; track $index) {
+          <option [value]="item.value">{{ item.label }}</option>
+        }
+      </select>
+    } @else {
+      @if (isTriming$$()) {
+        <span>{{ audioPlayer.trimDisplay$$() }}</span>
+      } @else {
+        <span>{{ audioPlayer.timeDisplay$$() }}</span>
+      }
+    }
+    <div class="flex-1"></div>
+    @if (!isRecording$() && !hasAudio$()) {
+      <input
+        type="file"
+        accept="audio/*"
+        class="opacity-0 cursor-pointer w-0 h-0 select-none"
+        #aa
+        (change)="fileInput(aa)"
+      />
+      <button
+        class="btn btn-circle btn-soft btn-ghost relative"
+        matTooltip="上传"
+        (click)="aa.click()"
+      >
+        <span class="material-icons">upload</span>
+      </button>
+    }
+    @if (hasAudio$()) {
+      @if (isTriming$$()) {
+        <button
+          class="btn btn-circle btn-soft btn-primary"
+          (click)="submitTrim()"
+          matTooltip="确认"
+        >
+          <span class="material-icons">check</span>
+        </button>
+      }
+      @if (!isTriming$$()) {
+        <button
+          class="btn btn-circle btn-soft btn-primary"
+          (click)="setTrim(true)"
+          matTooltip="裁剪"
+        >
+          <span class="material-icons">content_cut</span>
+        </button>
+      } @else {
+        <button
+          class="btn btn-circle btn-soft btn-error"
+          (click)="setTrim(false)"
+        >
+          <span class="material-icons">close</span>
+        </button>
+      }
+      @if (!isTriming$$()) {
+        <button
+          class="btn btn-circle btn-soft btn-error"
+          (click)="reset()"
+          matTooltip="重新选择"
+        >
+          <span class="material-icons">redo</span>
+        </button>
+      }
+    }
+  </div>
+</div>

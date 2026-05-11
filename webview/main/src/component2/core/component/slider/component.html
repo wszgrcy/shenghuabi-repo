@@ -1,0 +1,16 @@
+<mat-slider
+  class="!w-full"
+  [max]="max()"
+  [min]="min()"
+  [step]="step()"
+  [discrete]="discrete()"
+  [showTickMarks]="showTickMarks()"
+  [disabled]="disabled$()"
+>
+  <input
+    matSliderThumb
+    [ngModel]="value$()"
+    (ngModelChange)="valueChange($event)"
+    [disabled]="disabled$()"
+  />
+</mat-slider>

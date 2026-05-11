@@ -1,0 +1,17 @@
+<div class="noValid px-2 pt-2 form-minimum">
+  <piying-view
+    [(model)]="model"
+    class="grid gap-2"
+    #formly
+    [schema]="schema"
+    [options]="options"
+  ></piying-view>
+  <button
+    type="submit"
+    class="w-full mt-4 btn btn-block btn-primary btn-sm"
+    [disabled]="formly.form$$()?.invalid"
+    (click)="submit()"
+  >
+    创建知识库
+  </button>
+</div>

@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>{{ config ? '编辑配置' : '创建配置' }}</h2>
+<mat-dialog-content class="mat-typography !pt-2">
+  <piying-view
+    [schema]="schema"
+    [options]="options"
+    [model]="model$()"
+    (modelChange)="valueChange($event)"
+    class="form-minimum noValid"
+  >
+  </piying-view>
+</mat-dialog-content>
+<mat-dialog-actions class="flex">
+  <div class="flex-1">
+    @if (downloading$()) {
+      <mat-progress-bar
+        mode="buffer"
+        [value]="downloadingProgress$()"
+      ></mat-progress-bar>
+    }
+  </div>
+  <button
+    class="btn btn-circle btn-soft btn-accent"
+    [disabled]="!downloadModelObj$$() || downloading$()"
+    (click)="downloadModel()"
+    matTooltip="下载hf-repo仓库中的模型"
+  >
+    <span class="material-icons">download</span>
+  </button>
+  <button class="btn btn-error" mat-dialog-close>关闭</button>
+  <button class="btn btn-soft btn-primary" (click)="close()">提交</button>
+</mat-dialog-actions>

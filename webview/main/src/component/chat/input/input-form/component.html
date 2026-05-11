@@ -1,0 +1,81 @@
+<div class="flex gap-2 form-minimum noValid flex-col">
+  @for (item of inputList$$(); track $index) {
+    @let key = inputKey | pure: item;
+    @let label = inputLabel | pure: item;
+    @switch (inputType | pure: item : switchObject) {
+      @case ('object') {
+        <label class="floating-label">
+          <yaml-textarea
+            [name]="key"
+            [ngModel]="inputValue$$()[key]"
+            (ngModelChange)="valueChange(key, $event)"
+            [disabled]="disableInputObject()[key]"
+          ></yaml-textarea>
+          <span class="label">{{ label }}(yaml)</span>
+        </label>
+      }
+      @case ('string') {
+        <mat-menu #menu="matMenu">
+          @for (item of fullContextList$$(); track $index) {
+            <button
+              class="btn btn-circle btn-soft btn-ghost"
+              (click)="switchType(key, item.type)"
+              type="button"
+              [matTooltip]="item.label"
+            >
+              <mat-icon
+                [color]="item.color"
+                [fontIcon]="item.icon?.fontIcon!"
+                [fontSet]="item.icon?.fontSet!"
+              ></mat-icon>
+            </button>
+          }
+        </mat-menu>
+        <div class="join w-full">
+          <button
+            type="button"
+            class="btn btn-circle btn-soft btn-ghost join-item"
+            [matMenuTriggerFor]="menu"
+            (click)="stopDefault($event)"
+          >
+            <span class="material-icons">more_vert</span>
+          </button>
+          <textarea
+            [name]="key"
+            class="textarea join-item"
+            cdkTextareaAutosize
+            [ngModel]="inputValue$$()[key]"
+            (ngModelChange)="valueChange(key, $event)"
+            skipEnter
+            (keypressEnter)="keypressEnter()"
+            [disabled]="disableInputObject()[key]"
+            [placeholder]="label"
+          ></textarea>
+        </div>
+      }
+      @case ('image') {
+        <div class="flex items-center gap-2">
+          <label>{{ label }}</label>
+          <image-base64-input
+            [name]="key"
+            [ngModel]="inputValue$$()[key]"
+            (ngModelChange)="valueChange(key, $event)"
+          ></image-base64-input>
+        </div>
+      }
+      @case ('context') {
+        <mat-chip
+          (removed)="removeKey(key)"
+          color="primary"
+          (click)="switchType(key)"
+        >
+          {{ contextLabel | pure: context$$()[key] : label }}
+          <button matChipRemove color="warn">
+            <mat-icon color="warn">cancel</mat-icon>
+          </button>
+        </mat-chip>
+      }
+      @case ('schema') {}
+    }
+  }
+</div>

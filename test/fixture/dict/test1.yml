@@ -1,0 +1,5 @@
+list:
+  - word: word1
+    content: content1
+    extra:
+      key1: value1

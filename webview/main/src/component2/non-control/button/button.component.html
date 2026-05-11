@@ -1,0 +1,90 @@
+<div class="flex w-full">
+  @switch (type$$()) {
+    @case ('raised') {
+      <button
+        mat-raised-button
+        [color]="color()"
+        [disabled]="disabled() || loading$()"
+        class="flex-1"
+        (click)="onClicked()"
+        [type]="buttonType()"
+      >
+        {{ label() }}
+      </button>
+    }
+    @case ('stroked') {
+      <button
+        mat-stroked-button
+        [color]="color()"
+        [disabled]="disabled() || loading$()"
+        class="flex-1"
+        (click)="onClicked()"
+        [type]="buttonType()"
+      >
+        {{ label() }}
+      </button>
+    }
+    @case ('flat') {
+      <button
+        class="btn btn-soft flex-1"
+        [class.btn-primary]="color() === 'primary'"
+        [class.btn-warn]="color() === 'warn'"
+        [disabled]="disabled() || loading$()"
+        (click)="onClicked()"
+        [type]="buttonType()"
+      >
+        {{ label() }}
+      </button>
+    }
+    @case ('icon') {
+      <button
+        class="btn btn-circle btn-soft flex-1"
+        [disabled]="disabled() || loading$()"
+        (click)="onClicked()"
+        [type]="buttonType()"
+      >
+        <mat-icon
+          [fontSet]="fontSet()!"
+          [color]="color()"
+          [fontIcon]="icon()!"
+        ></mat-icon>
+      </button>
+    }
+    @case ('fab') {
+      <button
+        mat-fab
+        [color]="color()"
+        [disabled]="disabled() || loading$()"
+        class="flex-1"
+        (click)="onClicked()"
+        [type]="buttonType()"
+      >
+        <mat-icon [fontSet]="fontSet()!" [fontIcon]="icon()!"></mat-icon>
+      </button>
+    }
+    @case ('mini-fab') {
+      <button
+        mat-mini-fab
+        [color]="color()"
+        [disabled]="disabled() || loading$()"
+        class="flex-1"
+        (click)="onClicked()"
+        [type]="buttonType()"
+      >
+        <mat-icon [fontSet]="fontSet()!" [fontIcon]="icon()!"></mat-icon>
+      </button>
+    }
+    @default {
+      <button
+        class="btn btn-soft flex-1"
+        [class.btn-primary]="color() === 'primary'"
+        [class.btn-error]="color() === 'warn'"
+        [disabled]="disabled() || loading$()"
+        (click)="onClicked()"
+        [type]="buttonType()"
+      >
+        {{ label() }}
+      </button>
+    }
+  }
+</div>

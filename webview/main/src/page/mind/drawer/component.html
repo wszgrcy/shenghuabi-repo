@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>节点配置</h2>
+<mat-dialog-content>
+  <form class="form-minimum noValid p-2">
+    <piying-view
+      [schema]="schema"
+      [(model)]="data"
+      [options]="options"
+    ></piying-view>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-1"></div>
+  <button class="btn btn-soft btn-primary" (click)="apply()">修改</button>
+  <button class="btn btn-error" [mat-dialog-close] cdkFocusInitial>
+    取消
+  </button>
+</mat-dialog-actions>

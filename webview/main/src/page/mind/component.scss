@@ -1,0 +1,233 @@
+@use 'sass:meta';
+
+@mixin xyflow {
+  @include meta.load-css('../../../node_modules/@xyflow/react/dist/style');
+}
+:host ::ng-deep {
+  @include xyflow();
+  // 默认禁用
+  .connectionindicator {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  // 起始点
+  .react-flow__handle.source {
+    background-color: orange;
+  }
+  // 对接点，两者一样，但是这里只用于装饰，
+  .react-flow__handle.target {
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .react-flow__handle {
+    width: 12px;
+    height: 12px;
+    border: none;
+  }
+  /**
+  拖动点逻辑
+  默认不显示
+  hover显示
+  拖动时所有hover部分节点边蓝
+  逻辑上有source和target，但是实际上只有hover才显示
+  */
+  // hover及拖动的时候就显示
+  .react-flow__viewport:has(.react-flow__connectionline) {
+    .react-flow__handle.target {
+      // 不显示，优化下展示内容
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .react-flow__handle.source {
+      visibility: hidden;
+      pointer-events: all !important;
+      // 伪装代替
+      background-color: blue;
+      .click-add {
+        opacity: 0;
+      }
+    }
+  }
+
+  .react-flow__node:hover {
+    // background-color: red;
+    .react-flow__handle.source {
+      visibility: visible !important;
+      pointer-events: all;
+    }
+  }
+  // 激活resize后的框宽度，默认的太窄不好选择
+  .react-flow__resize-control.top.line {
+    border-top-width: 3px !important;
+  }
+  .react-flow__resize-control.right.line {
+    border-right-width: 3px !important;
+  }
+  .react-flow__resize-control.bottom.line {
+    border-bottom-width: 3px !important;
+  }
+  .react-flow__resize-control.left.line {
+    border-left-width: 3px !important;
+  }
+
+  .ce-toolbar__content,
+  .ce-block__content {
+    // todo 为什么两个卡片，但是左右位置不同
+    max-width: max(calc(100% - 120px), 650px);
+  }
+  //todo 默认值需要有数值。这么写没法重现。
+  $node-color: var(--vscode-foreground);
+  $node-bg-color: var(--vscode-editorWidget-background);
+  $node-radius-width: 8px;
+  .mat-mdc-card {
+    background-color: $node-bg-color;
+    box-shadow: none;
+  }
+
+  // todo 去掉所有样式
+  .default-style {
+    box-sizing: border-box;
+  }
+
+  // .react-flow__panel.top.left {
+  //   margin: 0;
+  // }
+  // .react-flow__panel.top.right {
+  //   margin: 0;
+  // }
+  .default-edge-label-renderer:has(*:hover) {
+    .edge-delete-btn,
+    .label-empty-hidden {
+      visibility: visible;
+    }
+  }
+  // 这里的target是特别的接收，用于对话
+  .handle-wrapper-left {
+    top: 50%;
+    left: -6px;
+
+    .react-flow__handle.target {
+      visibility: visible;
+      pointer-events: all;
+      opacity: 1;
+    }
+    .react-flow__handle-left {
+      left: unset;
+      top: unset;
+      transform: translate(0, -50%);
+    }
+  }
+  // 要不然看不到边 不好看因为这样的话边显示,但是节点没了
+  // .react-flow__nodes {
+  //   z-index: -1 !important;
+  // }
+  .click-add {
+    pointer-events: none;
+    opacity: 0;
+  }
+  // 点击时的样式
+  .clickGenerate {
+    .react-flow__handle.source {
+      .click-add {
+        opacity: 1;
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        line-height: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        color: wheat;
+      }
+    }
+    .react-flow__handle.source {
+      // &::after {
+      //   content: '+';
+      //   position: absolute;
+      //   top: -5px;
+      //   left: 0px;
+      //   color: wheat;
+      //   font-size: 0.8em;
+      // }
+    }
+  }
+
+  .toolbar-icon {
+    border-radius: 4px;
+    padding: 4px;
+    &:hover {
+      // todo 等改系统主题
+      background-color: var(--vscode-toolbar-activeBackground);
+      // opacity: 0.08;
+    }
+  }
+  .node-toolbar {
+    background-color: var(--mat-app-background-color);
+    // padding: 2px;
+    border-color: transparent;
+  }
+  .react-flow__node:not(.selected) {
+    .node-wrapper * {
+      pointer-events: none;
+      user-select: none;
+    }
+  }
+  .node-wrapper {
+    & > * {
+      display: block;
+      height: 100%;
+    }
+  }
+  // .react-flow__node:not(.selected) {
+  //   pointer-events: none !important;
+  //   // [contenteditable] {
+  //   //   pointer-events: none;
+  //   // }
+  // }
+  // .react-flow__node:hover {
+  //   background-color: red;
+  // }
+  // 中间的搜索.还需要调整下,与上面的最好一样
+  .search-input {
+    font-size: 16px;
+    .mat-mdc-form-field-infix {
+      min-height: 24px;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      line-height: 1;
+    }
+    .mat-mdc-notch-piece {
+      border-color: var(--vscode-commandCenter-border) !important;
+      background-color: var(--vscode-commandCenter-background) !important;
+    }
+    mat-icon {
+      color: var(--vscode-icon-foreground);
+    }
+    input {
+      color: var(--vscode-commandCenter-foreground) !important;
+    }
+  }
+  // 工具栏切换调整
+  .ant-segmented-item-label {
+    padding: 0;
+  }
+  .ant-segmented {
+    padding: 0;
+  }
+  .ant-segmented-item-label {
+    min-height: 0;
+    line-height: 0;
+  }
+  // 框选禁止选中
+  .react-flow__pane.selection {
+    * {
+      user-select: none !important;
+    }
+  }
+}

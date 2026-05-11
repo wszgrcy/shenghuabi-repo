@@ -1,0 +1,25 @@
+<div class="join">
+  <label class="input join-item">
+    帮助搜索
+    <input
+      type="text"
+      #el
+      class="input join-item"
+      ngModel
+      (ngModelChange)="inputChange($event)"
+      placeholder="请输入搜索内容"
+      [matAutocomplete]="auto"
+    />
+  </label>
+
+  @if (loading$()) {
+    <mat-spinner [diameter]="20" class="pr-2 join-item"></mat-spinner>
+  }
+  <mat-autocomplete #auto="matAutocomplete">
+    @for (item of searchOptions$(); track $index) {
+      <a [href]="item.value" class="no-underline !outline-0">
+        <mat-option [value]="el.value">{{ item.label }} </mat-option></a
+      >
+    }
+  </mat-autocomplete>
+</div>

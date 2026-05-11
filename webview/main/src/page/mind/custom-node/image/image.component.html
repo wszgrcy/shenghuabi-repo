@@ -1,0 +1,19 @@
+<div class="h-full overflow-hidden box-border flex">
+  @if (url(); as url) {
+    <img class="w-full h-full" [src]="url" alt="" (dblclick)="input.click()" />
+  } @else {
+    <button
+      class="btn btn-soft relative flex-[0_0_100px] !text-[16px]"
+      (click)="input.click()"
+    >
+      选择图片
+    </button>
+  }
+</div>
+<input
+  type="file"
+  (change)="selectImage(input)"
+  accept="image/*"
+  class="!h-0 !w-0 !opacity-0 !overflow-hidden !hidden"
+  #input
+/>

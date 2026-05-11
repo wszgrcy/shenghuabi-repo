@@ -1,0 +1,61 @@
+<form class="flex gap-2 form-minimum noValid items-start" [formGroup]="forms">
+  <menu-checkbox
+    [options]="PROMPT_TYPE"
+    formControlName="type"
+    class="sticky top-0"
+  >
+    <div class="extra-menu">
+      @if (isLast()) {
+        <div>
+          <button
+            class="btn btn-circle btn-soft btn-primary"
+            (click)="addTemplateChange.emit()"
+            matTooltip="添加对话模板"
+          >
+            <span class="material-icons">add</span>
+          </button>
+        </div>
+      }
+      <ng-content select=".extra-suffix-after"></ng-content>
+    </div>
+  </menu-checkbox>
+  <div class="flex-1 relative flex items-center group/prompt-container">
+    <span-input
+      class="span-replace-input flex-1 overflow-hidden"
+      formControlName="content"
+    ></span-input>
+    <div
+      class="absolute right-0 hidden group-hover/prompt-container:flex z-[1]"
+    >
+      <ng-content select=".extra-menu-before"></ng-content>
+      @if (!disableImage()) {
+        <button
+          class="btn btn-circle btn-soft btn-ghost btn-sm"
+          (click)="opened = !opened"
+          cdkOverlayOrigin
+          #trigger="cdkOverlayOrigin"
+          [matTooltip]="'定义图片变量'"
+        >
+          <span class="material-icons">image</span>
+        </button>
+        <ng-template
+          cdkConnectedOverlay
+          [cdkConnectedOverlayOrigin]="trigger"
+          [cdkConnectedOverlayOpen]="opened"
+          (overlayOutsideClick)="opened = !opened"
+        >
+          <div
+            class="form-minimum noValid"
+            style="background-color: var(--vscode-editorWidget-background)"
+          >
+            <label class="input">
+              图片变量名
+              <input type="text" class="grow" [formControl]="forms.controls.assets" placeholder="输入变量名" />
+            </label>
+          </div>
+        </ng-template>
+      }
+      <ng-content select=".extra-menu-after"></ng-content>
+    </div>
+  </div>
+</form>

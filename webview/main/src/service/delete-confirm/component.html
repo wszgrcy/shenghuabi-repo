@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>
+  <div class="inline-flex items-center w-full">
+    <div>{{ title }}</div>
+    <div class="flex-1"></div>
+    <div></div>
+  </div>
+</h2>
+<mat-dialog-content class="custom-scrollbar !pt-2 form-minimum noValid">
+  {{ description }}
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button class="btn btn-error" [mat-dialog-close]="{ submit: false }">
+    取消
+  </button>
+  <button class="btn btn-soft btn-primary" [mat-dialog-close]="{ submit: true }">确认</button>
+</mat-dialog-actions>

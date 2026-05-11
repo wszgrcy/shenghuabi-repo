@@ -1,0 +1,55 @@
+<mat-select
+  [ngModel]="value$()"
+  (ngModelChange)="valueChange($event)"
+  [disabled]="disabled$()"
+  [placeholder]="placeholder()"
+  [compareWith]="compareWith"
+  [multiple]="multiple()"
+  (selectionChange)="change.emit($event)"
+  [panelClass]="panelClass()"
+>
+  <mat-select-trigger>
+    @if (getItem | pure: value$(); as item) {
+      @if (item.icon) {
+        <div>
+          <mat-icon [ngStyle]="item.style" class="align-middle">{{
+            item.icon
+          }}</mat-icon>
+        </div>
+      } @else if (item.style) {
+        <div [ngStyle]="item.style"></div>
+      }
+    }
+  </mat-select-trigger>
+  @if (options() | selectOptions; as selectOptions) {
+    @for (item of selectOptions; track $index) {
+      @if (item.group) {
+        <mat-optgroup [label]="item.label">
+          @for (child of item.group; track $index) {
+            <mat-option
+              [value]="child.value"
+              [disabled]="child.disabled"
+              [ngStyle]="child.style"
+              class="styled-component-item"
+            >
+            </mat-option>
+          }
+        </mat-optgroup>
+      } @else {
+        <mat-option
+          [value]="item.value"
+          [disabled]="item.disabled"
+          class="styled-component-item"
+        >
+          @if (item.icon) {
+            <div class="flex">
+              <mat-icon [ngStyle]="item.style">{{ item.icon }}</mat-icon>
+            </div>
+          } @else if (item.style) {
+            <div [ngStyle]="item.style"></div>
+          }
+        </mat-option>
+      }
+    }
+  }
+</mat-select>

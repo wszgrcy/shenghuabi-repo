@@ -1,0 +1,42 @@
+@if (props$$()['title']; as title) {
+  <div class="text-center">
+    {{ title }}
+  </div>
+}
+<mat-chip-set>
+  @for (item of children$$(); track $index) {
+    <mat-chip
+      (removed)="remove($index)"
+      color="primary"
+      (click)="switch($index)"
+    >
+      {{ chipLabel() | pure: $index }}
+
+      <button
+        matChipRemove
+        type="button"
+        class="btn btn-circle btn-ghost btn-error btn-sm"
+        [disabled]="minLength() ? $count <= minLength() : false"
+      >
+        <span class="material-icons icon-4">cancel</span>
+      </button>
+    </mat-chip>
+  }
+
+  <button
+    class="btn btn-circle btn-ghost btn-primary btn-sm"
+    type="button"
+    (click)="addNewChip()"
+    color="primary"
+  >
+    <span class="material-icons icon-4">add</span>
+  </button>
+</mat-chip-set>
+@if (children$$()!.length) {
+  <ng-container
+    *ngTemplateOutlet="
+      fieldTemplateRef;
+      context: { $implicit: children$$()![activate$()] }
+    "
+  ></ng-container>
+}

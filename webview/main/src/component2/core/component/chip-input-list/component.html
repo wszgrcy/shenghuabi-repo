@@ -1,0 +1,70 @@
+@if (!disableInput()) {
+  <mat-chip-grid #chipGrid [disabled]="disabled$()">
+    @for (item of value$(); track $index; let i = $index) {
+      <mat-chip-row
+        [editable]="!!editable()"
+        (edited)="changeItem(i, $event)"
+        (removed)="prefixRemoveChange(i)"
+      >
+        {{ item }}
+        @if (!disableDelete()) {
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        }
+      </mat-chip-row>
+    }
+    @if (autocompletion()) {
+      <input
+        class="input input-sm"
+        #input
+        type="text"
+        [matChipInputFor]="chipGrid"
+        [(ngModel)]="searchContent$"
+        [matAutocomplete]="auto"
+        [matChipInputSeparatorKeyCodes]="list"
+        [matChipInputAddOnBlur]="addOnBlur()"
+        [placeholder]="placeholder() || ''"
+        (matChipInputTokenEnd)="completionChange($event); input.value = ''"
+      />
+      <mat-autocomplete #auto="matAutocomplete">
+        @for (option of completionList$$() | async; track option) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-autocomplete>
+    } @else if (!inputRow()) {
+      <input
+        class="input input-sm"
+        #input
+        [matChipInputFor]="chipGrid"
+        [matChipInputSeparatorKeyCodes]="list"
+        (matChipInputTokenEnd)="prefixChange($event); input.value = ''"
+        [matChipInputAddOnBlur]="addOnBlur()"
+        [placeholder]="placeholder() || ''"
+      />
+    }
+  </mat-chip-grid>
+  @if (inputRow()) {
+    <input
+      class="input input-sm"
+      #input
+      [matChipInputFor]="chipGrid"
+      [matChipInputSeparatorKeyCodes]="list"
+      (matChipInputTokenEnd)="prefixChange($event); input.value = ''"
+      [matChipInputAddOnBlur]="addOnBlur()"
+    />
+  }
+} @else {
+  <div class="flex gap-[8px]">
+    @for (item of value$(); track $index; let i = $index) {
+      <mat-chip-row (removed)="prefixRemoveChange(i)" [disabled]="disabled$()">
+        {{ item }}
+        @if (!disableDelete()) {
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        }
+      </mat-chip-row>
+    }
+  </div>
+}

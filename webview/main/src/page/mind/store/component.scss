@@ -1,0 +1,9 @@
+:host ::ng-deep {
+  // todo 太边界可能有问题
+  .item-container:has(.drag-btn:hover) {
+    // 因为内部变大,外部看不出来导致拖动位置异常
+    .draggable-wrapper {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+<mat-card appearance="outlined">
+  <mat-card-content>
+    <piying-view
+      class="form-minimum noValid"
+      [schema]="schema()"
+      [model]="model() ?? {}"
+      (modelChange)="valueChange($event)"
+      [options]="options$$()"
+    ></piying-view>
+  </mat-card-content>
+</mat-card>

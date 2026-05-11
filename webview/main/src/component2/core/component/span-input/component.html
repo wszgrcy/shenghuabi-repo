@@ -1,0 +1,15 @@
+@let showPlaceholder = !value && placeholder();
+<span
+  role="textbox"
+  [attr.contenteditable]="disabled() ? 'false' : 'plaintext-only'"
+  #span
+  (keydown)="blockEnter($event)"
+  (input)="valueChange()"
+  class="span-text"
+  [class.span-input--disabled]="disabled()"
+  (compositionstart)="_compositionStart()"
+  (compositionend)="_compositionEnd($event)"
+></span>
+@if (showPlaceholder && !composition$()) {
+  <span class="span-placeholder">{{ placeholder() }}</span>
+}

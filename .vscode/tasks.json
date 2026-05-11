@@ -1,0 +1,226 @@
+// See https://go.microsoft.com/fwlink/?LinkId=733558
+// for the documentation about the tasks.json format
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "没有用,但应该这么实现",
+			"dependsOn": [
+				"watch-native",
+				"watch-main-view"
+			],
+			"presentation": {
+				"reveal": "never",
+				"group": "watchers"
+			},
+			"isBackground": true,
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "watch-main-view",
+			"type": "npm",
+			"script": "start",
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never",
+				"group": "watchers"
+			},
+			"problemMatcher": [
+				{
+					"base": "$ts-webpack",
+					"applyTo": "closedDocuments",
+					"fileLocation": [
+						"relative",
+						"${cwd}"
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": {
+							"regexp": "Building"
+						},
+						"endsPattern": {
+							"regexp": "Watch mode enabled. Watching for file changes"
+						}
+					}
+				}
+			],
+			"group": {
+				"kind": "build"
+			},
+			"options": {
+				"cwd": "./webview/main"
+			}
+		},
+		{
+			"label": "watch",
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never",
+				"group": "watchers"
+			},
+			"group": {
+				"kind": "build"
+			},
+			"dependsOn": [
+				"watch-native",
+				"watch-main-view"
+			]
+		},
+		{
+			"label": "watch-native",
+			"type": "npm",
+			"script": "watch:run",
+			"problemMatcher": [
+				{
+					"base": "$ts-webpack",
+					"applyTo": "closedDocuments",
+					"fileLocation": [
+						"relative",
+						"${cwd}"
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": {
+							"regexp": "."
+						},
+						"endsPattern": {
+							"regexp": "构建完成"
+						}
+					}
+				}
+			],
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never",
+				"group": "watchers"
+			},
+			"group": {
+				"kind": "build"
+			}
+		},
+		{
+			"type": "npm",
+			"script": "watch-tests",
+			"problemMatcher": "$tsc-watch",
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never",
+				"group": "watchers"
+			},
+			"group": "build"
+		},
+		{
+			"type": "npm",
+			"script": "watch",
+			"problemMatcher": "$ts-webpack-watch",
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never",
+				"group": "watchers"
+			},
+			"group": "build"
+		},
+		{
+			"label": "tasks: watch-tests",
+			"type": "npm",
+			"script": "watch:test",
+			"problemMatcher": [
+				{
+					"base": "$ts-webpack",
+					"applyTo": "closedDocuments",
+					"fileLocation": [
+						"relative",
+						"${cwd}"
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": {
+							"regexp": "构建完成"
+						},
+						"endsPattern": {
+							"regexp": "构建完成"
+						}
+					}
+				}
+			],
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never",
+				"group": "watchers"
+			},
+			"group": {
+				"kind": "build"
+			}
+		},
+		{
+			"label": "package:build",
+			"detail": "打包",
+			"dependsOrder": "parallel",
+			"dependsOn": [
+				"build-main-view",
+				"build-native"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "build-main-view",
+			"type": "npm",
+			"script": "build",
+			"hide": true,
+			"presentation": {
+				"group": "build"
+			},
+			"problemMatcher": [],
+			"options": {
+				"cwd": "./webview/main"
+			}
+		},
+		{
+			"label": "build-native",
+			"type": "npm",
+			"script": "build:prod",
+			"hide": true,
+			"problemMatcher": [],
+			"presentation": {
+				"group": "build"
+			},
+			"dependsOn": []
+		},
+		{
+			"label": "package:copy",
+			"hide": true,
+			"type": "npm",
+			"script": "copy-assets",
+			"dependsOn": [
+				"package:build"
+			]
+		},
+		{
+			"label": "package",
+			"type": "npm",
+			"script": "local-publish",
+			"options": {
+				"cwd": "./build"
+			},
+			"dependsOn": [
+				"package:copy"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "vs-publish",
+			"type": "npm",
+			"script": "vs-publish",
+			"options": {
+				"cwd": "./build"
+			},
+			"dependsOn": [
+				"package:copy"
+			],
+			"problemMatcher": []
+		}
+	]
+}

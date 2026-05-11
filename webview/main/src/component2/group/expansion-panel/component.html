@@ -1,0 +1,14 @@
+<mat-accordion multi>
+  @for (item of children$$(); track $index) {
+    <mat-expansion-panel>
+      @if (item.props()['title']) {
+        <mat-expansion-panel-header
+          >{{ item.props()['title'] }}
+        </mat-expansion-panel-header>
+      }
+      <ng-container
+        *ngTemplateOutlet="fieldTemplateRef; context: { $implicit: item }"
+      ></ng-container>
+    </mat-expansion-panel>
+  }
+</mat-accordion>

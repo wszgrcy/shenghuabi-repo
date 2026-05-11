@@ -1,0 +1,24 @@
+@if (schema$$(); as schema) {
+  <div
+    class="host h-full flex rounded-lg border-0 border-solid w-[400px] pointer-events-auto noValid mat-elevation-z1"
+  >
+    <div class="flex flex-col p-2 flex-1 overflow-hidden">
+      <div class="flex gap-2 w-full items-center">
+        <node-head [props]="props()" class="flex-1 overflow-hidden"></node-head>
+        <button class="btn btn-circle btn-soft btn-error" (click)="closeSelf()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="overflow-auto flex-1 form-minimum">
+        <piying-view
+          #formly
+          class="pt-2 custom-scrollbar block"
+          [schema]="schema"
+          [model]="props()"
+          (modelChange)="modelChanged($event)"
+          [options]="options"
+        ></piying-view>
+      </div>
+    </div>
+  </div>
+}

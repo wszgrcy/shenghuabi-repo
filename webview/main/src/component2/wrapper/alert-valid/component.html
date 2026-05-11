@@ -1,0 +1,16 @@
+<ng-template #error>
+  @if (field$$().form.control?.errors && isChangedStatus$$()) {
+    <div class="flex flex-col gap-2 rounded-sm bg-red-200">
+      <div class="text-red-400 p-2">{{ errorStr$$() }}</div>
+    </div>
+  }
+</ng-template>
+
+@if (position$$() === 'top') {
+  <ng-container *ngTemplateOutlet="error"></ng-container>
+}
+
+<ng-container insertField></ng-container>
+@if (position$$() === 'bottom') {
+  <ng-container *ngTemplateOutlet="error"></ng-container>
+}

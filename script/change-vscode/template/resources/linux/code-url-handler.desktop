@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=@@NAME_LONG@@ - URL Handler
+Comment=智能写作编辑器
+GenericName=Text Editor
+Exec=@@EXEC@@ --open-url %U
+Icon=@@ICON@@
+Type=Application
+NoDisplay=true
+StartupNotify=true
+Categories=Utility;TextEditor;Development;IDE;
+MimeType=x-scheme-handler/@@URLPROTOCOL@@;
+Keywords=ShengHuaBi;

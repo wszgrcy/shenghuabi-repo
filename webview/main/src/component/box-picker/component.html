@@ -1,0 +1,104 @@
+<div class="flex justify-center">
+  <div class="w-[240px] h-[192px] bg-gray-500">
+    <div class="grid grid-cols-6 grid-rows-6 h-full">
+      <div
+        class="col-span-5 grid grid-cols-subgrid cursor-pointer direction-block direction-top-block"
+        [class.direction-top]="models().direction === Direction.top"
+        (click)="toggle(Direction.top)"
+        [matTooltip]="DirectionMap[Direction.top]"
+      >
+        <div class="radius-block"></div>
+        <div class="col-span-4"></div>
+      </div>
+      <div
+        class="col-start-6 col-span-1 row-start-1 row-span-5 grid grid-rows-subgrid cursor-pointer direction-block direction-right-block"
+        [class.direction-right]="models().direction === Direction.right"
+        (click)="toggle(Direction.right)"
+        [matTooltip]="DirectionMap[Direction.right]"
+      >
+        <div class="radius-block"></div>
+        <div class="row-span-4"></div>
+      </div>
+      <div
+        class="row-start-6 row-span-1 col-start-2 col-span-5 grid grid-cols-subgrid cursor-pointer direction-block direction-bottom-block"
+        [class.direction-bottom]="models().direction === Direction.bottom"
+        (click)="toggle(Direction.bottom)"
+        [matTooltip]="DirectionMap[Direction.bottom]"
+      >
+        <div class="col-span-4"></div>
+        <div class="radius-block"></div>
+      </div>
+      <div
+        class="row-start-2 row-span-5 col-start-1 col-span-1 grid grid-rows-subgrid cursor-pointer direction-block direction-left-block"
+        [class.direction-left]="models().direction === Direction.left"
+        (click)="toggle(Direction.left)"
+        [matTooltip]="DirectionMap[Direction.left]"
+      >
+        <div class="row-span-4"></div>
+        <div class="radius-block"></div>
+      </div>
+      <!-- 内圈 -->
+      <div
+        class="row-start-2 row-span-4 col-start-2 col-span-4 grid grid-rows-subgrid grid-cols-subgrid"
+      >
+        <div
+          class="grid grid-cols-subgrid row-start-1 row-span-1 col-start-1 col-span-3"
+        >
+          <div class="radius-block" [class.direction-axis]="isAxis$()"></div>
+          <div
+            class="col-span-2 cursor-pointer y-block direction-block y-top-block"
+            (click)="toggle(Direction.y)"
+            [class.direction-y]="models().direction === Direction.y"
+            [matTooltip]="DirectionMap[Direction.y]"
+          ></div>
+        </div>
+        <div
+          class="grid grid-rows-subgrid row-start-1 row-span-3 col-start-4 col-span-1"
+        >
+          <div class="radius-block" [class.direction-axis]="isAxis$()"></div>
+          <div
+            class="row-span-2 cursor-pointer x-block direction-block x-right-block"
+            (click)="toggle(Direction.x)"
+            [class.direction-x]="models().direction === Direction.x"
+            [matTooltip]="DirectionMap[Direction.x]"
+          ></div>
+        </div>
+        <div
+          class="grid grid-cols-subgrid row-start-4 row-span-1 col-start-2 col-span-3"
+        >
+          <div
+            class="col-span-2 cursor-pointer y-block direction-block y-bottom-block"
+            (click)="toggle(Direction.y)"
+            [class.direction-y]="models().direction === Direction.y"
+            [matTooltip]="DirectionMap[Direction.y]"
+          ></div>
+          <div class="radius-block" [class.direction-axis]="isAxis$()"></div>
+        </div>
+        <div
+          class="grid grid-rows-subgrid row-start-2 row-span-3 col-start-1 col-span-1"
+        >
+          <div
+            class="row-span-2 cursor-pointer x-block direction-block x-left-block"
+            (click)="toggle(Direction.x)"
+            [class.direction-x]="models().direction === Direction.x"
+            [matTooltip]="DirectionMap[Direction.x]"
+          ></div>
+          <div class="radius-block" [class.direction-axis]="isAxis$()"></div>
+        </div>
+        <div
+          class="col-start-2 col-span-2 row-start-2 row-span-2 cursor-pointer direction-block"
+          (click)="toggle(Direction.global)"
+          [class.direction-global]="models().direction === Direction.global"
+          [matTooltip]="DirectionMap[Direction.global]"
+        ></div>
+      </div>
+    </div>
+  </div>
+</div>
+<piying-view
+  [schema]="schema"
+  [options]="options"
+  [model]="models()"
+  (modelChange)="valueChange($any($event))"
+>
+</piying-view>

@@ -1,0 +1,175 @@
+:host {
+  --default-theme: 'open';
+}
+:host .markdown-body ::ng-deep {
+  * {
+    &::after {
+      white-space: normal;
+    }
+    &::before {
+      white-space: normal;
+    }
+  }
+  @container style(--default-theme: 'open') {
+    p {
+      margin: 0;
+      position: relative;
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      border-bottom: 1px solid;
+    }
+
+    a {
+      color: var(--vscode-textLink-foreground);
+      text-decoration: none;
+      outline: none;
+    }
+    a:hover {
+      text-decoration: var(--text-link-decoration);
+      cursor: pointer;
+    }
+
+    code {
+      font-family: var(
+        --vscode-editor-font-family,
+        'SF Mono',
+        Monaco,
+        Menlo,
+        Consolas,
+        'Ubuntu Mono',
+        'Liberation Mono',
+        'DejaVu Sans Mono',
+        'Courier New',
+        monospace
+      );
+      font-size: 1em;
+      line-height: 1.357em;
+      color: var(--vscode-textPreformat-foreground);
+      background-color: var(--vscode-textPreformat-background);
+      padding: 1px 3px;
+      border-radius: 4px;
+    }
+
+    ul {
+      list-style-position: outside;
+    }
+
+    ul,
+    ol {
+      margin-bottom: 0.7em;
+    }
+    li p {
+      margin-bottom: 0.7em;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    ol,
+    ul {
+      margin-top: 0;
+    }
+    h1,
+    h2,
+    hr,
+    th,
+    td {
+      border-color: var(--md-hr-border-color);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-weight: 600;
+      margin-top: 24px;
+      margin-bottom: 16px;
+      line-height: 1.25;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-top: 0;
+      padding-bottom: 0.3em;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      padding-bottom: 0.3em;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+    }
+
+    h3 {
+      font-size: 1.25em;
+    }
+
+    h4 {
+      font-size: 1em;
+    }
+
+    h5 {
+      font-size: 0.875em;
+    }
+
+    h6 {
+      font-size: 0.85em;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      overflow-y: scroll;
+      overflow-x: scroll;
+      table-layout: fixed;
+      width: 100%;
+      margin-bottom: 0.7em;
+    }
+    th {
+      background-color: #f2f3f5;
+      text-align: start;
+      border-bottom: 1px solid;
+    }
+
+    th,
+    td {
+      padding: 5px 10px;
+    }
+    th,
+    td {
+      border: 1px solid #bbb;
+      width: 75px;
+      min-width: 75px;
+      vertical-align: top;
+      text-align: start;
+      padding: 6px 8px;
+      position: relative;
+      outline: none;
+    }
+    th {
+      border-color: var(--md-th-border-color);
+    }
+
+    blockquote {
+      margin: 0;
+      padding: 0px 16px 0 10px;
+      border-left-width: 5px;
+      border-left-style: solid;
+      border-radius: 2px;
+
+      background: var(--vscode-textBlockQuote-background);
+      border-color: var(--vscode-textBlockQuote-border);
+    }
+  }
+}

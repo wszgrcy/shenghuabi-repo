@@ -1,0 +1,26 @@
+.wrapper {
+  // background: #2a2a2a;
+
+  width: 240px;
+  // height: 240px;
+  // font-size: 14px;
+
+  // font-family: sans-serif;
+  // color: #bec6cf;
+}
+
+.label {
+  user-select: none;
+}
+
+:host {
+  number-input ::ng-deep,
+  ::ng-deep .number-input {
+    .mat-mdc-text-field-wrapper.mdc-text-field {
+      padding: 0;
+      input {
+        text-align: right;
+      }
+    }
+  }
+}

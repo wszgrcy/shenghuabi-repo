@@ -1,0 +1,22 @@
+<div class="card bg-base-100 shadow-sm">
+  <div class="card-body">
+    @if (props$$()['title']) {
+      <h2 class="card-title">{{ props$$()['title'] }}</h2>
+    }
+    <ng-container insertField></ng-container>
+    @if (props$$()['actionList']; as actions) {
+      <div class="justify-end card-actions">
+        @for (item of actions; track $index) {
+          <button
+            class="btn btn-soft"
+            [class.btn-primary]="item.color === 'primary'"
+            (click)="loadFn(item)"
+            [disabled]="item.disable?.() ?? loadingMap.get(item)?.()"
+          >
+            {{ item.label }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>

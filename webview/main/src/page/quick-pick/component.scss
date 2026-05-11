@@ -1,0 +1,9 @@
+:host {
+  command-button,
+  install-check {
+    width: 100%;
+  }
+  ::ng-deep button {
+    width: 100%;
+  }
+}

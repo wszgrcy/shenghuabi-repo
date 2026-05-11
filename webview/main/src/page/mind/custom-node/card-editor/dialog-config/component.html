@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content class="mat-typography">
+  <mat-card-content>
+    <piying-view
+      class="form-minimum noValid grid gap-2"
+      [(model)]="model$"
+      [options]="options"
+      [schema]="schema"
+      #formly
+    ></piying-view>
+  </mat-card-content>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button class="btn btn-error" mat-dialog-close>取消</button>
+  <button
+    class="btn btn-soft btn-primary"
+    (click)="submit()"
+    cdkFocusInitial
+    [disabled]="formly.form$$()?.invalid"
+  >
+    保存
+  </button>
+</mat-dialog-actions>

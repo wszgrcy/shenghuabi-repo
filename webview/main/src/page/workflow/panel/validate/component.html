@@ -1,0 +1,27 @@
+<div
+  class="host h-full flex rounded-lg border-0 border-solid w-[400px] pointer-events-auto mat-elevation-z1"
+>
+  <div class="flex flex-col p-2 flex-1 gap-2 overflow-hidden">
+    <div class="flex gap-2 w-full items-center">
+      <div class="flex-1">对话测试</div>
+      <button
+        class="btn btn-circle btn-soft btn-warning"
+        (click)="reset(false)"
+        [matTooltip]="'停止请求'"
+      >
+        <span class="material-icons">stop</span>
+      </button>
+      <button
+        class="btn btn-circle btn-soft btn-error"
+        (click)="reset(true)"
+        [matTooltip]="'重置对话'"
+      >
+        <span class="material-icons">refresh</span>
+      </button>
+      <button class="btn btn-circle btn-soft btn-error" (click)="closeSelf()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <ai-chat #chat class="flex-1 overflow-auto"></ai-chat>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+<textarea
+  class="textarea"
+  cdkTextareaAutosize
+  [ngModel]="value$() || ''"
+  (ngModelChange)="valueChange($event)"
+  [disabled]="disabled$()"
+></textarea>

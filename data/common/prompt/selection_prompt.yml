@@ -1,0 +1,38 @@
+- title: 反义
+  mode: template
+  template:
+    - role: system
+      content:
+        - type: text
+          text: 请将输入的内容进行语义反转,并保持语言表达的自然流畅
+    - role: user
+      content:
+        - type: text
+          text: '{{selection}}'
+- title: 灌水
+  mode: template
+  template:
+    - role: system
+      content:
+        - type: text
+          text: 请扩展内容的细节和描述，使其更加丰富和完整，而不改变原有的核心意思
+    - role: user
+      content:
+        - type: text
+          text: '{{selection}}'
+- title: 美化
+  mode: template
+  template:
+    - role: system
+      content:
+        - type: text
+          text: 将输入内容换一种说法使其更委婉并返回
+    - role: user
+      content:
+        - type: text
+          text: '{{selection}}'
+- mode: workflow
+  workflow:
+    path: default/[编辑器选中]选中修改提示
+  context: {}
+  title: 选中修改提示

@@ -1,0 +1,72 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "compileOnSave": false,
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "outDir": "./dist/out-tsc",
+    "module": "ES2022",
+    "target": "ES2022",
+    "moduleResolution": "bundler",
+    "lib": [
+      "ES2020",
+      "ES2021",
+      "ES2022",
+      "ES2023",
+      "ES2024",
+      "dom",
+      "ESNext.Promise"
+    ],
+    "jsx": "react-jsx",
+    "paths": {
+      "@bridge/share": [
+        "../../src/share"
+      ],
+      "@bridge/api": [
+        "../../src/trpc"
+      ],
+      "@polyfill/*": [
+        "../../src/polyfill/*"
+      ],
+      "@fe/trpc": [
+        "./src/service/trpc.service.ts"
+      ],
+      "@fe/component/*": [
+        "./src/component/*"
+      ],
+      "@fe/form/*": [
+        "./src/form/*"
+      ],
+      "@fe/util/*": [
+        "./src/util/*"
+      ],
+      "@fe/piying/*": [
+        "./src/piying/*"
+      ],
+      "@global": [
+        "../../script/metadata/index.ts"
+      ],
+      "@share/util/*": [
+        "../../src/util/*"
+      ],
+      "@share/valibot": [
+        "./src/valibot/index.ts"
+      ],
+      "@share/valibot/type": [
+        "../../src/share/workflow/node-define/valibot-metadata/type"
+      ],
+      "@share/valibot/define": [
+        "../../src/share/valibot/define.ts"
+      ],
+      "@cyia/component/*": [
+        "./src/component2/*"
+      ]
+    }
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}

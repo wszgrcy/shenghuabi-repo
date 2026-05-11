@@ -1,0 +1,48 @@
+span {
+  outline: 0;
+  min-width: 0.1px;
+  min-height: 0.1px;
+}
+
+.span-placeholder {
+  opacity: 0.5;
+}
+.span-input--disabled {
+  overflow-wrap: break-word;
+  -webkit-line-break: after-white-space;
+  white-space: pre-line;
+}
+// 用来修复空内容时mat-input 不断点击时问题
+
+// 使用grid替代
+:host {
+  // 可以用inline-grid但是动态显示,比如放panel中会有问题
+  display: grid;
+  width: 100%;
+  position: relative;
+  line-height: normal;
+  cursor: text;
+}
+:host > .span-text,
+:host > .span-placeholder {
+  /* 还可以简写为 grid-area: 1 / 2 */
+  grid-area: 1 / 1 / 2 / 2;
+}
+// 适配mat的占位符
+:host-context(.mat-form-field-hide-placeholder) {
+  .span-placeholder {
+    opacity: 0;
+  }
+}
+:host {
+  .span-text {
+    display: block;
+    z-index: 1;
+    word-break: break-all;
+  }
+  .span-placeholder {
+    word-break: keep-all;
+    overflow: hidden;
+    user-select: none;
+  }
+}

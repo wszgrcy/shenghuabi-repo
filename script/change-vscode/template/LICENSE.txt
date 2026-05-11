@@ -1,0 +1,5 @@
+﻿请勿用作违法用途
+
+依赖 Microsoft Visual C++ Redistributable: https://aka.ms/vs/17/release/vc_redist.x64.exe
+请确保此依赖已被安装
+缺少会出现,无法ocr,创建知识库等问题

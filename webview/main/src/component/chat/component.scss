@@ -1,0 +1,19 @@
+:host ::ng-deep {
+  .chat-border {
+    padding: 8px 16px 8px 16px;
+    border: 1px solid;
+    border-radius: 4px;
+    line-height: 1.2;
+  }
+}
+
+// 输入框过高
+:host {
+  .chat-input-form ::ng-deep {
+    span-input {
+      max-height: 300px;
+      overflow: auto;
+      scrollbar-width: thin;
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [
+    "./src/declaration/code-node.ts",
+  ],
+  "include": [],
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "target": "ES2022",
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
+  }
+}
