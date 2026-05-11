@@ -7,7 +7,7 @@ export async function main() {
   let isCI = !!process.env['CI'];
   console.log('运行在集成环境', isCI);
 
-  const VSCODE_REL_PATH = isCI ? '../vscode' : '../../third-project/vscode';
+  const VSCODE_REL_PATH =  './lib/vscode';
 
   let packageJson = path.join(VSCODE_REL_PATH, 'package.json');
   let content = JSON.parse(

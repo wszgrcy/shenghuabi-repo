@@ -5,7 +5,7 @@ export async function main() {
   const enableShell = platform() === 'linux';
   const { $ } = await import('execa');
   let isCI = !!process.env['CI'];
-  const VSCODE_REL_PATH = isCI ? '../vscode' : '../../third-project/vscode';
+  const VSCODE_REL_PATH = './lib/vscode';
   let vscodeCWD = join(process.cwd(), VSCODE_REL_PATH);
   await $({ stdio: 'inherit', shell: enableShell })(`code-recycle`, [
     '--cwd',
