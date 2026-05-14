@@ -6,7 +6,7 @@
     "static-injector": "6.1.2",
     "valibot": "1.4.0",
     "rxjs": "7.8.2",
-    "@xyflow/react": "12.4.4",
+    "@xyflow/react": "12.10.2",
     "file-type": "^21.0.0",
     "graphology": "0.26.0",
     "graphology-types": "0.24.8",

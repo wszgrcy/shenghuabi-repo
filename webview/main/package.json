@@ -10,8 +10,7 @@
     "i18n:init": "ng extract-i18n --output-path src/locale --format xlf",
     "i18n:update": "ts-node -P ./script/tsconfig.json ./script/xlf-update.ts",
     "i18n:toJson": "ts-node ./script/xlf-to-json.ts",
-    "update": "ng update @angular/core@21 @angular/cdk@21 @angular/material@21 @angular/cli@21 --force --allow-dirty",
-    "postinstall": "patch-package"
+    "update": "ng update @angular/core@21 @angular/cdk@21 @angular/material@21 @angular/cli@21 --force --allow-dirty"
   },
   "private": true,
   "dependencies": {
@@ -43,7 +42,6 @@
     "material-icons": "^1.13.14",
     "mathjs": "13.2.0",
     "mnemonist": "0.40.3",
-    "patch-package": "^8.0.0",
     "prettier": "^3.3.3",
     "pure-rand": "7.0.1",
     "react-colorful": "^5.6.1",
