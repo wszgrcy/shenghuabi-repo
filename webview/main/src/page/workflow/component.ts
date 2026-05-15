@@ -112,7 +112,7 @@ export default class WorkflowEditor
   implements OnInit
 {
   drawer = viewChild.required<MatDrawer>('drawer');
-  reactFlowReactOutlet = viewChild.required<ReactOutlet>('reactflow');
+  // reactFlowReactOutlet = viewChild.required<ReactOutlet>('reactflow');
   ReactFlow = ReactFlow;
   Background = Background;
   BackgroundVariant = BackgroundVariant;
@@ -373,7 +373,7 @@ export default class WorkflowEditor
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.service.rootReactOutlet = this.reactFlowReactOutlet();
+
     this.#trpc.client.mind.listenEvent.subscribe(undefined, {
       onData: async (request) => {
         const response = { id: request.id, data: undefined as any };

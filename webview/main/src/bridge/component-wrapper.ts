@@ -28,7 +28,7 @@ export interface ReactComponentWrapper {
   /** input() / @Input() */
   props?: Record<string, any>;
   /** 当Angular组件被作为React组件调用时,且组件内部有react-outlet时使用 */
-  children?: Signal<(() => React.ReactPortal)[]>;
+  children?: Signal<(() => (() => React.ReactPortal) | undefined)[]>;
   /** 由外部定义 */
   output?: WritableSignal<Record<string, any> | undefined>;
 }
@@ -52,7 +52,7 @@ export function wrapperToReact(
     props: { inputs: Record<string, any>; className?: string },
     inputRef?: any,
   ) => {
-    const [children, setChildren] = useState<ReactPortal[]>([]);
+    const [children, setChildren] = useState<(ReactPortal | undefined)[]>([]);
     const className = props.className;
     const elRef = useRef<HTMLDivElement>(undefined as any);
     const environmentInjector =
@@ -81,7 +81,9 @@ export function wrapperToReact(
       if (instance.children) {
         effect(
           () => {
-            const children = instance.children!().map((item) => item());
+            // 第一个调用是信号,第二个调用是返回portal
+            const children = instance.children!().map((item) => item?.()?.());
+
             setChildren(children);
           },
           { injector: componentRef.injector },

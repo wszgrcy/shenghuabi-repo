@@ -20,7 +20,6 @@ import { ChatNodeService } from '../../domain/chat-node/chat-node.service';
 import { ReactOutlet } from '@cyia/ngx-bridge/react-outlet';
 @Injectable()
 export class BridgeService extends FlowBseService<CustomNode> {
-  rootReactOutlet!: ReactOutlet;
   #injector = inject(Injector);
   #chatNode = inject(ChatNodeService);
 
