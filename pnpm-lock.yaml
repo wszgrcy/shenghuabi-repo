@@ -523,8 +523,8 @@ importers:
         specifier: 6.2.2
         version: 6.2.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@cyia/ngx-bridge':
-        specifier: 0.0.21
-        version: 0.0.21(@angular/common@21.2.12(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(react@19.2.6)(vue@3.5.34(typescript@5.9.2))
+        specifier: 0.0.22
+        version: 0.0.22(@angular/common@21.2.12(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(react@19.2.6)(vue@3.5.34(typescript@5.9.2))
       '@cyia/ngx-common':
         specifier: ^20.1.0
         version: 20.1.0(@angular/common@21.2.12(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
@@ -1299,11 +1299,11 @@ packages:
   '@cyia/mdict-reader@1.0.10':
     resolution: {integrity: sha512-/sK2GlmxW6elMMNwvFy3dkj2Y3tq+q1188b33WXgrlL4/K7h/WIIzUtLTP3ZL1+D1CnVcVVhQFvTdXfUChu+8A==}
 
-  '@cyia/ngx-bridge@0.0.21':
-    resolution: {integrity: sha512-gEh7ZgVbGQTCjUd70hh3P/0PYR0bua2hDV35h6UQyu3m/eIZ6QfL33wlCgnPns7Egsjzt8WqWAFAmNCOAnTEbw==}
+  '@cyia/ngx-bridge@0.0.22':
+    resolution: {integrity: sha512-O9dHHZrLXaQOu4cvEHZQeCDFYlDn8fDwlMRJExf1wqnLnrNnMBQ6b+iQ8NSEF8SiP78nAqEp48UpE2MC9i/Hlw==}
     peerDependencies:
-      '@angular/common': '>=19.2.0'
-      '@angular/core': '>=19.2.0'
+      '@angular/common': '>=20.0.0'
+      '@angular/core': '>=20.0.0'
       react: ^19.0.0
       vue: ^3.4.21
 
@@ -11914,7 +11914,7 @@ snapshots:
       magic-string: 0.30.21
       xxhashjs: 0.2.2
 
-  '@cyia/ngx-bridge@0.0.21(@angular/common@21.2.12(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(react@19.2.6)(vue@3.5.34(typescript@5.9.2))':
+  '@cyia/ngx-bridge@0.0.22(@angular/common@21.2.12(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(react@19.2.6)(vue@3.5.34(typescript@5.9.2))':
     dependencies:
       '@angular/common': 21.2.12(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
       '@angular/core': 21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1)

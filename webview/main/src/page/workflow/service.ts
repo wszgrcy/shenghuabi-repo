@@ -17,8 +17,10 @@ import { FormlyCommonNodeComponent } from './custom-node/formly-common-node/comp
 import { isTruthy } from '@share/util/is-truthy';
 import { DefaultNodeComponent } from './custom-node/default/component';
 import { ChatNodeService } from '../../domain/chat-node/chat-node.service';
+import { ReactOutlet } from '@cyia/ngx-bridge/react-outlet';
 @Injectable()
 export class BridgeService extends FlowBseService<CustomNode> {
+  rootReactOutlet!: ReactOutlet;
   #injector = inject(Injector);
   #chatNode = inject(ChatNodeService);
 
@@ -141,7 +143,6 @@ export class BridgeService extends FlowBseService<CustomNode> {
   constructor() {
     super();
   }
-
   appendNode(position: { x: number; y: number }, config: Partial<CustomNode>) {
     const position2 = this.instance()!.screenToFlowPosition(position);
     const maybeParent = this.selectedNodeList$()[0];

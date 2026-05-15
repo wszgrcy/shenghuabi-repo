@@ -1,0 +1,11 @@
+<ng-template #templateRef let-attr="attributes" let-events="events">
+  <!-- todo 这里应该是一个类似锚点的,当拖动时进行校验 -->
+  <react-outlet [component]="Handle" [parent]="parent" [root]="false">
+    <!-- <div [attributes]="attr()" [events]="events()" #child> -->
+      <ng-template #child>
+
+        <ng-container insertField></ng-container>
+      </ng-template>
+    <!-- </div> -->
+  </react-outlet>
+</ng-template>

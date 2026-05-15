@@ -272,39 +272,7 @@ export function wrapControlNode(
     const instance = useReactFlow();
     props = instance.getNode(props.id)!;
     const updateNode = useUpdateNodeInternals();
-    const LeftDiffHandle = useMemo(
-      () =>
-        createDiffHandle<HandleNode>({
-          diffCompareFn: (item) => item.id,
-          diffWhen(preValue, currentValue, diffValue) {
-            return bridge.instance()!.deleteElements({
-              edges: bridge
-                .edges()
-                .filter((edge) =>
-                  diffValue.some(
-                    (handle) =>
-                      handle.id === edge.targetHandle &&
-                      props.id === edge.target,
-                  ),
-                ),
-            });
-          },
-          afterBuild() {
-            updateNode(props.id);
-          },
-          creatChild: (list, item, index) => {
-            return (
-              <LeftHandleItem
-                list={list}
-                index={index}
-                handleNode={item}
-                key={index}
-              ></LeftHandleItem>
-            );
-          },
-        }),
-      [],
-    );
+
     const RightDiffHandle = useMemo(
       () =>
         createDiffHandle<HandleNode>({
@@ -385,9 +353,7 @@ export function wrapControlNode(
               otherInputs={componentConfig.otherInputs}
             ></NgOutletReact>
           </div>
-          <LeftDiffHandle
-            list={flatFilterHandleList(props.data.handle?.input)}
-          />
+
           <RightDiffHandle
             list={flatFilterHandleList(props.data.handle?.output)}
           />
