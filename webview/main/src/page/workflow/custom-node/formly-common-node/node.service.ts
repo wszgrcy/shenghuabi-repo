@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, Signal, signal } from '@angular/core';
+import { CustomNode } from '@bridge/share';
 
 @Injectable()
 export class NodeService {
@@ -10,4 +11,5 @@ export class NodeService {
       return list;
     });
   }
+  props$!: Signal<CustomNode>;
 }
