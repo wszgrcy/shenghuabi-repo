@@ -3,7 +3,6 @@ import {
   actions,
   asControl,
   asVirtualGroup,
-  condition,
   setComponent,
   valueChange,
 } from '@piying/view-angular-core';
@@ -28,33 +27,13 @@ export const GRAPH_QUERY_NODE_DEFINE = v.looseObject({
               actions.inputs.patchAsync({
                 options: (field) => field.context!.selectRagKnowledgeList(),
               }),
-              condition({
-                environments: ['display'],
-                actions: [setComponent('readonly-value')],
-              }),
+            
             ),
             question: v.pipe(
               v.optional(v.string()),
               v.title('问题'),
-              valueChange((fn) => {
-                fn({ list: [undefined] }).subscribe(({ list, field }) => {
-                  if (typeof list[0] !== 'string') {
-                    return;
-                  }
-                  field.context
-                    .parseTemplate(list[0] ?? '')
-                    .then((value: any) => {
-                      if (!value) {
-                        return;
-                      }
-                      field.context.changeHandleData(field, 'input', 1, value);
-                    });
-                });
-              }),
-              condition({
-                environments: ['display'],
-                actions: [setComponent('readonly-value')],
-              }),
+     
+           
             ),
             list: v.pipe(
               v.optional(v.array(v.string())),
@@ -77,10 +56,7 @@ export const GRAPH_QUERY_NODE_DEFINE = v.looseObject({
                   };
                 },
               }),
-              condition({
-                environments: ['display'],
-                actions: [setComponent('readonly-value')],
-              }),
+           
             ),
             template: INLINE_Template,
           }),

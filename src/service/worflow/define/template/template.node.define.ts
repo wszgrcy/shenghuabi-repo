@@ -53,18 +53,7 @@ export const TEMPLATE_NODE_DEFINE = v.looseObject({
               layout({ keyPath: ['..', '..'] }),
             ),
           }),
-          valueChange((fn) => {
-            fn({ list: [undefined] }).subscribe(({ list, field }) => {
-              field.context
-                .parseTemplate(Object.values(list[0]).filter(Boolean), 'liquid')
-                .then((value: any) => {
-                  if (!value) {
-                    return;
-                  }
-                  field.context.changeHandleData(field, 'input', 2, value);
-                });
-            });
-          }),
+ 
         ),
       }),
       actions.wrappers.patch([

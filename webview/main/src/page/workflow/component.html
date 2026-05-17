@@ -49,12 +49,7 @@
       </button>
     </div>
     <div class="flex-1 flex gap-2 overflow-y-hidden">
-      @if (nodeConfigPanelStatus() && configProps(); as props) {
-        <node-panel
-          [props]="$any(props)"
-          [close$]="nodeConfigPanelStatus"
-        ></node-panel>
-      }
+
       @if (validatePanelStatus() && flowData()) {
         <validate-panel
           [flowData]="{ flow: flowData() }"

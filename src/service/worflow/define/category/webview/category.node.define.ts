@@ -5,7 +5,6 @@ import { stringify } from 'yaml';
 import {
   actions,
   asVirtualGroup,
-  condition,
   formConfig,
   renderConfig,
   setComponent,
@@ -33,44 +32,12 @@ export const CATEGORY_NODE_DEFINE = v.looseObject({
   data: v.looseObject({
     value: v.pipe(
       v.string(),
-      setComponent(''),
-      condition({
-        environments: ['display'],
-        actions: [
-          setComponent('textarea'),
-          actions.class.top('nodrag'),
-
-          valueChange((fn) => {
-            fn({ list: [undefined] })
-              .pipe(
-                debounceTime(200),
-                filter(({ list: [value] }) => typeof value === 'string'),
-              )
-              .subscribe(({ list: [value], field }) => {
-                field.context.parseTemplate(value).then((value: any) => {
-                  if (!value) {
-                    return;
-                  }
-                  field.context.changeHandleData(field, 'input', 1, value);
-                });
-              });
-          }),
-        ],
-      }),
+      setComponent('textarea-template'),
+      actions.class.top('nodrag'),
     ),
     config: v.pipe(
       v.intersect([
-        v.pipe(
-          v.object({ llm: v.optional(llmModelConfig()) }),
-          condition({
-            environments: ['display'],
-            actions: [
-              renderConfig({
-                hidden: true,
-              }),
-            ],
-          }),
-        ),
+        v.pipe(v.object({ llm: v.optional(llmModelConfig()) })),
         v.object({
           categories: v.pipe(
             v.optional(
@@ -81,15 +48,7 @@ export const CATEGORY_NODE_DEFINE = v.looseObject({
                       v.optional(v.string(), ''),
                       v.minLength(1),
                       v.title('分类依据'),
-                      condition({
-                        environments: ['display'],
-                        actions: [setComponent('string')],
-                      }),
                     ),
-                  }),
-                  condition({
-                    environments: ['display'],
-                    actions: [setComponent('object')],
                   }),
                 ),
               ),
@@ -100,52 +59,13 @@ export const CATEGORY_NODE_DEFINE = v.looseObject({
             v.title('分类'),
             v.description('根据分类依据进行不同问题的分类'),
             // todo , 禁用添加
-            condition({
-              environments: ['display', 'default'],
-              actions: [
-                formConfig({
-                  emptyValue: [],
-                }),
-                setComponent('editable-group'),
-                actions.inputs.set({
-                  minLength: 1,
-                  layout: 'column',
-                }),
-                valueChange((fn) => {
-                  fn({ list: [undefined] })
-                    .pipe(debounceTime(200))
-                    .subscribe(({ list: [value], field }) => {
-                      if (!Array.isArray(value)) {
-                        return;
-                      }
-                      value = (value as any[]).filter((item) => item.value);
-                      field.context.changeHandleData(
-                        field,
-                        'output',
-                        0,
-                        (value as any[]).map((item, index) => {
-                          // todo value变化了,需要知道在哪里用
-                          return { label: item.value, value: `${index}` };
-                        }),
-                      );
-                      field.context
-                        .parseTemplate(
-                          (value as any[]).map((item) => item.value),
-                        )
-                        .then((value: any) => {
-                          if (!value) {
-                            return;
-                          }
-                          field.context.changeHandleData(
-                            field,
-                            'input',
-                            2,
-                            value,
-                          );
-                        });
-                    });
-                }),
-              ],
+            formConfig({
+              emptyValue: [],
+            }),
+            setComponent('editable-group'),
+            actions.inputs.set({
+              minLength: 1,
+              layout: 'column',
             }),
           ),
           examples: v.optional(EXAMPLES_DEFINE, [

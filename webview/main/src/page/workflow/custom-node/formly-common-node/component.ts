@@ -2,21 +2,23 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
 } from '@angular/core';
 import { BridgeService } from '../../service';
-import { PiyingView, PiViewConfig } from '@piying/view-angular';
+import { PiyingView, PiViewConfig, actions } from '@piying/view-angular';
 import { FormWrappers } from '../../define/node-form';
-import { asVirtualGroup, condition } from '@piying/view-angular';
+import { asVirtualGroup } from '@piying/view-angular';
 import { Displayhandle } from '../../define/handle/display.handle';
 import * as v from 'valibot';
 import { CustomNode } from '../../type';
 import { FormsModule } from '@angular/forms';
 import { ValueFormatDirective } from '../../../../directive/value-format.directive';
-import { HandleAddon$$ } from '../../../../domain/chat-node/define';
 import { deepEqual } from 'fast-equals';
 import { DefaultFormTypes } from '@fe/form/default-type-config';
+import { HandleWC } from '../../wrapper/handle/component';
+import { NodeService } from './node.service';
 const FieldGlobalConfig = {
   types: DefaultFormTypes,
   wrappers: FormWrappers,
@@ -28,7 +30,7 @@ const FieldGlobalConfig = {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PiyingView, FormsModule, ValueFormatDirective],
-  providers: [],
+  providers: [NodeService],
 })
 export class FormlyCommonNodeComponent {
   define = input<v.BaseSchema<any, any, any>>();
@@ -45,20 +47,24 @@ export class FormlyCommonNodeComponent {
     if (!define) {
       return;
     }
-    return v.pipe(
-      v.intersect([define, HandleAddon$$()]),
-      condition({
-        environments: ['display', 'default'],
-        actions: [asVirtualGroup()],
-      }),
-    );
+    return define;
+    // return v.pipe(
+    //   v.intersect([
+    //     v.object({
+    //       a: v.pipe(v.string(), actions.wrappers.patch([{ type: HandleWC }])),
+    //     }),
+    //   ]),
+    //   asVirtualGroup(),
+    // );
+  });
+  nodeService = inject(NodeService);
+  children = computed(() => {
+    return this.nodeService.nodeList$();
   });
   #bridge = inject(BridgeService);
   context = this.#bridge.context;
   options = {
-    environments: ['display'],
     context: this.context,
-    handle: Displayhandle as any,
     fieldGlobalConfig: FieldGlobalConfig,
   };
   valueChange(event: CustomNode) {
@@ -66,5 +72,8 @@ export class FormlyCommonNodeComponent {
     if (!deepEqual(event.data, this.props().data)) {
       this.#service.patchDataOne(this.props().id, event.data);
     }
+  }
+  constructor() {
+    this.nodeService.props$ = this.props;
   }
 }

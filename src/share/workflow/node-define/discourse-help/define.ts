@@ -3,7 +3,6 @@ import * as v from 'valibot';
 
 import {
   actions,
-  condition,
   valueChange,
   setComponent,
 } from '@piying/view-angular-core';
@@ -52,21 +51,15 @@ export const DISCOURSE_HELP_DEFINE = v.looseObject({
       value: v.pipe(
         v.optional(v.string(), '{{问题搜索}}'),
         v.title('搜索'),
-        condition({
-          environments: ['display', 'default'],
-          actions: [
-            setComponent('string'),
-            valueChange((fn) => {
-              fn({ list: [undefined] })
-                .pipe(debounceTime(100))
-                .subscribe(({ list: [value], field }) => {
-                  if (typeof value !== 'string') {
-                    return;
-                  }
-                  field.context.changeHandleByTemplate(field, value, 1);
-                });
-            }),
-          ],
+        valueChange((fn) => {
+          fn({ list: [undefined] })
+            .pipe(debounceTime(100))
+            .subscribe(({ list: [value], field }) => {
+              if (typeof value !== 'string') {
+                return;
+              }
+              field.context.changeHandleByTemplate(field, value, 1);
+            });
         }),
       ),
     }),

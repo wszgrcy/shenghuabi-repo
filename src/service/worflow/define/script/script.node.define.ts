@@ -3,7 +3,6 @@ import { generateHandle } from '@shenghuabi/workflow/share';
 import {
   actions,
   asControl,
-  condition,
   valueChange,
   setComponent,
   renderConfig,
@@ -23,30 +22,7 @@ export const SCRIPT_NODE_DEFINE = v.looseObject({
           getCompletionList: undefined,
         }),
         actions.wrappers.set(['tooltip', 'label']),
-        valueChange((fn) => {
-          fn({
-            list: [undefined],
-          }).subscribe(({ list, field }) => {
-            if (list[0]) {
-              field.context.changeHandleData(
-                field,
-                'input',
-                1,
-                list[0].map((item: any) => {
-                  return { ...generateHandle(item), inputType: 'object' };
-                }),
-              );
-            }
-          });
-        }),
-        condition({
-          environments: ['display'],
-          actions: [
-            renderConfig({
-              hidden: true,
-            }),
-          ],
-        }),
+
       ),
       output: v.pipe(
         v.optional(v.array(v.string()), []),
@@ -60,53 +36,26 @@ export const SCRIPT_NODE_DEFINE = v.looseObject({
           getCompletionList: undefined,
         }),
         actions.wrappers.set(['tooltip', 'label']),
-        valueChange((fn) => {
-          fn({ list: [undefined] }).subscribe(({ list, field }) => {
-            if (list[0]) {
-              field.context.changeHandleData(
-                field,
-                'output',
-                1,
-                list[0].map((item: any) => {
-                  return { ...generateHandle(item), inputType: 'object' };
-                }),
-              );
-            }
-          });
-        }),
-        condition({
-          environments: ['display'],
-          actions: [
-            renderConfig({
-              hidden: true,
-            }),
-          ],
-        }),
+ 
       ),
       title: v.pipe(v.string(), setComponent('')),
       value: v.pipe(
         v.string(),
-        setComponent(''),
-        condition({
-          environments: ['display'],
-          actions: [
-            setComponent('button-input'),
-            actions.inputs.set({
-              disablePlaceholderShow: true,
-              shape: 'circle',
-              style: 'ghost',
-              content: { icon: { fontIcon: 'code' } },
-              clicked: () => {},
-            }),
-            actions.inputs.patchAsync({
-              clicked: (field) => () => {
-                return field.context.openTsEditor(
-                  field.get(['#'])?.form.control!.value,
-                  field,
-                );
-              },
-            }),
-          ],
+        setComponent('button-input'),
+        actions.inputs.set({
+          disablePlaceholderShow: true,
+          shape: 'circle',
+          style: 'ghost',
+          content: { icon: { fontIcon: 'code' } },
+          clicked: () => {},
+        }),
+        actions.inputs.patchAsync({
+          clicked: (field) => () => {
+            return field.context.openTsEditor(
+              field.get(['#'])?.form.control!.value,
+              field,
+            );
+          },
         }),
       ),
     }),

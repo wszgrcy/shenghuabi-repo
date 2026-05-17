@@ -3,7 +3,7 @@ import {
   actions,
   setComponent,
 } from '@piying/view-angular-core';
-import { asColumn, condition } from '@share/valibot';
+import { asColumn } from '@share/valibot';
 import * as v from 'valibot';
 export function llmModelConfig(item?: { label: string }) {
   return v.pipe(
@@ -32,16 +32,10 @@ export function llmModelConfig(item?: { label: string }) {
           ),
         ]),
         v.title(item?.label ?? '对话模型'),
-        condition({
-          environments: ['display', 'config'],
-          actions: [asVirtualGroup()],
-        }),
+        asVirtualGroup(),
       ),
     ]),
-    condition({
-      environments: ['display', 'config'],
-      actions: [asVirtualGroup()],
-    }),
+    asVirtualGroup(),
     setComponent('accordion'),
   );
 }

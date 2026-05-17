@@ -1,7 +1,6 @@
 import {
   actions,
   asControl,
-  condition,
   hideWhen,
   layout,
   setAlias,
@@ -33,10 +32,7 @@ export const ARTICLE_NODE_DEFINE = v.looseObject({
         actions.inputs.patchAsync({
           treeConfig: (field) => field.context.getContextTree('article'),
         }),
-        condition({
-          environments: ['display'],
-          actions: [asControl(), setComponent('readonly-value')],
-        }),
+     
       ),
       config: v.pipe(
         v.object({
@@ -49,13 +45,7 @@ export const ARTICLE_NODE_DEFINE = v.looseObject({
             selectOptions(ModeList),
             layout({ keyPath: ['..', '..'] }),
             setAlias('mode'),
-            condition({
-              environments: ['display'],
-              actions: [
-                selectOptions(ModeList),
-                setComponent('readonly-value'),
-              ],
-            }),
+         
           ),
           step: v.pipe(
             v.optional(v.number(), 0),
@@ -64,10 +54,7 @@ export const ARTICLE_NODE_DEFINE = v.looseObject({
 
             actions.wrappers.set(['tooltip', 'label']),
             layout({ keyPath: ['..', '..'] }),
-            condition({
-              environments: ['display'],
-              actions: [setComponent('readonly-value')],
-            }),
+         
           ),
           chunkSize: v.pipe(
             v.optional(v.number(), 1000),
@@ -83,10 +70,7 @@ export const ARTICLE_NODE_DEFINE = v.looseObject({
               },
             }),
             layout({ keyPath: ['..', '..'] }),
-            condition({
-              environments: ['display'],
-              actions: [setComponent('readonly-value')],
-            }),
+       
           ),
         }),
       ),

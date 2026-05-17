@@ -32,20 +32,7 @@ export class ChatNodeService {
     getModelList: () =>
       this.#client.chat.getChatModelConfigNameOptions.query(undefined),
     getContextTree: (type: string) => this.#chat.getContextTree(type),
-    changeHandleData: (
-      field: PiResolvedViewFieldConfig,
-      type: 'input' | 'output',
-      index: number,
-      value: any[],
-    ) => {
-      const result = field.get(['#', 'data', 'handle', type])!;
-      result.action.set(
-        value.map((item) => {
-          return { ...item, id: v5(item.value, UUID_NS) };
-        }),
-        index,
-      );
-    },
+
     changeNodeData: (
       field: PiResolvedViewFieldConfig,
       keyPath: KeyPath,
@@ -83,7 +70,6 @@ export class ChatNodeService {
           if (excludes) {
             result = result.filter((item) => !excludes.includes(item.value));
           }
-          return this.context.changeHandleData(field, 'input', index, result);
         });
     },
     selectRagKnowledgeList: () => {

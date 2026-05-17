@@ -31,7 +31,6 @@ import { MergeClassPipe } from '@piying-lib/angular-daisyui/pipe';
     EventsDirective,
     ReactOutlet,
     AddHandleDirective,
-    MergeClassPipe,
   ],
 })
 export class HandleWC {

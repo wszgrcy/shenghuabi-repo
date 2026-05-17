@@ -1,7 +1,6 @@
 import * as v from 'valibot';
 import {
   actions,
-  condition,
   setComponent,
   valueChange,
 } from '@piying/view-angular-core';
@@ -22,24 +21,7 @@ export const TEXT_TO_AUDIO_DEFINE = v.looseObject({
     ),
     value: v.pipe(
       v.optional(v.string(), '{{input}}'),
-      setComponent(''),
-      condition({
-        environments: ['display'],
-        actions: [
-          setComponent('string'),
-          valueChange((fn) => {
-            fn({}).subscribe(({ list: [value], field }) => {
-              const inputValue: ChatMessageListInputType = value ?? '';
-              field.context.parseTemplate(inputValue).then((value: any) => {
-                if (!value) {
-                  return;
-                }
-                field.context.changeHandleData(field, 'input', 1, value);
-              });
-            });
-          }),
-        ],
-      }),
+
     ),
   }),
 });

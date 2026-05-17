@@ -60,7 +60,6 @@ import { effectOnce } from '../../util/effect-once';
 import { wrapEdge } from './custom-node/wrap-edge';
 import { DefaultEdgeComponent } from './custom-edge/default/component';
 import { PurePipe } from '@cyia/ngx-common/pipe';
-import { NodePanelComponent } from './panel/node/component';
 import { deepEqual } from 'fast-equals';
 import { IterationNodeDefine } from './custom-node/iteration-node';
 import { ChatService } from '@fe/component/chat/chat.service';
@@ -95,7 +94,6 @@ import { isNumber } from 'lodash-es';
     ReactiveFormsModule,
     MatIconModule,
     PurePipe,
-    NodePanelComponent,
     ValidatePanelComponent,
     MatDialogModule,
   ],

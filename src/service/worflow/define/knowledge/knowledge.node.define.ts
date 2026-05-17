@@ -2,7 +2,6 @@ import * as v from 'valibot';
 import {
   actions,
   asControl,
-  condition,
   layout,
   setComponent,
   valueChange,
@@ -23,10 +22,7 @@ export const KNOWLEDGE_NODE_DEFINE = v.looseObject({
         v.title('文件'),
         setComponent('tree-select'),
         actions.inputs.set({ treeConfig: undefined }),
-        condition({
-          environments: ['display'],
-          actions: [asControl(), setComponent('readonly-value')],
-        }),
+      
       ),
       config: v.object({
         source: v.pipe(
@@ -48,37 +44,15 @@ export const KNOWLEDGE_NODE_DEFINE = v.looseObject({
             });
           }),
           layout({ keyPath: ['..', '..'] }),
-          condition({
-            environments: ['display'],
-            actions: [
-              selectOptions(sourceList),
-              setComponent('readonly-value'),
-            ],
-          }),
+     
         ),
         template: v.pipe(INLINE_Template2, layout({ keyPath: ['..', '..'] })),
         question: v.pipe(
           v.string(),
           v.title('问题'),
-          valueChange((fn) => {
-            fn({
-              list: [undefined],
-            }).subscribe(({ list, field }) => {
-              if (typeof list[0] === 'string') {
-                field.context.parseTemplate(list[0]).then((result: any) => {
-                  if (!result) {
-                    return;
-                  }
-                  field.context.changeHandleData(field, 'input', 2, result);
-                });
-              }
-            });
-          }),
+
           layout({ keyPath: ['..', '..'] }),
-          condition({
-            environments: ['display'],
-            actions: [setComponent('readonly-value')],
-          }),
+       
         ),
         limit: v.pipe(
           v.optional(v.number(), 10),

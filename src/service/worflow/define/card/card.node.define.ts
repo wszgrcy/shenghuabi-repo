@@ -1,9 +1,4 @@
-import {
-  asControl,
-  actions,
-  condition,
-  setComponent,
-} from '@piying/view-angular-core';
+import { asControl, actions, setComponent } from '@piying/view-angular-core';
 import * as v from 'valibot';
 
 export const CARD_NODE_DEFINE = v.looseObject({
@@ -16,14 +11,6 @@ export const CARD_NODE_DEFINE = v.looseObject({
       asControl(),
       setComponent('file-input'),
       actions.inputs.set({ mode: 'card' }),
-      condition({
-        environments: ['display'],
-        actions: [
-          asControl(),
-          setComponent('file-input'),
-          actions.inputs.set({ mode: 'card' }),
-        ],
-      }),
     ),
     config: v.object({
       useOcr: v.pipe(

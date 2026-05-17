@@ -1,6 +1,5 @@
 import * as v from 'valibot';
 import {
-  condition,
   mergeHooks,
   setComponent,
   actions,
@@ -25,20 +24,15 @@ export const Reference = v.pipe(
       return subject;
     },
   }),
-  condition({
-    environments: ['display'],
-    actions: [
-      mergeHooks({
-        allFieldsResolved: (field) => {
-          setTimeout(() => {
-            field.context['getActionList']().then((list: any[]) => {
-              if (!field.form.control?.value) {
-                field.form.control?.updateValue(list[0]);
-              }
-            });
-          }, 0);
-        },
-      }),
-    ],
+  mergeHooks({
+    allFieldsResolved: (field) => {
+      setTimeout(() => {
+        field.context['getActionList']().then((list: any[]) => {
+          if (!field.form.control?.value) {
+            field.form.control?.updateValue(list[0]);
+          }
+        });
+      }, 0);
+    },
   }),
 );

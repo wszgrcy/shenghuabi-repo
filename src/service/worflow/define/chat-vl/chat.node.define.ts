@@ -2,7 +2,6 @@ import * as v from 'valibot';
 
 import {
   actions,
-  condition,
   setComponent,
   valueChange,
 } from '@piying/view-angular-core';
@@ -24,35 +23,8 @@ export const CHAT_VL_NODE_DEFINE = v.looseObject({
     ),
     value: v.pipe(
       v.custom<ChatMessageListInputType>(Boolean),
-      setComponent(''),
-      condition({
-        environments: ['display'],
-        actions: [
-          setComponent('prompt-list'),
-          valueChange((fn) => {
-            fn({ list: [undefined] }).subscribe(({ list: [value], field }) => {
-              if (!Array.isArray(value)) {
-                return;
-              }
-              const inputValue: ChatMessageListInputType = value ?? [];
-              field.context
-                .parseTemplate(
-                  inputValue.flatMap((item) =>
-                    item.content.map((item) =>
-                      item.type === 'text' ? item.text : '',
-                    ),
-                  ),
-                )
-                .then((value: any) => {
-                  if (!value) {
-                    return;
-                  }
-                  field.context.changeHandleData(field, 'input', 1, value);
-                });
-            });
-          }),
-        ],
-      }),
+      setComponent('prompt-list'),
+
     ),
   }),
 });

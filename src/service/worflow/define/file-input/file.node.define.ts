@@ -2,7 +2,6 @@ import * as v from 'valibot';
 import {
   actions,
   asControl,
-  condition,
   layout,
   setComponent,
 } from '@piying/view-angular-core';
@@ -16,15 +15,10 @@ export const FILE_NODE_DEFINE = v.looseObject({
 
         v.minLength(1),
         v.title('文件'),
-        condition({
-          environments: ['display', 'default'],
-          actions: [
-            asControl(),
-            setComponent('file-input'),
-            actions.inputs.set({ mode: 'file' }),
-            layout({ keyPath: ['#', 'data'] }),
-          ],
-        }),
+        asControl(),
+        setComponent('file-input'),
+        actions.inputs.set({ mode: 'file' }),
+        layout({ keyPath: ['#', 'data'] }),
       ),
       config: v.object({
         splitPages: v.pipe(
@@ -56,27 +50,7 @@ export const FILE_NODE_DEFINE = v.looseObject({
           layout({ keyPath: ['#', 'data'] }),
         ),
       }),
-      outputName: v.pipe(
-        v.optional(v.string(), 'first'),
-        v.title('出口'),
-        setComponent(''),
-        condition({
-          environments: ['template'],
-          actions: [
-            setComponent('select'),
-            actions.inputs.set({ options: [] }),
-            actions.inputs.patchAsync({
-              options: (field) =>
-                field
-                  .get(['#', 'data', 'handle', 'output'])
-                  ?.form.control?.valueChanges.pipe(
-                    first(),
-                    map((options) => flatFilterHandleList(options)),
-                  ),
-            }),
-          ],
-        }),
-      ),
+
     }),
     actions.wrappers.patch([
       { type: 'div', attributes: { class: 'grid gap-2' } },

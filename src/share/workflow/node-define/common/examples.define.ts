@@ -1,4 +1,4 @@
-import { condition, actions, renderConfig } from '@piying/view-angular-core';
+import { actions, renderConfig } from '@piying/view-angular-core';
 import { asColumn } from '@share/valibot';
 import * as v from 'valibot';
 
@@ -52,12 +52,4 @@ export const EXAMPLES_DEFINE = v.pipe(
   ),
   v.title('用例'),
   v.description('回答问题之前,会参考定义的用例格式进行回复,用于规范回答'),
-  condition({
-    environments: ['display'],
-    actions: [
-      renderConfig({
-        hidden: true,
-      }),
-    ],
-  }),
 );

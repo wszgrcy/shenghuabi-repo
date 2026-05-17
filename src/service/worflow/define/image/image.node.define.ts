@@ -3,7 +3,6 @@ import { formDefine, selectOptions } from '@share/valibot';
 import {
   actions,
   asControl,
-  condition,
   setComponent,
 } from '@piying/view-angular-core';
 import { IMAGE_SUFFIX } from '../../../const';
@@ -27,22 +26,15 @@ export const IMAGE_NODE_DEFINE = v.looseObject({
       v.minLength(1),
       v.title('图片'),
       asControl(),
-      setComponent(''),
-      condition({
-        environments: ['display'],
-        actions: [
-          asControl(),
-          setComponent('file-input'),
-          actions.inputs.set({
-            mode: 'file',
-            icon: 'image',
-            multi: true,
-            label: `选择图片`,
-            filters: {
-              [`图片`]: IMAGE_SUFFIX,
-            },
-          }),
-        ],
+      setComponent('file-input'),
+      actions.inputs.set({
+        mode: 'file',
+        icon: 'image',
+        multi: true,
+        label: `选择图片`,
+        filters: {
+          [`图片`]: IMAGE_SUFFIX,
+        },
       }),
     ),
   }),
