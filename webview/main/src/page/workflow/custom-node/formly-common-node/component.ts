@@ -68,6 +68,8 @@ export class FormlyCommonNodeComponent {
       ...this.context,
       setOutputHandle: (index: number, list: any[]) => {
         let data = this.props().data;
+        data.handle ??= { output: [] };
+        data.handle.output ??= [];
         data.handle!.output[index] ??= [];
         data.handle!.output[index] ??= list;
         this.#bridge.patchDataOne(this.props().id, data);

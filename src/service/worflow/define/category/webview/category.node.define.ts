@@ -67,6 +67,17 @@ export const CATEGORY_NODE_DEFINE = v.looseObject({
               minLength: 1,
               layout: 'column',
             }),
+            valueChange((fn) => {
+              fn().subscribe(({ list: [value], field }) => {
+                value ??= [];
+                field.context.setOutputHandle(
+                  0,
+                  (value as any[]).map((item, index) => {
+                    return { label: item.value, value: `${index}` };
+                  }),
+                );
+              });
+            }),
           ),
           examples: v.optional(EXAMPLES_DEFINE, [
             {

@@ -8,7 +8,6 @@ export type CustomNode<T extends Record<string, any> = Record<string, any>> =
       style?: Record<string, any>;
       handle?: {
         /** 0 必须是连接点，否则空掉，1必须是value,否则空掉，之后随意 */
-        input: HandleNode[][];
         output: HandleNode[][];
       };
 

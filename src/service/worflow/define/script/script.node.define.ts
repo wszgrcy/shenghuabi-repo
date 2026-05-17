@@ -22,7 +22,6 @@ export const SCRIPT_NODE_DEFINE = v.looseObject({
           getCompletionList: undefined,
         }),
         actions.wrappers.set(['tooltip', 'label']),
-
       ),
       output: v.pipe(
         v.optional(v.array(v.string()), []),
@@ -36,7 +35,16 @@ export const SCRIPT_NODE_DEFINE = v.looseObject({
           getCompletionList: undefined,
         }),
         actions.wrappers.set(['tooltip', 'label']),
- 
+        valueChange((fn) => {
+          fn().subscribe(({ list: [value], field }) => {
+            field.context.setOutputHandle(
+              0,
+              (value as any[]).map((item) => {
+                return { label: item, value: item };
+              }),
+            );
+          });
+        }),
       ),
       title: v.pipe(v.string(), setComponent('')),
       value: v.pipe(
