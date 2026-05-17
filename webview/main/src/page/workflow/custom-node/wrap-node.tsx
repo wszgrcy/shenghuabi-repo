@@ -350,10 +350,20 @@ export function wrapControlNode(
               otherInputs={componentConfig.otherInputs}
             ></NgOutletReact>
           </div>
-
+          // todo handle 应该分为固定和动态
           <RightDiffHandle
             list={flatFilterHandleList(props.data.handle?.output)}
           />
+          {/* 上下文永远存在,就看需求 */}
+          <Handle
+            type="target"
+            id="context"
+            position={Position.Left}
+            style={{
+              background: colorInterpolate(0),
+            }}
+            isValidConnection={isValidConnection}
+          ></Handle>
         </div>
       </>
     );

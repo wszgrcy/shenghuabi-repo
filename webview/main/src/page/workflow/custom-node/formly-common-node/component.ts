@@ -64,7 +64,15 @@ export class FormlyCommonNodeComponent {
   #bridge = inject(BridgeService);
   context = this.#bridge.context;
   options = {
-    context: this.context,
+    context: {
+      ...this.context,
+      setOutputHandle: (index: number, list: any[]) => {
+        let data = this.props().data;
+        data.handle!.output[index] ??= [];
+        data.handle!.output[index] ??= list;
+        this.#bridge.patchDataOne(this.props().id, data);
+      },
+    },
     fieldGlobalConfig: FieldGlobalConfig,
   };
   valueChange(event: CustomNode) {
