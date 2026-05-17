@@ -18,5 +18,5 @@ coverage
 .env.sentry-build-plugin
 .tmp-build
 .traceDist
-/.agent
+/.agents
 /skills-lock.json

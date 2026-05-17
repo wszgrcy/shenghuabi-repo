@@ -8,7 +8,7 @@
 
 // import './index.css';
 
-import { $isCodeHighlightNode } from '@lexical/code';
+import { $isCodeHighlightNode } from '@lexical/code-core';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   $findMatchingParent,

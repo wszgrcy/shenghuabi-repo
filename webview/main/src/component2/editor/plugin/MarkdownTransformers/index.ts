@@ -21,7 +21,7 @@ import {
   $createHorizontalRuleNode,
   $isHorizontalRuleNode,
   HorizontalRuleNode,
-} from '@lexical/react/LexicalHorizontalRuleNode';
+} from '@lexical/extension';
 import {
   $createTableCellNode,
   $createTableNode,

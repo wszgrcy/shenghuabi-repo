@@ -7,11 +7,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { $isCodeNode } from '@lexical/code-core';
 import {
-  $isCodeNode,
   CODE_LANGUAGE_FRIENDLY_NAME_MAP,
-  normalizeCodeLang,
-} from '@lexical/code';
+  normalizeCodeLanguage,
+} from '@lexical/code-prism';
 import { KeyValuePipe, NgStyle } from '@angular/common';
 import { Clipboard } from '@angular/cdk/clipboard';
 import type { Options } from 'prettier';
@@ -144,7 +144,7 @@ export class CodeToolkitComponent {
       }
       const codeNode = $getNearestNodeFromDOMNode(codeDOMNode);
       return $isCodeNode(codeNode)
-        ? normalizeCodeLang(codeNode.getLanguage() || '')
+        ? normalizeCodeLanguage(codeNode.getLanguage() || '')
         : '';
     });
   }

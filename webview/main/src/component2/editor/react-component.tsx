@@ -1,4 +1,4 @@
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { LexicalExtensionComposer } from '@lexical/react/LexicalExtensionComposer';
 import { ThemeDefine } from './theme';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -13,19 +13,21 @@ import { ListItemNode, ListNode } from '@lexical/list';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import MarkdownPlugin from './plugin/MarkdownShortcutPlugin';
-import { CodeHighlightNode, CodeNode } from '@lexical/code';
+import { CodeHighlightNode, CodeNode } from '@lexical/code-core';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import TableCellResizer from './plugin/TableCellResizer/index';
 import TableHoverActionsPlugin from './plugin/TableHoverActionsPlugin/index';
 import TableActionMenuPlugin from './plugin/TableActionMenuPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
-import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
+import {
+  HorizontalRuleExtension,
+  HorizontalRuleNode,
+} from '@lexical/extension';
 import ComponentPickerMenuPlugin from './plugin/ComponentPickerPlugin';
-import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { COMMAND_PRIORITY_EDITOR } from 'lexical';
+import { COMMAND_PRIORITY_EDITOR, defineExtension } from 'lexical';
 import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin';
 import { useLexicalEditable } from '@lexical/react/useLexicalEditable';
 import CodeHighlightPlugin from './plugin/CodeHighlightPlugin';
@@ -43,35 +45,38 @@ export function PlaceHolder() {
 export function ComponentMain(injector: Injector): () => React.ReactElement {
   const service = injector.get(CardEditorService);
   return () => {
+    const appExtension = useMemo(
+      () =>
+        defineExtension({
+          name: 'editor',
+          namespace: 'editor',
+          nodes: () => [
+            ListNode,
+            ListItemNode,
+            HeadingNode,
+            QuoteNode,
+            CodeHighlightNode,
+            CodeNode,
+            TableCellNode,
+            TableNode,
+            TableRowNode,
+            HorizontalRuleNode,
+            ...service.plugins().map((item) => item.node),
+          ],
+          $initialEditorState: service.initEditorState,
+          onError(error: Error) {
+            throw error;
+          },
+          theme: ThemeDefine,
+          dependencies: [HorizontalRuleExtension],
+        }),
+      [],
+    );
     return (
       <>
-        <LexicalComposer
-          initialConfig={{
-            editorState: service.initEditorState,
-            namespace: 'editor',
-            nodes: [
-              ListNode,
-              ListItemNode,
-              HeadingNode,
-              QuoteNode,
-              CodeHighlightNode,
-              CodeNode,
-              TableCellNode,
-              TableNode,
-              TableRowNode,
-              HorizontalRuleNode,
-              ...service.plugins().map((item) => item.node),
-            ],
-            // Handling of errors during update
-            onError(error: Error) {
-              throw error;
-            },
-            // The editor theme
-            theme: ThemeDefine,
-          }}
-        >
+        <LexicalExtensionComposer extension={appExtension}>
           <Editor injector={injector}></Editor>
-        </LexicalComposer>
+        </LexicalExtensionComposer>
       </>
     );
   };
@@ -141,12 +146,10 @@ export function Editor({ injector }: { injector: Injector }) {
       <TablePlugin hasCellMerge={true} hasCellBackgroundColor={true} />
       <TableCellResizer></TableCellResizer>
       <TableHoverActionsPlugin></TableHoverActionsPlugin>
-
       {/* '/'命令 */}
       <ComponentPickerMenuPlugin
         injector={injector}
       ></ComponentPickerMenuPlugin>
-      <HorizontalRulePlugin />
       {plugins.map((Plugin, index) => (
         <Plugin key={index} injector={injector}></Plugin>
       ))}

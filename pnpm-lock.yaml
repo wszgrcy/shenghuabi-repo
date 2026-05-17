@@ -552,6 +552,15 @@ importers:
       '@lexical/code':
         specifier: ~0.44.0
         version: 0.44.0
+      '@lexical/code-core':
+        specifier: ~0.44.0
+        version: 0.44.0
+      '@lexical/code-prism':
+        specifier: ~0.44.0
+        version: 0.44.0
+      '@lexical/extension':
+        specifier: ~0.44.0
+        version: 0.44.0
       '@lexical/file':
         specifier: ~0.44.0
         version: 0.44.0
