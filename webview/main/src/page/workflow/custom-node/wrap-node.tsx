@@ -220,23 +220,20 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
     </NodeToolbar>
   );
 }
-export function handleItemFactory(
-  position: Position,
-  type: 'target' | 'source',
-) {
+function handleItemFactory(position: Position, type: 'target' | 'source') {
   return (props: {
-    list: any[];
+    length: number;
     index: number;
 
     handleNode: HandleNode;
   }) => {
-    const percent = props.index / props.list.length;
+    const percent = props.index / props.length;
     const { id, label } = props.handleNode;
     return (
       <div
         className={'absolute handle-wrapper-' + position}
         key={props.index}
-        style={{ top: getPosition(props.index, props.list.length) }}
+        style={{ top: getPosition(props.index, props.length) }}
       >
         <Tooltip title={label} mouseEnterDelay={0} placement={position}>
           <div className="label-hint">
@@ -296,7 +293,7 @@ export function wrapControlNode(
           creatChild: (list, item, index) => {
             return (
               <RightHandleItem
-                list={list}
+                length={list.length}
                 index={index}
                 handleNode={item}
                 key={index}

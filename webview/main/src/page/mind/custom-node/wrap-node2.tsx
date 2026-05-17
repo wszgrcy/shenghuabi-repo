@@ -70,7 +70,7 @@ export function wrapControlNodeDynamic(
           creatChild: (list, item, index) => {
             return (
               <LeftHandleItem
-                list={list}
+                length={list.length}
                 index={index}
                 handleNode={item}
                 key={index}
