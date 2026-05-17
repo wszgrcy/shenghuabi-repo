@@ -38,7 +38,7 @@ export class FormlyCommonNodeComponent {
   #service = inject(BridgeService);
   model$$ = computed(
     () => {
-      return { data: this.props().data };
+      return { data: this.props().data.config };
     },
     { equal: deepEqual },
   );
