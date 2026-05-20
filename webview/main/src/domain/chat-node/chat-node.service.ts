@@ -10,7 +10,6 @@ import type { WebviewNodeConfig } from '@shenghuabi/workflow/share';
 import { deepEqual } from 'fast-equals';
 import { IterationNodeDefine } from '../../page/workflow/custom-node/iteration-node';
 import { IterationStartNodeDefine } from '../../page/workflow/custom-node/iteration-start-node';
-import { InputParamsNodeDefine } from '../../page/workflow/custom-node/params-node';
 import { WebviewNodeMap } from '@shenghuabi/workflow/webview';
 @Injectable()
 export class ChatNodeService {
@@ -20,11 +19,8 @@ export class ChatNodeService {
   pluginNodeList$ = signal<WebviewNodeConfig[]>([], { equal: deepEqual });
   nodeList$ = signal<WebviewNodeConfig[]>(
     [
-      ...Object.values(WebviewNodeMap).filter(
-        (item) => item.type !== 'input-params',
-      ),
+      ...Object.values(WebviewNodeMap),
       ...Object.values(WorkflowNodeConfigObj),
-      InputParamsNodeDefine,
       IterationStartNodeDefine,
       IterationNodeDefine,
     ].sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
@@ -123,6 +119,18 @@ export class ChatNodeService {
     },
     pluginMethod: (method: string, args: any[]) => {
       return this.#client.workflow.pluginMethod.query({ method, args });
+    },
+    getUsageType: async () => {
+      // todo 类型,应该是编辑器部分场景
+      // tts,内联编辑器,文本就错
+      return [{ label: 'default', value: 'default' }];
+    },
+    getUsageOutputs: async (value: any) => {
+      console.log(value);
+      return [{ id: 'default2', label: 'default2' }];
+    },
+    editorInputChange: async (value:boolean) => {
+      console.log('xxxx',value);
     },
   };
 }

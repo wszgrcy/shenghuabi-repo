@@ -94,7 +94,10 @@ function useWarnToolbar({
     if (!config) {
       return;
     }
-    const result = v.safeParse(config, props.data.config, { lang: 'zh-CN' });
+    // todo 这里的验证,应该要过滤掉引用
+    const result = v.safeParse(config, props.data.config?.value, {
+      lang: 'zh-CN',
+    });
     if (!result.success) {
       const list: string[] = [];
       result.issues.forEach((issue) => {
@@ -109,6 +112,9 @@ function useWarnToolbar({
         // console.log(metadata, issue);
         list.push(`${metadata.title}: ${issue.message}`);
       });
+      if (!list.length) {
+        return [v.summarize(result.issues)];
+      }
       return list;
     }
     return;
