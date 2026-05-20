@@ -55,6 +55,7 @@ export class BridgeService extends FlowBseService<CustomNode> {
                   define: item.configDefine,
                 }
               : {},
+            nodeDefine: item,
           },
           this,
         );
@@ -74,6 +75,7 @@ export class BridgeService extends FlowBseService<CustomNode> {
                   define: item.configDefine,
                 }
               : {},
+            nodeDefine: item,
           },
           this,
         );
@@ -366,7 +368,6 @@ export class BridgeService extends FlowBseService<CustomNode> {
       });
     });
   }
-
 
   context = inject(ChatNodeService).context;
 }

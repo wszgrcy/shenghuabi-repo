@@ -16,7 +16,7 @@ import { NodeHeadComponent } from './node-head/component';
 import { BridgeService } from '../service';
 import { Tooltip } from 'antd';
 import { isValidConnection } from '../../../component/flow-base/flow-base.service';
-import { flatFilterHandleList, HandleNode } from '@bridge/share';
+import { flatFilterHandleList, HandleNode, NodeDefine } from '@bridge/share';
 import { uniqBy } from 'lodash-es';
 import { ToggleActionButton } from '@fe/component/react/toggle-action.button';
 import { Segmented } from 'antd';
@@ -30,11 +30,51 @@ import {
 import { WarningTwoTone } from '@ant-design/icons';
 import '@valibot/i18n/zh-CN';
 import { createDiffHandle } from '@fe/util/react';
+import { WebviewNodeConfig } from '@shenghuabi/workflow/share';
 
 const colorInterpolate = interpolateRgbBasisClosed(['red', 'yellow']);
 const outputColorInterpolate = interpolateRgbBasisClosed(['lime', 'teal']);
 function getPosition(position: number, count: number) {
   return ((position + 1) / (count + 1)) * 100 + '%';
+}
+
+const LEFT_HANDLES = [
+  { id: '[connect]', title: '连接点' },
+  { id: '[context]', title: '上下文' },
+];
+
+function LeftHandles(props: {
+  disableConnect?: boolean;
+  disableContext?: boolean;
+}) {
+  const hideMap: Record<string, boolean> = {
+    '[connect]': !!props.disableConnect,
+    '[context]': !!props.disableContext,
+  };
+  const list = LEFT_HANDLES.filter((h) => !hideMap[h.id]);
+  return list.map((h, index) => (
+    <div
+      className={'absolute handle-wrapper-left'}
+      key={h.id}
+      style={{ top: getPosition(index, list.length) }}
+    >
+      <Tooltip
+        title={`[${h.title}]`}
+        mouseEnterDelay={0}
+        placement={Position.Left}
+      >
+        <div className="label-hint">
+          <Handle
+            type="target"
+            id={h.id}
+            position={Position.Left}
+            style={{ background: colorInterpolate(index) }}
+            isValidConnection={isValidConnection}
+          ></Handle>
+        </div>
+      </Tooltip>
+    </div>
+  ));
 }
 
 function useWarnToolbar({
@@ -225,11 +265,11 @@ export function wrapControlNode(
   componentConfig: {
     component: Type<any>;
     otherInputs?: Record<string, any>;
+    nodeDefine?: WebviewNodeConfig;
   },
   bridge: BridgeService,
 ) {
   // todo 迁到上方
-
   return (props: CustomNode) => {
     const instance = useReactFlow();
     props = instance.getNode(props.id)!;
@@ -318,16 +358,10 @@ export function wrapControlNode(
           <RightDiffHandle
             list={flatFilterHandleList(props.data.handle?.output)}
           />
-          {/* 上下文永远存在,就看需求 */}
-          <Handle
-            type="target"
-            id="context"
-            position={Position.Left}
-            style={{
-              background: colorInterpolate(0),
-            }}
-            isValidConnection={isValidConnection}
-          ></Handle>
+          <LeftHandles
+            disableConnect={componentConfig.nodeDefine?.disableConnect}
+            disableContext={componentConfig.nodeDefine?.disableContext}
+          />
         </div>
       </>
     );
