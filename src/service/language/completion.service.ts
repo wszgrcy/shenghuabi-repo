@@ -10,14 +10,14 @@ import {
   ChatMode,
   deepClone,
 } from '../../share';
-import { WorkflowExecService, ResolvedWorkflow } from '@shenghuabi/workflow';
+import {
+  WorkflowExecService,
+  ResolvedWorkflow,
+  ModelOptionsToken,
+} from '@shenghuabi/workflow';
 import { WorkflowSelectService } from '@shenghuabi/workflow';
 import { filter, Subject, Subscription, take } from 'rxjs';
-import {
-  isChatStream,
-  LLMWorkflowData,
-  WorkflowStreamData,
-} from '@shenghuabi/workflow';
+import { LLMWorkflowData, WorkflowStreamData } from '@shenghuabi/workflow';
 import { KnowledgeFileSystem } from '../../webview/common-webview/knowledge.fs';
 import { FolderName, WorkspaceService } from '../workspace.service';
 import { path } from '@cyia/vfs2';
@@ -30,6 +30,15 @@ import { getNumberText } from '@share/util/format/get-number-text';
 import { isStringArray } from '@share/util/assert/is-string-array';
 import { CommandPrefix } from '@global';
 import { captureException } from '@sentry/node';
+import { result } from 'es-toolkit/compat';
+export function isChatStream(
+  data: WorkflowStreamData,
+): data is LLMWorkflowData {
+  return (
+    !!data.extra && 'content' in data.extra && 'thinkContent' in data.extra
+  );
+}
+
 function isEditorData(
   location: vscode.ChatRequest['location2'],
 ): location is vscode.ChatRequestEditorData {
@@ -37,7 +46,7 @@ function isEditorData(
 }
 interface InlineEditorData {
   mode: ChatMode;
-  manualInput: boolean;
+  editorInput: boolean;
   input: {
     selection: string;
   };
@@ -201,7 +210,7 @@ export class CompletionService extends RootStaticInjectOptions {
           }
         };
         const input = deepClone(inlineEditorData.input) as Record<string, any>;
-        if (inlineEditorData.manualInput) {
+        if (inlineEditorData.editorInput) {
           input['input'] = req.prompt;
         }
         const defaultInput = this.#createDefaultInput(
@@ -222,12 +231,12 @@ export class CompletionService extends RootStaticInjectOptions {
             .runParse(
               inlineEditorData.resolvedWorkflow!,
               {
-                input: {},
-                modelOptions: modelOptions,
+                inputs: {},
                 environmentParameters: defaultInput,
               },
               subject,
               abort.signal,
+              [{ provide: ModelOptionsToken, useValue: modelOptions }],
             )
             .catch((rej) => {
               captureException(rej);
@@ -238,15 +247,16 @@ export class CompletionService extends RootStaticInjectOptions {
             .agentChat(
               {
                 template: inlineEditorData.template!,
-                input: {},
-                context: {},
-                modelOptions: modelOptions,
+                // inputs: {},
+                // context: {},
+                // modelOptions: modelOptions,
                 environmentParameters: defaultInput,
-                inlineMode: true,
+                // inlineMode: true,
               },
 
               streamFn,
               abort.signal,
+              [{ provide: ModelOptionsToken, useValue: modelOptions }],
             )
             .catch((rej) => {
               captureException(rej);
@@ -348,7 +358,7 @@ export class CompletionService extends RootStaticInjectOptions {
   async codeActionResolve(options: CodeChatActionOptions) {
     const list = await this.#promptService.actionConfig.getList();
     const actionItem = list.find((item) => item.title === options.title)!;
-    let manualInput = false;
+    let editorInput = false;
     let data: Partial<InlineEditorData>;
     const selection = options.document.getText(options.range);
     if (actionItem.mode === ChatMode.workflow) {
@@ -359,18 +369,19 @@ export class CompletionService extends RootStaticInjectOptions {
       if (result.error) {
         throw result.error;
       }
-      manualInput = !!result.manualInput;
+      editorInput = !!result.editorInput;
       data = {
         resolvedWorkflow: result.data,
       };
     } else {
+      // todo 重构未验证
       const { error, list } = this.#templateFormat.parse(
         actionItem.template!.map((item) => item.content).join('\n'),
       );
       if (error) {
         throw new Error('模板解析失败');
       }
-      manualInput = list.some((item) => item.value === 'input');
+      editorInput = list.some((item) => item.value === 'input');
 
       data = {
         template: actionItem.template!,
@@ -379,7 +390,7 @@ export class CompletionService extends RootStaticInjectOptions {
     this.#selectedEditorTemplate.set(options.filePath, {
       ...data,
       mode: actionItem.mode,
-      manualInput,
+      editorInput,
       input: {
         selection: selection,
       },
@@ -389,7 +400,7 @@ export class CompletionService extends RootStaticInjectOptions {
       position: range.start,
       initialSelection: new vscode.Selection(range.start, range.end),
       initialRange: range,
-      autoSend: !manualInput,
+      autoSend: !editorInput,
       message: '/default ',
     });
   }

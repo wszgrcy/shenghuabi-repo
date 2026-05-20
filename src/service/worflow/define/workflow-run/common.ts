@@ -10,6 +10,5 @@ export const NODE_COMMON: NodeComponentType = {
   help: [`- 在工作流内执行其他工作流`].join('\n'),
   // config: defineConfig,
 
-  inputs: [],
   outputs: [],
 };

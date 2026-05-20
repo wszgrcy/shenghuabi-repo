@@ -101,12 +101,12 @@ export class InputFormComponent implements ControlValueAccessor {
     return this.value$().input;
   });
   #nodeContextList$$ = computed(() => {
-    return this.#chatNode.nodeList$().filter((item) => item.templateConfig);
+    return this.#chatNode.nodeList$().filter((item) => item.configDefine);
   });
   #pluginNodeContextList$$ = computed(() => {
     return this.#chatNode
       .pluginNodeList$()
-      .filter((item) => item.templateConfig);
+      .filter((item) => item.configDefine);
   });
   fullContextList$$ = computed(() => {
     return [...this.#nodeContextList$$(), ...this.#pluginNodeContextList$$()];

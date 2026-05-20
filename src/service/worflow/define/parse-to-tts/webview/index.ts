@@ -4,7 +4,7 @@ import { PARSE_TO_TTS_DEFINE } from '../node.define';
 
 export const ParseToTTSWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  displayConfig: PARSE_TO_TTS_DEFINE,
+  configDefine: PARSE_TO_TTS_DEFINE,
   // config: TEXT_TO_AUDIO_DEFINE,
   initData: () => {
     return {

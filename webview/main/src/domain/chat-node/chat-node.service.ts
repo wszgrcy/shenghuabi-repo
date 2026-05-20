@@ -20,7 +20,9 @@ export class ChatNodeService {
   pluginNodeList$ = signal<WebviewNodeConfig[]>([], { equal: deepEqual });
   nodeList$ = signal<WebviewNodeConfig[]>(
     [
-      ...Object.values(WebviewNodeMap),
+      ...Object.values(WebviewNodeMap).filter(
+        (item) => item.type !== 'input-params',
+      ),
       ...Object.values(WorkflowNodeConfigObj),
       InputParamsNodeDefine,
       IterationStartNodeDefine,

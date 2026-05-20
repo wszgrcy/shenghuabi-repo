@@ -503,3 +503,16 @@ span-input {
   height: 1em !important;
   font-size: calc(var(--spacing) * --value(integer)) !important;
 }
+/* 工作流菜单用 */
+.typeahead-menu {
+  @apply menu bg-base-200 rounded-box w-56;
+  .typeahead-item > button {
+    display: flex;
+    .dynamic-badge {
+      @apply badge badge-success badge-xs;
+    }
+    .option-label {
+      @apply flex-1;
+    }
+  }
+}

@@ -91,31 +91,31 @@ importers:
         version: 2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2))
       '@sentry/cli':
         specifier: 2.42.4
-        version: 2.42.4(encoding@0.1.13)
+        version: 2.42.4
       '@sentry/node':
         specifier: ^9.9.0
         version: 9.47.1
       '@shenghuabi/crunker':
-        specifier: 1.1.4
-        version: 1.1.4(valibot@1.4.0(typescript@5.9.2))
+        specifier: 1.1.10
+        version: 1.1.10(valibot@1.4.0(typescript@5.9.2))
       '@shenghuabi/han2number':
-        specifier: 1.1.4
-        version: 1.1.4
+        specifier: 1.1.10
+        version: 1.1.10
       '@shenghuabi/knowledge':
         specifier: 1.0.24
-        version: 1.0.24(@browserbasehq/sdk@2.10.0(encoding@0.1.13))(@browserbasehq/stagehand@1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(encoding@0.1.13)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76))(@cyia/dl@1.5.3)(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@ibm-cloud/watsonx-ai@1.7.11(@swc/core@1.15.33(@swc/helpers@0.5.21))(typescript@5.9.2))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(fast-xml-parser@4.4.1)(fastq@1.19.1)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.12)(ignore@5.3.2)(jsonwebtoken@9.0.3)(lodash-es@4.17.21)(lodash@4.18.1)(lru-cache@11.3.5)(magic-string@0.30.21)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(playwright@1.59.1)(rfdc@1.4.1)(rxjs@7.8.2)(sharp@0.34.2)(static-injector@6.1.2(rxjs@7.8.2))(ts-toolbelt@9.6.0)(typescript@5.9.2)(uuid@13.0.0)(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)
+        version: 1.0.24(@browserbasehq/sdk@2.10.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76))(@cyia/dl@1.5.3)(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@ibm-cloud/watsonx-ai@1.7.11(@swc/core@1.15.33(@swc/helpers@0.5.21))(typescript@5.9.2))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(fast-xml-parser@4.4.1)(fastq@1.19.1)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.12)(ignore@5.3.2)(jsonwebtoken@9.0.3)(lodash-es@4.17.21)(lodash@4.18.1)(lru-cache@11.3.5)(magic-string@0.30.21)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(playwright@1.59.1)(rfdc@1.4.1)(rxjs@7.8.2)(sharp@0.34.2)(static-injector@6.1.2(rxjs@7.8.2))(ts-toolbelt@9.6.0)(typescript@5.9.2)(uuid@13.0.0)(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)
       '@shenghuabi/llama':
-        specifier: 1.1.4
-        version: 1.1.4(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@cyia/zip@1.5.3(static-injector@6.1.2(rxjs@7.8.2)))(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))
+        specifier: 1.1.10
+        version: 1.1.10(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@cyia/zip@1.5.3(static-injector@6.1.2(rxjs@7.8.2)))(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))
       '@shenghuabi/openai':
-        specifier: 1.1.4
-        version: 1.1.4(@cyia/util@1.5.3)(@cyia/vfs2@1.5.3)(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(dayjs@1.11.20)(rxjs@7.8.2)(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)(zod@3.25.76)
+        specifier: 1.1.10
+        version: 1.1.10(@cyia/util@1.5.3)(@cyia/vfs2@1.5.3)(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(dayjs@1.11.20)(rxjs@7.8.2)(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)(zod@3.25.76)
       '@shenghuabi/python-addon':
-        specifier: 1.1.4
-        version: 1.1.4(@cyia/dl@1.5.3)(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@cyia/zip@1.5.3(static-injector@6.1.2(rxjs@7.8.2)))(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))
+        specifier: 1.1.10
+        version: 1.1.10(@cyia/dl@1.5.3)(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@cyia/zip@1.5.3(static-injector@6.1.2(rxjs@7.8.2)))(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))
       '@shenghuabi/workflow':
-        specifier: 1.1.4
-        version: 1.1.4(@angular/compiler@21.2.12)(@cyia/bundle-file@1.5.3(rxjs@7.8.2))(@cyia/code-util@2.8.1(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1)))(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/util@1.5.3)(@cyia/vfs2@1.5.3)(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(@shenghuabi/openai@1.1.4(@cyia/util@1.5.3)(@cyia/vfs2@1.5.3)(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(dayjs@1.11.20)(rxjs@7.8.2)(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)(zod@3.25.76))(@types/react@19.0.12)(graphology-types@0.24.8)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(rxjs@7.8.2)(static-injector@6.1.2(rxjs@7.8.2))(zone.js@0.15.1)
+        specifier: 1.1.10
+        version: 1.1.10(70b1fc36ef6bd1aa9b96a1b67adde914)
       '@trpc/client':
         specifier: 11.16.0
         version: 11.16.0(@trpc/server@11.16.0(typescript@5.9.2))(typescript@5.9.2)
@@ -155,6 +155,9 @@ importers:
       dom-serializer:
         specifier: 3.1.1
         version: 3.1.1
+      domhandler:
+        specifier: ^6.0.1
+        version: 6.0.1
       domutils:
         specifier: 4.0.2
         version: 4.0.2
@@ -223,7 +226,7 @@ importers:
         version: 6.0.2
       langchain:
         specifier: 0.3.19
-        version: 0.3.19(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(axios@1.15.2)(encoding@0.1.13)(handlebars@4.7.8)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0)
+        version: 0.3.19(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(axios@1.15.2)(handlebars@4.7.8)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0)
       liquidjs:
         specifier: 10.16.4
         version: 10.16.4
@@ -606,6 +609,9 @@ importers:
       '@sentry/angular':
         specifier: ^10.52.0
         version: 10.52.0(@angular/common@21.2.12(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/router@21.2.12(@angular/common@21.2.12(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@21.2.12(@angular/animations@21.2.12(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@21.2.12(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2))(rxjs@7.8.2)
+      '@shenghuabi/lexical-textarea':
+        specifier: 1.0.4
+        version: 1.0.4(@lexical/history@0.44.0)(@lexical/react@0.44.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(yjs@13.6.30))(@lexical/rich-text@0.44.0)(fast-equals@5.2.2)(lexical@0.44.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@tailwindcss/cli':
         specifier: ^4.1.4
         version: 4.2.4
@@ -4503,13 +4509,13 @@ packages:
   '@sevinf/maybe@0.5.0':
     resolution: {integrity: sha512-ARhyoYDnY1LES3vYI0fiG6e9esWfTNcXcO6+MPJJXcnyMV3bim4lnFt45VXouV7y82F4x3YH8nOQ6VztuvUiWg==}
 
-  '@shenghuabi/crunker@1.1.4':
-    resolution: {integrity: sha512-RWzXIKUcrXSMqmUyzFoCCEffHTxexbHMe3OBCJKcJvu4sWBLkRsDp8/8xFw0u/Lt4qwPze1OhQ+e4vB24O/vEQ==}
+  '@shenghuabi/crunker@1.1.10':
+    resolution: {integrity: sha512-h95K/cF5FO39pvoAknhdKryjYjZZZpiATK1QymF15PKfSCLPkX1EgMzFLE7yBft1MRNfITwEF/qF2ad3ZTvbQw==}
     peerDependencies:
       valibot: ^1.1.0
 
-  '@shenghuabi/han2number@1.1.4':
-    resolution: {integrity: sha512-ShksAYdQ4vSvwO3kcu8hDXKo+mIuao4TppVM4SBwbyo3vZ+odFRh0mfN2pnaH8Lwe7Dc8XLxbYdeyPM4ARI7+Q==}
+  '@shenghuabi/han2number@1.1.10':
+    resolution: {integrity: sha512-5CQajqbFzw/IjpA6ZV/15Zl4gTtUvD9KO9xeve105qAnU919VP4ryxYju/bQCezrP3OFBNq8PjCF1NE6KZ1R9g==}
 
   '@shenghuabi/knowledge@1.0.24':
     resolution: {integrity: sha512-XF6RnPB4dXa5mWXpMlKGWjmMITaC5c41XLLOEmCqdJBoAPyCg3ECH65Stzv0c2xJs6hPuBeKQOg7iDSAYP0J5w==}
@@ -4531,8 +4537,30 @@ packages:
       valibot: ^1.1.0
       yaml: ^2.7.0
 
-  '@shenghuabi/llama@1.1.4':
-    resolution: {integrity: sha512-eEH3YDFXAVjNh/Tc/qmUFOatjPOcYprkoe3XLVZcOMYAQy4kIbUb9EKaFAEz2GkfEs2SS2qGI09hT6Dg3nFzOQ==}
+  '@shenghuabi/lexical-textarea@1.0.1':
+    resolution: {integrity: sha512-OvJk+SQNr9QYCJZiendb37+aKGN4TBdlymsR5HBge/SseCJ5rpDfonj8sGPiXq7gRWaoxlQG2v6CfQn9bSkx1Q==}
+    peerDependencies:
+      '@lexical/history': ^0.44.0
+      '@lexical/react': ^0.44.0
+      '@lexical/rich-text': ^0.44.0
+      fast-equals: ^6.0.0
+      lexical: ^0.44.0
+      react: ^19.0.0
+      react-dom: ^19.0.0
+
+  '@shenghuabi/lexical-textarea@1.0.4':
+    resolution: {integrity: sha512-nuYo8tHs2HVmMyBC2Lb9RW9kLpymGj+gRS3HDx56+xe7PWPhfRppUxKN7QqDDj/f9N3mqR2o5LE4zFpocSLp8Q==}
+    peerDependencies:
+      '@lexical/history': ^0.44.0
+      '@lexical/react': ^0.44.0
+      '@lexical/rich-text': ^0.44.0
+      fast-equals: ^6.0.0
+      lexical: ^0.44.0
+      react: ^19.0.0
+      react-dom: ^19.0.0
+
+  '@shenghuabi/llama@1.1.10':
+    resolution: {integrity: sha512-Fbhod51Oh+45hqOJn3Rp0XZ9BWx1lV5dwGG4o6SvPD0Q/TcIGLhM4XefWz8wS6QJ2kUnyuWJyjtagmnFYJOgMw==}
     peerDependencies:
       '@cyia/external-call': ^1.5.2
       '@cyia/vfs2': ^1.5.2
@@ -4540,8 +4568,8 @@ packages:
       static-injector: '>=6.1.2'
       valibot: ^1.1.0
 
-  '@shenghuabi/openai@1.1.4':
-    resolution: {integrity: sha512-E4tVeqiuuf+Vv3H2/ZQ9rz/+ucJJ07BWrvqpnHKPRMf993pu6q8E7zFd2/HiO0NGYIhYgCHhXdc6WPlDZUwoeQ==}
+  '@shenghuabi/openai@1.1.10':
+    resolution: {integrity: sha512-yVY8yIlyNU9XHTE+3L3T5EmI8mctbyKXoS33e5I2blO9dAHexq90HyjZZy8ZADVe7PJw1lJT013Vkkqr0zgn7Q==}
     peerDependencies:
       '@cyia/util': ^1.5.2
       '@cyia/vfs2': ^1.5.2
@@ -4553,8 +4581,8 @@ packages:
       valibot: ^1.1.0
       yaml: ^2.8.1
 
-  '@shenghuabi/python-addon@1.1.4':
-    resolution: {integrity: sha512-KDS3dzgq1aCHRxMyEFiL5Jsv1GlHrK6P7a9jncpbr9fTKJqpNchCMU7Nvq67s7zf9HAXbRHR0nmMGaQFciDeSg==}
+  '@shenghuabi/python-addon@1.1.10':
+    resolution: {integrity: sha512-YvYVGyiy1tzebTZkZwlM325bj2TLH79RbtbtF/lamXbDc7pOp7fTAqgPIGPTxueT3eCalLmTi7GrKaPkgXCkiA==}
     peerDependencies:
       '@cyia/dl': ^1.5.2
       '@cyia/external-call': ^1.5.2
@@ -4565,8 +4593,8 @@ packages:
       static-injector: '>=6.1.2'
       valibot: ^1.1.0
 
-  '@shenghuabi/workflow@1.1.4':
-    resolution: {integrity: sha512-NJ1ez1fZG1Q7MOVZYoUE+M60Es/RMlNmrJMC9tDgkVkofw9q5zGAvTxQOdc8Kp5Lqlep1T/QzQ1Kvgz5ZCjK6g==}
+  '@shenghuabi/workflow@1.1.10':
+    resolution: {integrity: sha512-Hioo0zqOL41jyGU/jvneUXAd2whMBuUx8BLBlHC6UExls9+UntN9IQGwA09v3sgmKJcpfNzLhX+CeGT7/d9HSQ==}
     peerDependencies:
       '@cyia/bundle-file': ^1.5.2
       '@cyia/code-util': ^2.8.1
@@ -4575,7 +4603,7 @@ packages:
       '@cyia/vfs2': ^1.5.2
       '@piying/valibot-visit': ^1.3.11
       '@piying/view-angular-core': ^2.9.3
-      '@shenghuabi/openai': 1.1.4
+      '@shenghuabi/openai': 1.1.10
       static-injector: ^6.1.2
 
   '@sigstore/bundle@4.0.0':
@@ -6459,9 +6487,6 @@ packages:
     resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
     engines: {node: '>= 0.8'}
 
-  encoding@0.1.13:
-    resolution: {integrity: sha512-ETBauow1T35Y/WZMkio9jiM0Z5xjHHmJ4XmjZOq1l/dXz3lr2sRn87nJy20RupqSh1F2m3HHPSp8ShIPQJrJ3A==}
-
   end-of-stream@1.4.5:
     resolution: {integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==}
 
@@ -7130,11 +7155,13 @@ packages:
 
   glob@10.4.5:
     resolution: {integrity: sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@11.1.0:
     resolution: {integrity: sha512-vuNwKSaKiqm7g0THUBu2x7ckSs3XJLXE+2ssL7/MfTGPLLcrJQ/4Uq1CjPTtO5cCIiRxqvN6Twy1qOwhL0Xjcw==}
     engines: {node: 20 || >=22}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@13.0.6:
@@ -7143,12 +7170,12 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   glob@8.1.0:
     resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
     engines: {node: '>=12'}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-agent@3.0.0:
     resolution: {integrity: sha512-PT6XReJ+D07JvGoxQMkT6qji/jVNfX/h364XHZOWeRzy64sSFr+xJ5OX7LI3b4MPQzdL4H8Y8M0xzPpsVMwA8Q==}
@@ -10165,6 +10192,7 @@ packages:
 
   sliced@1.0.1:
     resolution: {integrity: sha512-VZBmZP8WU3sMOZm1bdgTadsQbcscK0UM8oKxKVBs4XAhUo2Xxzm/OFMGBkPusxw9xL3Uy8LrzEqGqJhclsr0yA==}
+    deprecated: Unsupported
 
   smart-buffer@4.2.0:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}
@@ -11628,7 +11656,7 @@ snapshots:
       resize-observer-polyfill: 1.5.1
       throttle-debounce: 5.0.2
 
-  '@anthropic-ai/sdk@0.27.3(encoding@0.1.13)':
+  '@anthropic-ai/sdk@0.27.3':
     dependencies:
       '@types/node': 18.19.130
       '@types/node-fetch': 2.6.13
@@ -11636,7 +11664,7 @@ snapshots:
       agentkeepalive: 4.6.0
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
-      node-fetch: 2.7.0(encoding@0.1.13)
+      node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
 
@@ -11764,7 +11792,7 @@ snapshots:
 
   '@braintree/sanitize-url@6.0.2': {}
 
-  '@browserbasehq/sdk@2.10.0(encoding@0.1.13)':
+  '@browserbasehq/sdk@2.10.0':
     dependencies:
       '@types/node': 18.19.130
       '@types/node-fetch': 2.6.13
@@ -11772,14 +11800,14 @@ snapshots:
       agentkeepalive: 4.6.0
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
-      node-fetch: 2.7.0(encoding@0.1.13)
+      node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
 
-  '@browserbasehq/stagehand@1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(encoding@0.1.13)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76)':
+  '@browserbasehq/stagehand@1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76)':
     dependencies:
-      '@anthropic-ai/sdk': 0.27.3(encoding@0.1.13)
-      '@browserbasehq/sdk': 2.10.0(encoding@0.1.13)
+      '@anthropic-ai/sdk': 0.27.3
+      '@browserbasehq/sdk': 2.10.0
       '@playwright/test': 1.59.1
       deepmerge: 4.3.1
       dotenv: 16.6.1
@@ -12947,9 +12975,9 @@ snapshots:
       - openai
       - ws
 
-  '@langchain/community@1.1.1(@browserbasehq/sdk@2.10.0(encoding@0.1.13))(@browserbasehq/stagehand@1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(encoding@0.1.13)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76))(@huggingface/transformers@4.2.0)(@ibm-cloud/watsonx-ai@1.7.11(@swc/core@1.15.33(@swc/helpers@0.5.21))(typescript@5.9.2))(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(d3-dsv@2.0.0)(epub2@3.0.2(ts-toolbelt@9.6.0))(fast-xml-parser@4.4.1)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.12)(ignore@5.3.2)(jsonwebtoken@9.0.3)(lodash@4.18.1)(mammoth@1.12.0)(officeparser@4.2.0)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(pdf-parse@1.1.4)(playwright@1.59.1)(srt-parser-2@1.2.3)(ws@8.20.0)':
+  '@langchain/community@1.1.1(@browserbasehq/sdk@2.10.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76))(@huggingface/transformers@4.2.0)(@ibm-cloud/watsonx-ai@1.7.11(@swc/core@1.15.33(@swc/helpers@0.5.21))(typescript@5.9.2))(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(d3-dsv@2.0.0)(epub2@3.0.2(ts-toolbelt@9.6.0))(fast-xml-parser@4.4.1)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.12)(ignore@5.3.2)(jsonwebtoken@9.0.3)(lodash@4.18.1)(mammoth@1.12.0)(officeparser@4.2.0)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(pdf-parse@1.1.4)(playwright@1.59.1)(srt-parser-2@1.2.3)(ws@8.20.0)':
     dependencies:
-      '@browserbasehq/stagehand': 1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(encoding@0.1.13)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76)
+      '@browserbasehq/stagehand': 1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76)
       '@ibm-cloud/watsonx-ai': 1.7.11(@swc/core@1.15.33(@swc/helpers@0.5.21))(typescript@5.9.2)
       '@langchain/classic': 1.0.7(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0)
       '@langchain/core': 1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0)
@@ -12963,7 +12991,7 @@ snapshots:
       uuid: 10.0.0
       zod: 3.25.76
     optionalDependencies:
-      '@browserbasehq/sdk': 2.10.0(encoding@0.1.13)
+      '@browserbasehq/sdk': 2.10.0
       '@huggingface/transformers': 4.2.0
       d3-dsv: 2.0.0
       epub2: 3.0.2(ts-toolbelt@9.6.0)
@@ -13003,11 +13031,11 @@ snapshots:
       - openai
       - ws
 
-  '@langchain/openai@0.4.9(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(encoding@0.1.13)(ws@8.20.0)':
+  '@langchain/openai@0.4.9(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(ws@8.20.0)':
     dependencies:
       '@langchain/core': 1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0)
       js-tiktoken: 1.0.21
-      openai: 4.104.0(encoding@0.1.13)(ws@8.20.0)(zod@3.25.76)
+      openai: 4.104.0(ws@8.20.0)(zod@3.25.76)
       zod: 3.25.76
       zod-to-json-schema: 3.25.2(zod@3.25.76)
     transitivePeerDependencies:
@@ -14589,10 +14617,10 @@ snapshots:
   '@sentry/cli-win32-x64@2.42.4':
     optional: true
 
-  '@sentry/cli@2.42.4(encoding@0.1.13)':
+  '@sentry/cli@2.42.4':
     dependencies:
       https-proxy-agent: 5.0.1
-      node-fetch: 2.7.0(encoding@0.1.13)
+      node-fetch: 2.7.0
       progress: 2.0.3
       proxy-from-env: 1.1.0
       which: 2.0.2
@@ -14676,7 +14704,7 @@ snapshots:
 
   '@sevinf/maybe@0.5.0': {}
 
-  '@shenghuabi/crunker@1.1.4(valibot@1.4.0(typescript@5.9.2))':
+  '@shenghuabi/crunker@1.1.10(valibot@1.4.0(typescript@5.9.2))':
     dependencies:
       audio-buffer: 5.0.0
       audio-decode: 2.2.3
@@ -14684,9 +14712,9 @@ snapshots:
       node-wav: 0.0.2
       valibot: 1.4.0(typescript@5.9.2)
 
-  '@shenghuabi/han2number@1.1.4': {}
+  '@shenghuabi/han2number@1.1.10': {}
 
-  '@shenghuabi/knowledge@1.0.24(@browserbasehq/sdk@2.10.0(encoding@0.1.13))(@browserbasehq/stagehand@1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(encoding@0.1.13)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76))(@cyia/dl@1.5.3)(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@ibm-cloud/watsonx-ai@1.7.11(@swc/core@1.15.33(@swc/helpers@0.5.21))(typescript@5.9.2))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(fast-xml-parser@4.4.1)(fastq@1.19.1)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.12)(ignore@5.3.2)(jsonwebtoken@9.0.3)(lodash-es@4.17.21)(lodash@4.18.1)(lru-cache@11.3.5)(magic-string@0.30.21)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(playwright@1.59.1)(rfdc@1.4.1)(rxjs@7.8.2)(sharp@0.34.2)(static-injector@6.1.2(rxjs@7.8.2))(ts-toolbelt@9.6.0)(typescript@5.9.2)(uuid@13.0.0)(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)':
+  '@shenghuabi/knowledge@1.0.24(@browserbasehq/sdk@2.10.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76))(@cyia/dl@1.5.3)(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@ibm-cloud/watsonx-ai@1.7.11(@swc/core@1.15.33(@swc/helpers@0.5.21))(typescript@5.9.2))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(fast-xml-parser@4.4.1)(fastq@1.19.1)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.12)(ignore@5.3.2)(jsonwebtoken@9.0.3)(lodash-es@4.17.21)(lodash@4.18.1)(lru-cache@11.3.5)(magic-string@0.30.21)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(playwright@1.59.1)(rfdc@1.4.1)(rxjs@7.8.2)(sharp@0.34.2)(static-injector@6.1.2(rxjs@7.8.2))(ts-toolbelt@9.6.0)(typescript@5.9.2)(uuid@13.0.0)(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)':
     dependencies:
       '@cyia/dl': 1.5.3
       '@cyia/external-call': 1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))
@@ -14694,7 +14722,7 @@ snapshots:
       '@cyia/vfs2': 1.5.3
       '@gutenye/ocr-common': 1.4.8
       '@huggingface/transformers': 4.2.0
-      '@langchain/community': 1.1.1(@browserbasehq/sdk@2.10.0(encoding@0.1.13))(@browserbasehq/stagehand@1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(encoding@0.1.13)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76))(@huggingface/transformers@4.2.0)(@ibm-cloud/watsonx-ai@1.7.11(@swc/core@1.15.33(@swc/helpers@0.5.21))(typescript@5.9.2))(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(d3-dsv@2.0.0)(epub2@3.0.2(ts-toolbelt@9.6.0))(fast-xml-parser@4.4.1)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.12)(ignore@5.3.2)(jsonwebtoken@9.0.3)(lodash@4.18.1)(mammoth@1.12.0)(officeparser@4.2.0)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(pdf-parse@1.1.4)(playwright@1.59.1)(srt-parser-2@1.2.3)(ws@8.20.0)
+      '@langchain/community': 1.1.1(@browserbasehq/sdk@2.10.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.59.1)(deepmerge@4.3.1)(dotenv@16.6.1)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(zod@3.25.76))(@huggingface/transformers@4.2.0)(@ibm-cloud/watsonx-ai@1.7.11(@swc/core@1.15.33(@swc/helpers@0.5.21))(typescript@5.9.2))(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(d3-dsv@2.0.0)(epub2@3.0.2(ts-toolbelt@9.6.0))(fast-xml-parser@4.4.1)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.12)(ignore@5.3.2)(jsonwebtoken@9.0.3)(lodash@4.18.1)(mammoth@1.12.0)(officeparser@4.2.0)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(pdf-parse@1.1.4)(playwright@1.59.1)(srt-parser-2@1.2.3)(ws@8.20.0)
       '@langchain/core': 1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0)
       '@langchain/textsplitters': 1.0.1(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))
       '@qdrant/qdrant-js': 1.15.1(typescript@5.9.2)
@@ -14856,7 +14884,27 @@ snapshots:
       - ws
       - youtubei.js
 
-  '@shenghuabi/llama@1.1.4(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@cyia/zip@1.5.3(static-injector@6.1.2(rxjs@7.8.2)))(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))':
+  '@shenghuabi/lexical-textarea@1.0.1(@lexical/history@0.44.0)(@lexical/react@0.44.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(yjs@13.6.30))(@lexical/rich-text@0.44.0)(fast-equals@5.2.2)(lexical@0.44.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+    dependencies:
+      '@lexical/history': 0.44.0
+      '@lexical/react': 0.44.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(yjs@13.6.30)
+      '@lexical/rich-text': 0.44.0
+      fast-equals: 5.2.2
+      lexical: 0.44.0
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
+
+  '@shenghuabi/lexical-textarea@1.0.4(@lexical/history@0.44.0)(@lexical/react@0.44.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(yjs@13.6.30))(@lexical/rich-text@0.44.0)(fast-equals@5.2.2)(lexical@0.44.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+    dependencies:
+      '@lexical/history': 0.44.0
+      '@lexical/react': 0.44.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(yjs@13.6.30)
+      '@lexical/rich-text': 0.44.0
+      fast-equals: 5.2.2
+      lexical: 0.44.0
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
+
+  '@shenghuabi/llama@1.1.10(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@cyia/zip@1.5.3(static-injector@6.1.2(rxjs@7.8.2)))(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))':
     dependencies:
       '@cyia/external-call': 1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))
       '@cyia/vfs2': 1.5.3
@@ -14869,7 +14917,7 @@ snapshots:
       valibot: 1.4.0(typescript@5.9.2)
       yaml: 2.8.1
 
-  '@shenghuabi/openai@1.1.4(@cyia/util@1.5.3)(@cyia/vfs2@1.5.3)(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(dayjs@1.11.20)(rxjs@7.8.2)(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)(zod@3.25.76)':
+  '@shenghuabi/openai@1.1.10(@cyia/util@1.5.3)(@cyia/vfs2@1.5.3)(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(dayjs@1.11.20)(rxjs@7.8.2)(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)(zod@3.25.76)':
     dependencies:
       '@anthropic-ai/sdk': 0.60.0
       '@cyia/util': 1.5.3
@@ -14888,7 +14936,7 @@ snapshots:
       - ws
       - zod
 
-  '@shenghuabi/python-addon@1.1.4(@cyia/dl@1.5.3)(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@cyia/zip@1.5.3(static-injector@6.1.2(rxjs@7.8.2)))(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))':
+  '@shenghuabi/python-addon@1.1.10(@cyia/dl@1.5.3)(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/vfs2@1.5.3)(@cyia/zip@1.5.3(static-injector@6.1.2(rxjs@7.8.2)))(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))':
     dependencies:
       '@cyia/dl': 1.5.3
       '@cyia/external-call': 1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))
@@ -14896,7 +14944,7 @@ snapshots:
       '@cyia/zip': 1.5.3(static-injector@6.1.2(rxjs@7.8.2))
       '@piying/valibot-visit': 1.3.12(typescript@5.9.2)
       '@piying/view-angular-core': 2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2))
-      '@shenghuabi/crunker': 1.1.4(valibot@1.4.0(typescript@5.9.2))
+      '@shenghuabi/crunker': 1.1.10(valibot@1.4.0(typescript@5.9.2))
       execa: 9.6.1
       fast-equals: 5.2.2
       fastest-levenshtein: 1.0.16
@@ -14909,7 +14957,7 @@ snapshots:
       valibot: 1.4.0(typescript@5.9.2)
       yaml: 2.8.1
 
-  '@shenghuabi/workflow@1.1.4(@angular/compiler@21.2.12)(@cyia/bundle-file@1.5.3(rxjs@7.8.2))(@cyia/code-util@2.8.1(@angular/core@21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1)))(@cyia/external-call@1.5.3(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2)))(@cyia/util@1.5.3)(@cyia/vfs2@1.5.3)(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(@shenghuabi/openai@1.1.4(@cyia/util@1.5.3)(@cyia/vfs2@1.5.3)(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(dayjs@1.11.20)(rxjs@7.8.2)(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)(zod@3.25.76))(@types/react@19.0.12)(graphology-types@0.24.8)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(rxjs@7.8.2)(static-injector@6.1.2(rxjs@7.8.2))(zone.js@0.15.1)':
+  '@shenghuabi/workflow@1.1.10(70b1fc36ef6bd1aa9b96a1b67adde914)':
     dependencies:
       '@angular/core': 21.2.12(@angular/compiler@21.2.12)(rxjs@7.8.2)(zone.js@0.15.1)
       '@cyia/bundle-file': 1.5.3(rxjs@7.8.2)
@@ -14919,7 +14967,8 @@ snapshots:
       '@cyia/vfs2': 1.5.3
       '@piying/valibot-visit': 1.3.12(typescript@5.9.2)
       '@piying/view-angular-core': 2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2))
-      '@shenghuabi/openai': 1.1.4(@cyia/util@1.5.3)(@cyia/vfs2@1.5.3)(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(dayjs@1.11.20)(rxjs@7.8.2)(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)(zod@3.25.76)
+      '@shenghuabi/lexical-textarea': 1.0.1(@lexical/history@0.44.0)(@lexical/react@0.44.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(yjs@13.6.30))(@lexical/rich-text@0.44.0)(fast-equals@5.2.2)(lexical@0.44.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@shenghuabi/openai': 1.1.10(@cyia/util@1.5.3)(@cyia/vfs2@1.5.3)(@piying/valibot-visit@1.3.12(typescript@5.9.2))(@piying/view-angular-core@2.9.4(@hyperjump/browser@1.3.1)(typescript@5.9.2)(valibot@1.4.0(typescript@5.9.2)))(dayjs@1.11.20)(rxjs@7.8.2)(static-injector@6.1.2(rxjs@7.8.2))(valibot@1.4.0(typescript@5.9.2))(ws@8.20.0)(yaml@2.8.1)(zod@3.25.76)
       '@xyflow/react': 12.10.2(@types/react@19.0.12)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       graphology: 0.26.0(graphology-types@0.24.8)
       handlebars: 4.7.9
@@ -14928,9 +14977,14 @@ snapshots:
       uuid: 13.0.2
     transitivePeerDependencies:
       - '@angular/compiler'
+      - '@lexical/history'
+      - '@lexical/react'
+      - '@lexical/rich-text'
       - '@types/react'
+      - fast-equals
       - graphology-types
       - immer
+      - lexical
       - react
       - react-dom
       - rxjs
@@ -17026,11 +17080,6 @@ snapshots:
 
   encodeurl@2.0.0: {}
 
-  encoding@0.1.13:
-    dependencies:
-      iconv-lite: 0.6.3
-    optional: true
-
   end-of-stream@1.4.5:
     dependencies:
       once: 1.4.0
@@ -18886,10 +18935,10 @@ snapshots:
 
   kleur@4.1.5: {}
 
-  langchain@0.3.19(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(axios@1.15.2)(encoding@0.1.13)(handlebars@4.7.8)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0):
+  langchain@0.3.19(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(axios@1.15.2)(handlebars@4.7.8)(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0):
     dependencies:
       '@langchain/core': 1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0)
-      '@langchain/openai': 0.4.9(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(encoding@0.1.13)(ws@8.20.0)
+      '@langchain/openai': 0.4.9(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))(ws@8.20.0)
       '@langchain/textsplitters': 0.1.0(@langchain/core@1.1.8(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.1))(openai@6.37.0(ws@8.20.0)(zod@3.25.76))(ws@8.20.0))
       js-tiktoken: 1.0.21
       js-yaml: 4.1.1
@@ -19740,11 +19789,9 @@ snapshots:
 
   node-ensure@0.0.0: {}
 
-  node-fetch@2.7.0(encoding@0.1.13):
+  node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
-    optionalDependencies:
-      encoding: 0.1.13
 
   node-gyp-build-optional-packages@5.2.2:
     dependencies:
@@ -19936,7 +19983,7 @@ snapshots:
       is-inside-container: 1.0.0
       is-wsl: 3.1.1
 
-  openai@4.104.0(encoding@0.1.13)(ws@8.20.0)(zod@3.25.76):
+  openai@4.104.0(ws@8.20.0)(zod@3.25.76):
     dependencies:
       '@types/node': 18.19.130
       '@types/node-fetch': 2.6.13
@@ -19944,7 +19991,7 @@ snapshots:
       agentkeepalive: 4.6.0
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
-      node-fetch: 2.7.0(encoding@0.1.13)
+      node-fetch: 2.7.0
     optionalDependencies:
       ws: 8.20.0
       zod: 3.25.76

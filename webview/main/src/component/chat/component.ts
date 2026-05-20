@@ -22,7 +22,7 @@ import {
   ChatMode,
   ChatOptions,
   CommonChat,
-  isChatStream,
+  LLMWorkflowData,
   ResolvedWorkflow,
   WorkflowData,
   WorkflowStreamData,
@@ -42,7 +42,14 @@ import { deepEqual } from 'fast-equals';
 import { WorkflowInputComponent } from './workflow/input/component';
 import { CommonChatFn } from './type';
 import { MenuCheckboxFCC } from '@cyia/component/core';
-
+// todo
+export function isChatStream(
+  data: WorkflowStreamData,
+): data is LLMWorkflowData {
+  return (
+    !!data.extra && 'content' in data.extra && 'thinkContent' in data.extra
+  );
+}
 type InputVarList = {
   label: string;
   // id: string;
@@ -218,7 +225,7 @@ export class ChatComponent {
       return lastItem.historyList;
     }
     const item = this.#lastChatResult();
-    return item?.extra.historyList || [];
+    return item?.extra!.historyList || [];
   });
   #workflow$$ = computed(
     () => {

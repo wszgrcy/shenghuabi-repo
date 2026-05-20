@@ -1,13 +1,11 @@
 import { inject } from 'static-injector';
-import { NodeRunnerBase } from '@shenghuabi/workflow';
+import { NodeRunnerBase, serializeLexicalTextarea } from '@shenghuabi/workflow';
 import { WorkspaceService } from '../../../../workspace.service';
 import { WorkflowExtraMetadata } from '@shenghuabi/workflow';
 import { differenceBy } from 'lodash-es';
 import { getNodeType } from '../../../../ai/rag/graph-util';
 import { TemplateFormatService } from '@shenghuabi/workflow';
-import { RUNNER_ORIGIN_OUTPUT_KEY } from '@shenghuabi/workflow/share';
 import { NodeItem } from '../../../../ai/rag/type';
-import * as v from 'valibot';
 import { GRAPH_QUERY_NODE_DEFINE } from '../graph-query.node.define';
 import { CustomKnowledgeManagerService } from '../../../../knowledge/custom-knowledge.manager.service';
 import { EMPTY_QUERY } from '../../../../knowledge/const';
@@ -15,22 +13,24 @@ import { GraphQueryService } from '@shenghuabi/knowledge/knowledge';
 import { dynamicInject } from '../../../../../token';
 
 export type WorkflowFileExtraMetadata = WorkflowExtraMetadata;
-export class GraphQueryNodeRunner extends NodeRunnerBase {
+export class GraphQueryNodeRunner extends NodeRunnerBase<
+  typeof GRAPH_QUERY_NODE_DEFINE
+> {
   #format = inject(TemplateFormatService);
 
   #workspace = inject(WorkspaceService);
   #manager$$ = dynamicInject(CustomKnowledgeManagerService);
   override async run() {
-    const nodeResult = v.parse(GRAPH_QUERY_NODE_DEFINE, this.node);
-
-    const config = nodeResult.data.config!;
+    const config = this.inputs!;
 
     const instance = await this.#manager$$().getGraph(config.name);
     if (!instance) {
       throw new Error(`未找到[${config.name}]知识库`);
     }
-    const obj = this.inputValueObject$$();
-    const question = this.#format.interpolate(config.question ?? '', obj);
+    const question = serializeLexicalTextarea(config.question, {
+      context: await this.nodeContextData$$(),
+      environmentContext: this.environmentContextData,
+    });
     const query = instance.createQuery(EMPTY_QUERY);
     let resultList: Awaited<ReturnType<GraphQueryService['fuzzyQueryNode']>> =
       [];
@@ -86,8 +86,8 @@ export class GraphQueryNodeRunner extends NodeRunnerBase {
         EDGE_LIST: list.flatMap((item) => item.edgeList),
       };
     });
-    return async (outputName: string) => {
-      if (outputName === RUNNER_ORIGIN_OUTPUT_KEY) {
+    return async (id: string) => {
+      if (id === 'default') {
         return {
           value: originList,
         };

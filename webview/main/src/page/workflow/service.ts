@@ -50,9 +50,9 @@ export class BridgeService extends FlowBseService<CustomNode> {
         obj[item.type] = wrapControlNode(
           {
             component: item.component ?? FormlyCommonNodeComponent,
-            otherInputs: item.displayConfig
+            otherInputs: item.configDefine
               ? {
-                  define: item.displayConfig,
+                  define: item.configDefine,
                 }
               : {},
           },
@@ -69,9 +69,9 @@ export class BridgeService extends FlowBseService<CustomNode> {
         obj[item.type] = wrapControlNode(
           {
             component: item.component ?? FormlyCommonNodeComponent,
-            otherInputs: item.displayConfig
+            otherInputs: item.configDefine
               ? {
-                  define: item.displayConfig,
+                  define: item.configDefine,
                 }
               : {},
           },
@@ -366,30 +366,7 @@ export class BridgeService extends FlowBseService<CustomNode> {
       });
     });
   }
-  async handleChange(
-    id: string,
-    direction: 'input' | 'output',
-    index: number,
-    changeFn: () => Promise<Omit<HandleNode, 'id'>[] | undefined>,
-    autoUpdate = false,
-  ) {
-    const node = this.getNode(id)!;
-    const result = await changeFn();
-    if (result) {
-      const handle = deepClone(node.data.handle || { input: [], output: [] });
-      handle[direction][index] = result.map((item, j) => {
-        return {
-          ...item,
-          id: v5(item.value, UUID_NS),
-        };
-      });
-      if (autoUpdate && !deepEqual(handle, node.data.handle)) {
-        this.patchDataOne(id, { handle: handle });
-      }
-      return handle[direction];
-    }
-    return;
-  }
+
 
   context = inject(ChatNodeService).context;
 }

@@ -8,7 +8,6 @@ import { ChatContextType } from '../../../../../share';
 import { minChunkOverlap, separators } from '../../../../vector-query/const';
 import { chunk } from 'lodash-es';
 import { WorkflowExtraMetadata } from '@shenghuabi/workflow';
-import * as v from 'valibot';
 import { ARTICLE_NODE_DEFINE } from '../article.define';
 
 export interface ArticleChunk {
@@ -18,12 +17,11 @@ export interface ArticleChunk {
     filePath: string[];
   };
 }
-export class ArticleRunner extends NodeRunnerBase {
+export class ArticleRunner extends NodeRunnerBase<typeof ARTICLE_NODE_DEFINE> {
   /** 读取当前的文章 */
   #vfs = inject(WorkspaceService).vfs;
   override async run() {
-    const nodeResult = v.parse(ARTICLE_NODE_DEFINE, this.node);
-    const list = nodeResult.data.value;
+    const list = this.inputs.value;
     const newList: { filePath: string; content: string }[] = [];
     for (const filePath of list) {
       const content = await this.#vfs.readContent(filePath);
@@ -32,7 +30,7 @@ export class ArticleRunner extends NodeRunnerBase {
       }
     }
 
-    const config = nodeResult.data.config!;
+    const config = this.inputs!;
     const step = config.step;
     const fileGroup = step === 0 ? [newList] : chunk(newList, step);
 

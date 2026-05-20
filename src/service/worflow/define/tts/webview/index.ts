@@ -4,8 +4,7 @@ import { TEXT_TO_AUDIO_DEFINE } from '../text-to-audio.node.define';
 
 export const TTSWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  displayConfig: TEXT_TO_AUDIO_DEFINE,
-  config: TEXT_TO_AUDIO_DEFINE,
+  configDefine: TEXT_TO_AUDIO_DEFINE,
   initData: () => {
     return {
       data: {

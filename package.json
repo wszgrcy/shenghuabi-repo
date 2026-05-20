@@ -63,6 +63,7 @@
     "check-version": "tsx ./script/check-version-branch.ts"
   },
   "devDependencies": {
+    "@actions/core": "3.0.1",
     "@code-recycle/cli": "1.3.13",
     "@cyia/localize": "1.4.2",
     "@eslint/js": "9.14.0",
@@ -87,7 +88,6 @@
     "@vscode/dts": "0.4.1",
     "@vscode/test-cli": "0.0.10",
     "@vscode/test-electron": "2.4.1",
-    "@actions/core": "3.0.1",
     "c8": "10.1.3",
     "cpx": "1.5.0",
     "cross-env": "7.0.3",
@@ -136,13 +136,13 @@
     "@piying/view-angular-core": "2.9.4",
     "@sentry/cli": "2.42.4",
     "@sentry/node": "^9.9.0",
-    "@shenghuabi/crunker": "1.1.4",
-    "@shenghuabi/han2number": "1.1.4",
+    "@shenghuabi/crunker": "1.1.10",
+    "@shenghuabi/han2number": "1.1.10",
     "@shenghuabi/knowledge": "1.0.24",
-    "@shenghuabi/llama": "1.1.4",
-    "@shenghuabi/openai": "1.1.4",
-    "@shenghuabi/python-addon": "1.1.4",
-    "@shenghuabi/workflow": "1.1.4",
+    "@shenghuabi/llama": "1.1.10",
+    "@shenghuabi/openai": "1.1.10",
+    "@shenghuabi/python-addon": "1.1.10",
+    "@shenghuabi/workflow": "1.1.10",
     "@trpc/client": "11.16.0",
     "@trpc/server": "11.16.0",
     "@types/d3-color": "3.1.3",
@@ -151,10 +151,12 @@
     "@xyflow/react": "12.10.2",
     "buffer-crc32": "1.0.0",
     "chroma-js": "2.4.2",
+    "clsx": "2.1.1",
     "d3-color": "3.1.0",
     "d3-interpolate": "^3.0.1",
     "dayjs": "^1.11.18",
     "dom-serializer": "3.1.1",
+    "domhandler": "^6.0.1",
     "domutils": "4.0.2",
     "epub2": "3.0.2",
     "es-toolkit": "1.46.1",
@@ -204,8 +206,7 @@
     "valibot": "1.4.0",
     "yaml": "2.8.1",
     "zod": "^3.24.1",
-    "zone.js": "~0.15.1",
-    "clsx": "2.1.1"
+    "zone.js": "~0.15.1"
   },
   "overrides": {
     "electron": {

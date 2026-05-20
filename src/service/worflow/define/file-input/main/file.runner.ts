@@ -5,7 +5,6 @@ import { WorkspaceService } from '../../../../workspace.service';
 
 import { ChatContextType } from '../../../../../share';
 import { WorkflowExtraMetadata } from '@shenghuabi/workflow';
-import * as v from 'valibot';
 import { FILE_NODE_DEFINE } from '../file.node.define';
 import { FileParserService } from '@shenghuabi/knowledge/file-parser';
 import { dynamicInject } from '../../../../../token';
@@ -14,14 +13,13 @@ export type WorkflowFileExtraMetadata = WorkflowExtraMetadata & {
   filePath: string;
 };
 /** 读文件 */
-export class FileRunner extends NodeRunnerBase {
+export class FileRunner extends NodeRunnerBase<typeof FILE_NODE_DEFINE> {
   #workspace = inject(WorkspaceService);
   #vfs = this.#workspace.rootVfs;
   #fileParser$$ = dynamicInject(FileParserService);
   override async run() {
-    const nodeResult = v.parse(FILE_NODE_DEFINE, this.node);
-    const list = nodeResult.data.value;
-    const config = nodeResult.data.config!;
+    const list = this.inputs.value;
+    const config = this.inputs!;
 
     const newList: string[][] = [];
     const extraList: WorkflowFileExtraMetadata[][] = [];

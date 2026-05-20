@@ -14,7 +14,7 @@ import {
   FileChunkPayloadDefine,
 } from '@shenghuabi/knowledge/knowledge';
 
-export class KnowledgeRunner extends NodeRunnerBase {
+export class KnowledgeRunner extends NodeRunnerBase<typeof KNOWLEDGE_NODE_DEFINE> {
   #format = inject(TemplateFormatService);
   #docVector = inject(DocumentVectorService);
   override async run() {

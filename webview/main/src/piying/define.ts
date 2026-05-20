@@ -25,6 +25,8 @@ import { NodeTemplateApplyFCC } from '@fe/form/control/node-template/component';
 import { PromptListFCC } from '@fe/form/control/prompt-list/component';
 import { TreeSelectFCC } from '@fe/form/control/tree-select/component';
 import { AutoComplete2 } from './preset/autocomplete2';
+import { TextareaTemplateFCC } from '@fe/component/textarea-template/component';
+import { UseRefWrapper } from '@cyia/component/wrapper/use-ref/component';
 const optionsMap = actions.inputs.mapAsync((field) => {
   const options$$ = computed(() => field.props()['options']);
   return (data) => {
@@ -139,11 +141,15 @@ export const safeDefine = typedComponent({
       type: PromptListFCC,
     },
     'tree-select': { type: TreeSelectFCC },
+    'textarea-template': { type: TextareaTemplateFCC },
   },
   wrappers: {
     ...PresetDefine.wrappers,
     card: {
       type: CardWrapper,
+    },
+    'use-ref': {
+      type: UseRefWrapper,
     },
   },
 });

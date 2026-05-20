@@ -11,8 +11,7 @@ const systemPrompt = `###职位描述
 不要在响应中包含JSON数组以外的任何内容。`;
 export const CategoryWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  displayConfig: CATEGORY_NODE_DEFINE,
-  config: CATEGORY_NODE_DEFINE,
+  configDefine: CATEGORY_NODE_DEFINE,
   initData: () => {
     return {
       data: {

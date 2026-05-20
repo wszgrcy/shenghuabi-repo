@@ -503,7 +503,7 @@ export class CommandService extends RootStaticInjectOptions {
         const result = await this.#workflowExec.exec(
           workflow,
           {
-            input: {},
+            inputs: {},
             environmentParameters: defaultInput,
           },
           { showError: true },
@@ -547,7 +547,7 @@ export class CommandService extends RootStaticInjectOptions {
       const result = await this.#workflowExec.exec(
         workflow,
         {
-          input: {},
+          inputs: {},
           environmentParameters: defaultInput,
         },
         { showError: true },
@@ -992,7 +992,7 @@ export class CommandService extends RootStaticInjectOptions {
       const result = await this.#workflowExec.exec(
         workflow,
         {
-          input: {},
+          inputs: {},
           environmentParameters: defaultInput,
         },
         { showError: true },

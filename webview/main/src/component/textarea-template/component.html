@@ -1,0 +1,8 @@
+<ng-template #templateRef let-attr="attributes">
+  <react-outlet
+    [root]="true"
+    [component]="Editor"
+    [attributes]="attr()"
+    [props]="$any(props$$())"
+  ></react-outlet>
+</ng-template>

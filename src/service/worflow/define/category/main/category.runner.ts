@@ -1,6 +1,6 @@
 import { inject } from 'static-injector';
 
-import { NodeRunnerBase } from '@shenghuabi/workflow';
+import { NodeRunnerBase, serializeLexicalTextarea } from '@shenghuabi/workflow';
 import { WorkflowRunnerService } from '@shenghuabi/workflow';
 
 import { parse } from 'yaml';
@@ -11,32 +11,42 @@ import { ChatMessageListOutputType } from '@shenghuabi/openai';
 import { AbortSignalToken } from '@shenghuabi/workflow';
 import { TemplateFormatService } from '@shenghuabi/workflow';
 import { jsonParse } from '../../../../ai/util/json-parser';
-import * as v from 'valibot';
 import { CATEGORY_NODE_DEFINE } from '../webview/category.node.define';
 
-export class CategoryRunner extends NodeRunnerBase {
+export class CategoryRunner extends NodeRunnerBase<
+  typeof CATEGORY_NODE_DEFINE
+> {
   #chatService = inject(ChatService);
   #abort = inject(AbortSignalToken);
-  #format = inject(TemplateFormatService);
 
   override async run() {
-    const obj = this.inputValueObject$$();
-    // 连接点
-    const data = this.inputParams.get(this.node.inputs[0].value)!;
-    const nodeResult = v.parse(CATEGORY_NODE_DEFINE, this.node);
+    let rawSys = this.inputs.systemPrompt;
+    let contextData = await this.nodeContextData$$();
+    let sysContent = serializeLexicalTextarea(rawSys, {
+      context: contextData,
+      environmentContext: this.environmentContextData,
+    });
+    let userSys = this.inputs.content;
+    let userContent = serializeLexicalTextarea(userSys, {
+      context: contextData,
+      environmentContext: this.environmentContextData,
+    });
 
-    const config = nodeResult.data.config!;
+    const config = this.inputs!;
     const inputList = config.categories.map((item) => {
       return {
         category_id: v4().slice(0, 13),
-        category_name: this.#format.interpolate(item.value, obj),
+        // todo 用序列化
+        category_name: serializeLexicalTextarea(item.value, {
+          context: contextData,
+          environmentContext: this.environmentContextData,
+        }),
       };
     });
     // 返回显示问题
     /** 系统提示词 */
-    const value = this.node.data.value!;
     const templatePrompt = [
-      { role: 'system', content: [{ type: 'text', text: value }] },
+      { role: 'system', content: [{ type: 'text', text: sysContent }] },
       ...config.examples
         .filter((item) => item.input.value && item.output.value)
         .flatMap((item) => {
@@ -77,7 +87,7 @@ export class CategoryRunner extends NodeRunnerBase {
             type: 'text',
             text: JSON.stringify({
               categories: inputList,
-              input_text: data.value,
+              input_text: userContent,
             }),
           },
         ],
@@ -104,11 +114,10 @@ export class CategoryRunner extends NodeRunnerBase {
     if (!subFlow) {
       throw new Error('未找到匹配分类');
     }
-    const newInputs = new Map(this.inputParams);
 
     const subResult = await this.injector
       .get(WorkflowRunnerService)
-      .createContext(subFlow.flow, newInputs, this.context, this.injector)
+      .createContext(subFlow.flow, this.runnerContext, this.injector)
       .run();
     return async () => {
       return subResult;

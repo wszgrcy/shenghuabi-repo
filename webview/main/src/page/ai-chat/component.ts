@@ -7,7 +7,7 @@ import {
 import { TrpcService } from '@fe/trpc';
 import { deepClone } from '../../util/clone';
 import { ChatService } from '@fe/component/chat/chat.service';
-import { ChatMode, ChatOptions, DEFAULT_INPUT_KEY } from '@bridge/share';
+import { ChatMode, ChatOptions } from '@bridge/share';
 import { isUndefined, omitBy } from 'lodash-es';
 /**
  * 侧边栏页面
@@ -32,7 +32,8 @@ export default class AiChatPage {
         const data = deepClone(result);
         delete (data as any).title;
         if (data.mode === ChatMode.template) {
-          data.input = data.input?.[DEFAULT_INPUT_KEY];
+          // todo 重构未验证
+          data.input = data.input?.['default'];
         }
         this.comp().firstItem$.set({
           ...getDefaultChatConfig(data?.mode || ChatMode.default),

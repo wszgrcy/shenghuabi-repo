@@ -10,6 +10,5 @@ export const NODE_COMMON: NodeComponentType = {
   help: [`- 文本解析TTS配置`].join('\n'),
   // config: defineConfig,
 
-  inputs: [],
   outputs: [],
 };

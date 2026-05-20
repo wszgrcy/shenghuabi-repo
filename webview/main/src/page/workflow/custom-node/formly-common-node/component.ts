@@ -38,7 +38,7 @@ export class FormlyCommonNodeComponent {
   #service = inject(BridgeService);
   model$$ = computed(
     () => {
-      return { data: this.props().data.config };
+      return this.props().data.config?.value;
     },
     { equal: deepEqual },
   );
@@ -48,14 +48,6 @@ export class FormlyCommonNodeComponent {
       return;
     }
     return define;
-    // return v.pipe(
-    //   v.intersect([
-    //     v.object({
-    //       a: v.pipe(v.string(), actions.wrappers.patch([{ type: HandleWC }])),
-    //     }),
-    //   ]),
-    //   asVirtualGroup(),
-    // );
   });
   nodeService = inject(NodeService);
   children = computed(() => {
@@ -77,10 +69,11 @@ export class FormlyCommonNodeComponent {
     },
     fieldGlobalConfig: FieldGlobalConfig,
   };
-  valueChange(event: CustomNode) {
+  valueChange(event: CustomNode['data']['config']) {
     // todo 没找到为什么会出现递归变更,因为发射的值确实是一样的
-    if (!deepEqual(event.data, this.props().data)) {
-      this.#service.patchDataOne(this.props().id, event.data);
+    // todo 重构 目前仅赋值有效,还有无效部分
+    if (!deepEqual(event, this.props().data.config?.value)) {
+      this.#service.patchDataOne(this.props().id, { config: { value: event } });
     }
   }
   constructor() {

@@ -266,23 +266,7 @@ export default class WorkflowEditor
   #trpc = inject(TrpcService);
   nodeConfigPanelStatus = signal(false);
   validatePanelStatus = signal(false);
-  configProps = computed(
-    () => {
-      let data = this.service.clickedNode();
-      if (!data) {
-        return;
-      }
-      data = this.service.nodes$().find((item) => item.id === data!.id);
-      if (!data || !this.service.fullNodeObject$$()[data.type!]) {
-        return;
-      }
-      if (data.data.options?.disableOpenConfig) {
-        return;
-      }
-      return deepClone({ id: data.id, type: data.type, data: data.data });
-    },
-    { equal: deepEqual },
-  );
+
   dataInited$ = signal(false);
   override nodeClipBoardKind: ClipboardKind = 'workflow-node';
   #chatNode = inject(ChatNodeService);
@@ -452,7 +436,7 @@ export default class WorkflowEditor
   addNode(type: string) {
     const config = this.service.fullNodeObject$$()[type];
     const node = this.service.appendNode(this.service.contextMenuPoint(), {
-      ...defaultConfigMerge(config, config.config ?? config.displayConfig),
+      ...defaultConfigMerge(config, config.configDefine),
       type: type,
     });
     config.afterAdd?.(node as any, this.injector as any);

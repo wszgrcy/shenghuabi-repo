@@ -19,20 +19,6 @@ export const NODE_COMMON: NodeComponentType = {
   ].join('\n'),
   // config: defineConfig,
   // displayConfig: TEMPLATE_NODE_DEFINE,
-  inputs: [
-    [],
-    [
-      {
-        label: '标题',
-        value: '标题',
-        inputType: 'object',
-      },
-      {
-        label: '内容',
-        value: '内容',
-        inputType: 'object',
-      },
-    ],
-  ],
+
   priority: -96,
 };

@@ -9,19 +9,17 @@ import { MindService } from '../../../../mind/mind.service';
 import { html2Text } from '../../../../../util/html-to-text';
 import { OCRService } from '../../../../external-call/ocr.service';
 import { MindFileService } from '../../../../mind/mind-file.service';
-import * as v from 'valibot';
 import { CARD_NODE_DEFINE } from '../card.node.define';
 
 export type WorkflowFileExtraMetadata = WorkflowExtraMetadata;
-export class CardRunner extends NodeRunnerBase {
+export class CardRunner extends NodeRunnerBase<typeof CARD_NODE_DEFINE> {
   #workspace = inject(WorkspaceService);
   #fileService = inject(MindFileService);
   override async run() {
-    const nodeResult = v.parse(CARD_NODE_DEFINE, this.node);
-    const list = nodeResult.data.value;
+    const list = this.inputs.value;
     const mindService = this.injector.get(MindService);
     const ocrService = this.injector.get(OCRService);
-    const config = nodeResult.data.config!;
+    const config = this.inputs!;
 
     const newList: string[] = [];
     const extraList: WorkflowFileExtraMetadata[] = [];

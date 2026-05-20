@@ -4,7 +4,7 @@ import { t } from './t';
 import * as v from 'valibot';
 import { ChatService } from '../service/ai/chat.service';
 import { ActionConfig, PromptService } from '../service/ai/prompt.service';
-import { ChatMindNode, DEFAULT_INPUT_KEY, PromptItem } from '../share';
+import { ChatMindNode, PromptItem } from '../share';
 import { PromptTree } from '../webview/custom-sidebar/prompt.tree';
 import { WatchService } from '../service/fs/watch.service';
 import { firstValueFrom } from 'rxjs';
@@ -154,7 +154,8 @@ export const ChatRouter = t.router({
           {
             ...input.config,
             input: {
-              [DEFAULT_INPUT_KEY]: {
+              // todo 重构未检查
+              default: {
                 selection: input.selection,
               },
             },

@@ -1,6 +1,6 @@
 import { ChatMessageListInputType } from '@shenghuabi/openai/define';
 import { ChatHistoryListType } from './chat/define/history';
-import { RawWorkflowNode } from './workflow';
+import { CustomNode } from './workflow';
 /** 对话知识来源 */
 export enum ChatContextType {
   article = '文章',
@@ -26,7 +26,8 @@ export enum ChatMode {
 export interface WorkflowChatOptions {
   mode: ChatMode.workflow;
   input?: Record<string, any>;
-  context?: Record<string, RawWorkflowNode>;
+  /** todo 不确定是否保留 */
+  context?: Record<string, CustomNode>;
   workflow?: {
     path: string;
   };
@@ -35,7 +36,8 @@ export interface ChatOptions {
   mode: ChatMode;
   input?: Record<string, any>;
   template?: ChatMessageListInputType;
-  context?: Record<string, RawWorkflowNode>;
+  /** todo 不确定是否保留 */
+  context?: Record<string, CustomNode>;
   workflow?: {
     path: string;
   };

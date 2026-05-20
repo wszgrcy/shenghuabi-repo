@@ -43,7 +43,7 @@ export class MindChatProviderService extends ChatService {
         (item) => item.targetHandle === inputItem.id,
       );
       if (linkedEdges.length) {
-        inputObject[inputItem.value] = this.formatNode(
+        inputObject[inputItem.name!] = this.formatNode(
           linkedEdges.map((item) => item.source),
         );
       }

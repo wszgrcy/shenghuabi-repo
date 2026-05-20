@@ -191,7 +191,7 @@ export class AiChatNode extends NodeBase<ChatDataType> {
             const disableInputObj = {} as Record<string, true>;
             for (const inputItem of inputHandle) {
               if (edges.some((item) => item.targetHandle === inputItem.id)) {
-                disableInputObj[inputItem.label] = true;
+                disableInputObj[inputItem.label!] = true;
               }
             }
             untracked(() => {

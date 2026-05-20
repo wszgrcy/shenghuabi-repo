@@ -18,8 +18,8 @@ export const NODE_COMMON: NodeComponentType = {
 
   outputs: [
     [
-      { value: 'first', label: '第一项' },
-      { value: 'flat', label: '扁平数组' },
+      { id: 'first', label: '第一项' },
+      { id: 'flat', label: '扁平数组' },
     ],
   ],
   // (injector) => FileNodeConfig.form(injector),

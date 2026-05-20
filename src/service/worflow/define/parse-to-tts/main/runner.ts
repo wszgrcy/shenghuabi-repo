@@ -6,7 +6,7 @@ import { TTSSerivce } from '@shenghuabi/python-addon';
 import * as v from 'valibot';
 import { PARSE_TO_TTS_DEFINE } from '../node.define';
 import { TemplateFormatService } from '@shenghuabi/workflow';
-export class Runner extends NodeRunnerBase {
+export class Runner extends NodeRunnerBase<typeof PARSE_TO_TTS_DEFINE> {
   #injector = inject(Injector);
   #format = inject(TemplateFormatService);
 

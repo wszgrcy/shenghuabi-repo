@@ -12,7 +12,7 @@ import zodToJsonSchema from 'zod-to-json-schema';
 import * as yaml from 'yaml';
 import { LogFactoryService } from '../../../../log.service';
 
-export class ScriptRunner extends NodeRunnerBase {
+export class ScriptRunner extends NodeRunnerBase<typeof SCRIPT_NODE_DEFINE> {
   #channel = inject(LogFactoryService).getLog('workflow');
   #workspace = inject(WorkspaceService);
   override async run() {

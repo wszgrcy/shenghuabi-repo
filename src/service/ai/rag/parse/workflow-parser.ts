@@ -35,7 +35,7 @@ export class RagWorkflowParser {
         result = await this.#workflowExec.runParse(
           data,
           {
-            input: {},
+            inputs: {},
             environmentParameters: {
               chunk: document.chunk,
               fileName: document.fileName,

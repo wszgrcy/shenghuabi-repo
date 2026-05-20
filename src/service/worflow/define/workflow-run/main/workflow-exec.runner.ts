@@ -6,7 +6,7 @@ import { AbortSignalToken, WorkflowSelectService } from '@shenghuabi/workflow';
 import { WorkflowExecService } from '@shenghuabi/workflow';
 import { WORKFLOW_EXEC_DEFINE } from '../workflow-run.define';
 
-export class WorkflowExecRunner extends NodeRunnerBase {
+export class WorkflowExecRunner extends NodeRunnerBase<typeof WORKFLOW_EXEC_DEFINE> {
   #workflow = inject(WorkflowSelectService);
   #workflowExec = inject(WorkflowExecService);
   #abort = inject(AbortSignalToken);

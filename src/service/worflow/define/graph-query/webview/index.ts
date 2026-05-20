@@ -4,8 +4,7 @@ import { GRAPH_QUERY_NODE_DEFINE } from '../graph-query.node.define';
 
 export const GraphQueryWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  displayConfig: GRAPH_QUERY_NODE_DEFINE,
-  config: GRAPH_QUERY_NODE_DEFINE,
+  configDefine: GRAPH_QUERY_NODE_DEFINE,
   initData: () => {
     return {
       data: {

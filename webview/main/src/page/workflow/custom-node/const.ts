@@ -1,8 +1,9 @@
-import { generateHandle } from '@bridge/share';
-/** 分类器使用 */
-export const CONNECT_POINT = () => [
+import { HandleNode } from '@shenghuabi/workflow';
+
+export const CONNECT_POINT: HandleNode[] = [
   {
-    ...generateHandle('[connect]', '[连接点]'),
-    type: 'connect' as const,
+    id: '[connect]',
+    label: '[连接点]',
+    type: 'connect',
   },
 ];

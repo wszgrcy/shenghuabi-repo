@@ -36,27 +36,7 @@ const outputColorInterpolate = interpolateRgbBasisClosed(['lime', 'teal']);
 function getPosition(position: number, count: number) {
   return ((position + 1) / (count + 1)) * 100 + '%';
 }
-function NodeTooltip(props: { bridge: BridgeService; props: CustomNode }) {
-  if (props.props.type === 'input-params') {
-    const manualInput = !!props.props.data.config?.['manualInput'];
-    return (
-      <ToggleActionButton
-        disabledStatus={manualInput}
-        title={!manualInput ? '需要输入提示词' : '直接调用'}
-        onClick={useCallback(() => {
-          props.bridge.patchDataOne(props.props.id, {
-            config: {
-              ...props.props.data.config,
-              manualInput: !props.props.data.config?.['manualInput'],
-            },
-          });
-        }, [props.props.data.config])}
-        icon={'send'}
-      ></ToggleActionButton>
-    );
-  }
-  return null;
-}
+
 function useWarnToolbar({
   props,
   bridge,
@@ -70,11 +50,11 @@ function useWarnToolbar({
     if (!nodeMeta) {
       return;
     }
-    const config = nodeMeta.config;
+    const config = nodeMeta.configDefine;
     if (!config) {
       return;
     }
-    const result = v.safeParse(config, props, { lang: 'zh-CN' });
+    const result = v.safeParse(config, props.data.config, { lang: 'zh-CN' });
     if (!result.success) {
       const list: string[] = [];
       result.issues.forEach((issue) => {
@@ -98,7 +78,6 @@ function useWarnToolbar({
 const selector = (a: ReactFlowState) =>
   a.nodes.filter((node) => node.selected).length;
 function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
-  const disableOpenConfig = props.props.data.options?.disableOpenConfig;
   const excludeUsage = props.props.data.excludeUsage;
   const outputList = useMemo(
     () => flatFilterHandleList(props.props.data.handle?.output),
@@ -129,9 +108,9 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
     if (!displayOutput) {
       return [];
     }
-    return uniqBy(outputList, (item) => item.value).map((item, i) => {
+    return uniqBy(outputList, (item) => item.name).map((item, i) => {
       return {
-        value: item.value,
+        value: item.name ?? item.id,
         icon: (
           <Tooltip title={'选择出口:' + item.label}>
             <div
@@ -152,14 +131,7 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
       excludeUsage: !excludeUsage,
     });
   }, [excludeUsage]);
-  const hiddenFn = useCallback(() => {
-    props.bridge.patchDataOne(props.props.id, {
-      options: {
-        ...props.props.data.options,
-        disableOpenConfig: !props.props.data.options?.disableOpenConfig,
-      },
-    });
-  }, [props.props.data.options]);
+
   // 切换出口
   return (
     <NodeToolbar
@@ -192,12 +164,6 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
       {selectedLength === 1 && props.props.selected ? (
         <>
           <ToggleActionButton
-            disabledStatus={!disableOpenConfig}
-            title={!disableOpenConfig ? '隐藏配置' : '显示配置'}
-            onClick={hiddenFn}
-            icon={'settings'}
-          ></ToggleActionButton>
-          <ToggleActionButton
             disabledStatus={!excludeUsage}
             title={!excludeUsage ? '排除此节点' : '包含此节点'}
             onClick={excludeFn}
@@ -214,7 +180,6 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
               }}
             />
           ) : null}
-          <NodeTooltip props={props.props} bridge={props.bridge}></NodeTooltip>
         </>
       ) : null}
     </NodeToolbar>
@@ -350,7 +315,6 @@ export function wrapControlNode(
               otherInputs={componentConfig.otherInputs}
             ></NgOutletReact>
           </div>
-          // todo handle 应该分为固定和动态
           <RightDiffHandle
             list={flatFilterHandleList(props.data.handle?.output)}
           />

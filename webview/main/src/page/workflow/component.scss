@@ -1,9 +1,11 @@
 @use '@angular/material' as mat;
 @use 'sass:meta';
+@reference '../../styles.css';
 
 @mixin xyflow {
   @include meta.load-css('../../../node_modules/@xyflow/react/dist/style');
 }
+
 :host ::ng-deep {
   @include xyflow();
 
@@ -144,5 +146,38 @@
     * {
       user-select: none !important;
     }
+  }
+}
+:host ::ng-deep {
+  .editor-textarea-wrapper {
+    display: grid;
+    width: 100%;
+    outline: none;
+    @apply min-h-10;
+  }
+
+  .editor-textarea-wrapper > div {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .editor-textarea-wrapper > div[aria-hidden] {
+    z-index: 0;
+    pointer-events: none;
+    position: relative;
+  }
+  .editor-textarea {
+    outline: none;
+  }
+  .variable-label {
+    @apply badge;
+  }
+  .variable-label-custom {
+    @apply badge-success;
+  }
+  .variable-label-missing {
+    @apply badge-warning;
+  }
+  .variable-label-default {
+    @apply badge-info;
   }
 }

@@ -5,7 +5,7 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 
-import { deepClone, RawWorkflowNode, WebviewNodeConfig } from '@bridge/share';
+import { CustomNode, deepClone, WebviewNodeConfig } from '@bridge/share';
 
 import { v4 } from 'uuid';
 import { PiyingView } from '@piying/view-angular';
@@ -31,7 +31,7 @@ const FieldGlobalConfig = {
 })
 export class WorkflowNodeDialogComponent {
   #dialogData = inject<{
-    data: RawWorkflowNode;
+    data: CustomNode;
     config: WebviewNodeConfig;
   }>(MAT_DIALOG_DATA);
   readonly title = this.#dialogData.config.label;
@@ -43,13 +43,13 @@ export class WorkflowNodeDialogComponent {
           id: v4(),
           ...defaultConfigMerge(
             this.#dialogData.config,
-            this.#dialogData.config.templateConfig,
+            this.#dialogData.config.configDefine,
           ),
           type: this.#dialogData.config.type,
         },
   );
   context = inject(ChatNodeService).context;
-  schema = v.pipe(this.#dialogData.config.templateConfig!);
+  schema = v.pipe(this.#dialogData.config.configDefine!);
   options = {
     context: this.context,
     fieldGlobalConfig: FieldGlobalConfig,

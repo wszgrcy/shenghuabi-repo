@@ -8,7 +8,7 @@ import { TTSSerivce } from '@shenghuabi/python-addon';
 import { FolderName, WorkspaceService } from '../../../../workspace.service';
 import { path } from '@cyia/vfs2';
 import { getFileTimestamp } from '@cyia/util';
-export class TextToAuduioRunner extends NodeRunnerBase {
+export class TextToAuduioRunner extends NodeRunnerBase<typeof TEXT_TO_AUDIO_DEFINE> {
   #ttsSerivce = inject(TTSSerivce);
   #workspace = inject(WorkspaceService);
   #format = inject(TemplateFormatService);

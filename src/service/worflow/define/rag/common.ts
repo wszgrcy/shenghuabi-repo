@@ -15,6 +15,5 @@ export const NODE_COMMON: NodeComponentType = {
   // config: defineConfig,
   // displayConfig: RAG_NODE_DEFINE,
 
-  inputs: [[{ label: '问题', value: 'question' }]],
   priority: -99,
 };

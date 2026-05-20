@@ -1,14 +1,10 @@
 import * as v from 'valibot';
 import { t } from './t';
-import { TemplateFormatService } from '@shenghuabi/workflow';
+import { ModelOptionsToken, TemplateFormatService } from '@shenghuabi/workflow';
 import { WorkflowParserService } from '@shenghuabi/workflow';
 import { observable } from '@trpc/server/observable';
 import { MindEvent } from '../share';
-import {
-  WorkflowSelectService,
-  DEFAULT_INPUT_KEY,
-  WorkflowData,
-} from '@shenghuabi/workflow';
+import { WorkflowSelectService, WorkflowData } from '@shenghuabi/workflow';
 import { selectFile } from '../util/platform/select-file';
 import { WorkspaceService } from '../service/workspace.service';
 import * as vscode from 'vscode';
@@ -107,22 +103,29 @@ export const WorkflowRouter = t.router({
       const abort = new AbortController();
       return observable<WorkflowStreamData>((ob) => {
         let parameters: WorkflowRunnerEnvironmentParams | undefined;
-        if (input.input[DEFAULT_INPUT_KEY]) {
-          parameters = input.input[DEFAULT_INPUT_KEY];
-          delete input.input[DEFAULT_INPUT_KEY];
+        // todo 重构未处理
+        if (input.input['default']) {
+          parameters = input.input['default'];
+          delete input.input['default'];
         }
+        // todo 模型用provider
         exec
           .exec(
             input.data,
             {
-              input: input.input,
-              context: input.context,
+              inputs: input.input,
+              // context: input.context,
               environmentParameters: parameters,
-              modelOptions: chatService.getModelConfig(input.modelConfigName),
             },
             { showError: false },
             ob,
             abort.signal,
+            [
+              {
+                provide: ModelOptionsToken,
+                useValue: chatService.getModelConfig(input.modelConfigName),
+              },
+            ],
           )
 
           .catch((rej) => {

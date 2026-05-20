@@ -10,6 +10,5 @@ export const NODE_COMMON: NodeComponentType = {
   help: [`- 文本转语音`].join('\n'),
   // config: defineConfig,
 
-  inputs: [],
   outputs: [],
 };

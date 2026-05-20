@@ -1,5 +1,4 @@
-import { RUNNER_ORIGIN_OUTPUT_KEY } from '@shenghuabi/workflow/share';
-import { NodeComponentType } from '@shenghuabi/workflow/share';
+import { NodeComponentType, RUNNER_ORIGIN_OUTPUT } from '@shenghuabi/workflow/share';
 const helpList = [
   '- 使用之前请保证已有知识库启用`图索引`',
   '- 使用`问题`对知识库进行动态查询或使用`选择`指定某些节点',
@@ -20,5 +19,5 @@ export const NODE_COMMON: NodeComponentType = {
   help: helpList.join('\n'),
 
   // config: defineConfig,
-  outputs: [[{ label: '原始结果', value: RUNNER_ORIGIN_OUTPUT_KEY }]],
+  outputs: [RUNNER_ORIGIN_OUTPUT],
 };

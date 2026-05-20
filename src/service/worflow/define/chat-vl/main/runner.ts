@@ -13,8 +13,9 @@ import {
   createLLMData,
   EnviromentParametersToken,
   NodeRunnerBase,
-  RUNNER_ORIGIN_OUTPUT_KEY,
+  serializeLexicalTextarea,
   TemplateFormatService,
+  useChat,
 } from '@shenghuabi/workflow';
 import { bufferToImageBase64, imageExtract } from '@shenghuabi/knowledge/image';
 import { vlMarkdownParser } from '@shenghuabi/knowledge/file-parser';
@@ -22,34 +23,24 @@ import { path } from '@cyia/vfs2';
 import * as fs from 'fs/promises';
 import sharp from 'sharp';
 
-export class ChatVlRunner extends NodeRunnerBase {
+export class ChatVlRunner extends NodeRunnerBase<typeof CHAT_VL_NODE_DEFINE> {
   #format = inject(TemplateFormatService);
   #chatService = inject(ChatServiceToken);
   #envParameters = inject(EnviromentParametersToken);
   #abort = inject(AbortSignalToken);
   #channel = inject(LogService).getToken('chat');
-
+  chatParse = useChat();
   override async run() {
-    const { metadataList, obj } = await this.getInputChat();
-    const imageBuffer = this.#envParameters!['image'];
+    const imageBuffer = this.inputs.image;
     // const inputJsonSchema = this.inputParams.get(DEFAULT_CHAT_SCHEMA_KEY);
-    const nodeResult = this.getParsedNode(CHAT_VL_NODE_DEFINE);
-    const config = nodeResult.data.config;
+    const nodeResult = this.inputs;
+    const config = nodeResult;
 
-    const list = nodeResult.data.value;
-    const historyList = list.map((item) => {
-      const content = this.#format.interpolate(
-        item.content
-          .map((item) => (item.type === 'text' ? item.text : ''))
-          .join('\n'),
-        obj,
-      );
-      return {
-        role: item.role,
-        content: [{ type: 'text', text: content }],
-      };
-    }) as ChatMessageListOutputType;
-    const lastUserItem = historyList.find((item) => item.role === 'user');
+    const list = nodeResult.value;
+
+    const { list: historyList, metadataList } = await this.chatParse(list);
+
+    const lastUserItem = historyList.findLast((item) => item.role === 'user');
     const imageContent = {
       type: 'image_url' as const,
       image_url: {
@@ -122,8 +113,8 @@ export class ChatVlRunner extends NodeRunnerBase {
         },
       });
     }
-    return async (outputName: string) => {
-      if (outputName === RUNNER_ORIGIN_OUTPUT_KEY) {
+    return async (id: string) => {
+      if (id === 'default') {
         return {
           value: streamData.value,
           dataId: streamData.dataId,

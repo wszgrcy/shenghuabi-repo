@@ -4,8 +4,7 @@ import { IMAGE_NODE_DEFINE } from '../image.node.define';
 
 export const ImageWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  displayConfig: IMAGE_NODE_DEFINE,
-  config: IMAGE_NODE_DEFINE,
+  configDefine: IMAGE_NODE_DEFINE,
   initData: () => {
     return {
       data: {

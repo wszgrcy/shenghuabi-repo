@@ -6,8 +6,7 @@ const DEFAULT_CONTENT = `\n  return async (outputName) => {
   }\n`;
 export const ScriptWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  displayConfig: SCRIPT_NODE_DEFINE,
-  config: SCRIPT_NODE_DEFINE,
+  configDefine: SCRIPT_NODE_DEFINE,
   initData: () => {
     return {
       data: {

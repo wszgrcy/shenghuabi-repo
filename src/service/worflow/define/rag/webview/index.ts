@@ -5,7 +5,7 @@ import { RAG_NODE_DEFINE } from '../rag.node.define';
 
 export const RagWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  config: RAG_NODE_DEFINE,
+  configDefine: RAG_NODE_DEFINE,
   initData: () => {
     return {
       data: {
