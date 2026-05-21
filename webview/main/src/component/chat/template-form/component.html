@@ -9,7 +9,7 @@
     </div>
   </menu-checkbox>
   <div class="flex-1 relative flex items-center group/prompt-container">
-    <cyia-textarea-template formControlName="content" class="flex-1" [minHeight]="22"></cyia-textarea-template>
+    <cyia-textarea-template formControlName="content" class="flex-1" [minHeight]="22" (variableChange)="textVarChange($event)"></cyia-textarea-template>
     <div
       class="absolute right-0 hidden group-hover/prompt-container:flex z-[1]"
     >

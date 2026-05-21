@@ -21,8 +21,64 @@ import { HandleWC } from '../../wrapper/handle/component';
 import { UseRefWC } from '../../wrapper/use-ref/component';
 import { NodeService } from './node.service';
 import { safeDefine } from '@fe/piying/define';
+import { PromptListFCC } from '@fe/form/control/prompt-list/component';
+import { TextareaTemplateFCC } from '@fe/component/textarea-template/component';
+import { outputChange, valueChange } from '@piying/view-angular-core';
+import {
+  Editor,
+  extractVariableItems,
+  restoreEditorState,
+  SimpleVariableNode,
+  simplifyEditorState,
+} from '@shenghuabi/lexical-textarea';
+import { ChatVariable } from '../../../../type/chat-variable';
+import { InputContextItem } from '@bridge/share';
 const FieldGlobalConfig = {
-  types: safeDefine.define.types,
+  types: {
+    ...safeDefine.define.types,
+    'prompt-list': {
+      type: PromptListFCC,
+      actions: [
+        outputChange((fn) => {
+          fn([{ list: undefined, output: 'variableChange' }]).subscribe(
+            ({ list: [[value]], field }) => {
+              field.context['setContextList'](
+                field.form.control!.fieldPath,
+                (value as ChatVariable[]).map((item) => {
+                  return {
+                    label: item.label,
+                    key: item.value,
+                    kind: item.kind,
+                  } as InputContextItem;
+                }),
+              );
+            },
+          );
+        }),
+      ],
+    },
+    'textarea-template': {
+      type: TextareaTemplateFCC,
+      actions: [
+        outputChange((fn) => {
+          fn([{ list: undefined, output: 'variableChange' }]).subscribe(
+            ({ list: [[value]], field }) => {
+              let list: SimpleVariableNode['item'][] = value.custom;
+              field.context['setContextList'](
+                field.form.control!.fieldPath,
+                list.map((item) => {
+                  return {
+                    label: item.label,
+                    key: item.value,
+                  } as InputContextItem;
+                }),
+              );
+            },
+          );
+        }),
+      ],
+    },
+  },
   wrappers: {
     ...FormWrappers,
     'flow-handle': { type: HandleWC },
@@ -71,6 +127,11 @@ export class FormlyCommonNodeComponent {
         data.handle!.output[index] ??= [];
         data.handle!.output[index] ??= list;
         this.#bridge.patchDataOne(this.props().id, data);
+      },
+      setContextList: (key: any[], value: any) => {
+        let config = this.props().data.config ?? {};
+        config.contextGroup ??= {};
+        config.contextGroup[key.join('-')] = value;
       },
     },
     fieldGlobalConfig: FieldGlobalConfig,

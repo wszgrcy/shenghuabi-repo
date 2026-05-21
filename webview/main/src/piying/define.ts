@@ -144,11 +144,8 @@ export const safeDefine = typedComponent({
     'shadow-picker': {
       type: ShadowPickerFCC,
     },
-    'prompt-list': {
-      type: PromptListFCC,
-    },
+ 
     'tree-select': { type: TreeSelectFCC },
-    'textarea-template': { type: TextareaTemplateFCC },
     'div-control': { type: DivFCC },
   },
   wrappers: {

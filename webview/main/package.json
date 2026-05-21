@@ -23,7 +23,7 @@
     "@emotion/sheet": "^1.4.0",
     "@excalidraw/excalidraw": "0.18.0",
     "@fontsource/roboto": "^5.2.5",
-    "@shenghuabi/lexical-textarea":"1.0.4",
+    "@shenghuabi/lexical-textarea":"1.0.5",
     "@lexical/code": "~0.44.0",
     "@lexical/code-core": "~0.44.0",
     "@lexical/code-prism": "~0.44.0",

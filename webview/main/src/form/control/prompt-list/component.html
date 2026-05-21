@@ -8,6 +8,7 @@
         [isLast]="true"
         (addTemplateChange)="addChange($event, $index)"
         [list]="value$()"
+        (variableChange)="varChanged($event,$index)"
       ></prompt-template>
       <div class="flex items-center overflow-hidden">
         <button

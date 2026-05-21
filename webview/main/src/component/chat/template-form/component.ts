@@ -6,6 +6,7 @@ import {
   forwardRef,
   input,
   output,
+  signal,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -34,7 +35,11 @@ import { deepEqual } from 'fast-equals';
 import * as v from 'valibot';
 import { MenuCheckboxOption } from '@cyia/component/core/component/menu-checkbox/type';
 import { TextareaTemplateFCC } from '@fe/component/textarea-template/component';
-
+import {
+  SimpleVariableNode,
+  SimplifiedState,
+} from '@shenghuabi/lexical-textarea';
+import { ChatVariable } from '../../../type/chat-variable';
 @Component({
   selector: 'prompt-template',
   templateUrl: './component.html',
@@ -60,6 +65,7 @@ import { TextareaTemplateFCC } from '@fe/component/textarea-template/component';
 })
 export class PromptTemplateFCC implements ControlValueAccessor {
   disableImage = input(false);
+  variableChange = output<ChatVariable[]>();
   readonly PROMPT_TYPE: MenuCheckboxOption[] = [
     {
       value: 'system',
@@ -144,13 +150,29 @@ export class PromptTemplateFCC implements ControlValueAccessor {
       if (value.content) {
         contentList.push({ text: value.content, type: 'text' });
       }
+      let imageList: SimpleVariableNode | undefined;
       if (value.assets) {
-        contentList.push(
-          v.parse(ChatCompletionContentPartImage, {
-            image_url: { url: value.assets },
-          }),
-        );
+        imageList = {
+          type: 'variable',
+          item: {
+            label: '图片',
+            value: [value.assets],
+            type: 'custom',
+          },
+        };
+        contentList.push({
+          image_url: {
+            url: [[imageList]] as SimplifiedState,
+          },
+          type: 'image_url',
+        });
       }
+      let list: ChatVariable[] = [...this.#textVarList$()];
+      if (imageList) {
+        list.push({ ...imageList.item, kind: 'image' });
+      }
+      this.variableChange.emit(list);
+
       this.onChange({
         role: value.type,
         content: contentList,
@@ -175,5 +197,9 @@ export class PromptTemplateFCC implements ControlValueAccessor {
 
   registerOnChange(fn: (_: any) => any): void {
     this.onChange = fn;
+  }
+  #textVarList$ = signal<SimpleVariableNode['item'][]>([]);
+  textVarChange(obj: any) {
+    this.#textVarList$.set(obj.custom);
   }
 }
