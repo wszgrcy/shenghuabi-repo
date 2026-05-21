@@ -18,10 +18,16 @@ import { ValueFormatDirective } from '../../../../directive/value-format.directi
 import { deepEqual } from 'fast-equals';
 import { DefaultFormTypes } from '@fe/form/default-type-config';
 import { HandleWC } from '../../wrapper/handle/component';
+import { UseRefWC } from '../../wrapper/use-ref/component';
 import { NodeService } from './node.service';
+import { safeDefine } from '@fe/piying/define';
 const FieldGlobalConfig = {
-  types: DefaultFormTypes,
-  wrappers: FormWrappers,
+  types: safeDefine.define.types,
+  wrappers: {
+    ...FormWrappers,
+    'flow-handle': { type: HandleWC },
+    'use-ref': { type: UseRefWC },
+  },
 } as PiViewConfig;
 @Component({
   selector: 'formly-common-node',
@@ -70,6 +76,7 @@ export class FormlyCommonNodeComponent {
     fieldGlobalConfig: FieldGlobalConfig,
   };
   valueChange(event: CustomNode['data']['config']) {
+    console.log('变更');
     // todo 没找到为什么会出现递归变更,因为发射的值确实是一样的
     // todo 重构 目前仅赋值有效,还有无效部分
     if (!deepEqual(event, this.props().data.config?.value)) {

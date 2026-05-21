@@ -7,4 +7,4 @@ import { InsertFieldDirective } from '@piying/view-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [InsertFieldDirective],
 })
-export class UseRefWrapper {}
+export class UseRefWC {}

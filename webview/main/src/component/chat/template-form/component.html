@@ -5,25 +5,11 @@
     class="sticky top-0"
   >
     <div class="extra-menu">
-      @if (isLast()) {
-        <div>
-          <button
-            class="btn btn-circle btn-soft btn-primary"
-            (click)="addTemplateChange.emit()"
-            matTooltip="添加对话模板"
-          >
-            <span class="material-icons">add</span>
-          </button>
-        </div>
-      }
       <ng-content select=".extra-suffix-after"></ng-content>
     </div>
   </menu-checkbox>
   <div class="flex-1 relative flex items-center group/prompt-container">
-    <span-input
-      class="span-replace-input flex-1 overflow-hidden"
-      formControlName="content"
-    ></span-input>
+    <cyia-textarea-template formControlName="content" class="flex-1" [minHeight]="22"></cyia-textarea-template>
     <div
       class="absolute right-0 hidden group-hover/prompt-container:flex z-[1]"
     >
@@ -50,7 +36,12 @@
           >
             <label class="input">
               图片变量名
-              <input type="text" class="grow" [formControl]="forms.controls.assets" placeholder="输入变量名" />
+              <input
+                type="text"
+                class="grow"
+                [formControl]="forms.controls.assets"
+                placeholder="输入变量名"
+              />
             </label>
           </div>
         </ng-template>

@@ -40,16 +40,16 @@ import { deepEqual } from 'fast-equals';
     OverlayModule,
     MatIconModule,
     ReactOutlet,
-    AttributesDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextareaTemplateFCC extends BaseControl {
-  static __version = 2;
-  templateRef = viewChild.required('templateRef');
+  // static __version = 2;
+  // templateRef = viewChild.required('templateRef');
   override value$ = signal(undefined, { equal: deepEqual });
   options = input<any[]>();
   placeholder = input<string>();
+  minHeight = input<number>(40);
   readonly Editor = Editor;
 
   onChange = (value: any) => {
@@ -61,7 +61,7 @@ export class TextareaTemplateFCC extends BaseControl {
       onChange: this.onChange,
       variables: this.options(),
       className: 'textarea',
-      minHeight: 40,
+      minHeight: this.minHeight(),
       placeholder: this.placeholder(),
     };
   });

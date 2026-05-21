@@ -6,11 +6,16 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BaseControl } from '@piying/view-angular';
 import { MenuCheckboxOption } from './type';
+import { MergeClassPipe } from '@piying-lib/angular-daisyui/pipe';
 @Component({
   selector: 'menu-checkbox',
   templateUrl: './component.html',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, MatMenuModule, MatTooltipModule],
+  imports: [
+    MatMenuModule,
+    MatTooltipModule,
+    MergeClassPipe,
+  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -22,9 +27,10 @@ import { MenuCheckboxOption } from './type';
 export class MenuCheckboxFCC extends BaseControl {
   /** ---输入--- */
   /** @default {"icon":"help","description":"未知"} */
-  unknownOption = input<{ icon: string; description: string; color?: string }>({
+  unknownOption = input<{ icon: string; description: string; color: string }>({
     icon: 'help',
     description: '未知',
+    color: 'warning',
   });
   /** @title 列表 */
   options = input.required<MenuCheckboxOption[]>();
@@ -39,17 +45,17 @@ export class MenuCheckboxFCC extends BaseControl {
     );
   });
   loading$ = signal(false);
-  async buttonClicked(value: any, index: number) {
+  async buttonClicked(option: MenuCheckboxOption, index: number) {
     this.loading$.set(true);
     try {
-      const option = this.options()[index];
+      // const option = this.options()[index];
       if (option.beforeChange) {
-        const result = await option.beforeChange();
+        const result = await option.beforeChange(option);
         if (!result) {
           return;
         }
       }
-      this.valueChange(value);
+      this.valueChange(option.value);
     } catch (error) {
     } finally {
       this.loading$.set(false);

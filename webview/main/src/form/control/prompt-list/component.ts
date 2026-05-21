@@ -39,10 +39,10 @@ export class PromptListFCC extends BaseControl<ChatMessageListOutputType> {
     });
     this.valueChange(this.value$());
   }
-  addChange(index: number) {
+  addChange(role: string, index: number) {
     this.value$.update((list) => {
-      list = [...list!];
-      list.splice(index + 1, 0, getHumanTemplate());
+      list = [...(list ?? [])!];
+      list.splice(index + 1, 0, { role: role as any, content: [] });
       return list;
     });
     this.valueChange(this.value$());

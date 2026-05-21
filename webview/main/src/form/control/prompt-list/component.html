@@ -6,7 +6,7 @@
         [ngModel]="item"
         (ngModelChange)="promptChange($event, $index)"
         [isLast]="true"
-        (addTemplateChange)="addChange($index)"
+        (addTemplateChange)="addChange($event, $index)"
         [list]="value$()"
       ></prompt-template>
       <div class="flex items-center overflow-hidden">
@@ -19,5 +19,9 @@
         </button>
       </div>
     </div>
+  } @empty {
+    <button class="btn btn-circle btn-soft btn-primary">
+      <span class="material-icons" (click)="addChange('user', -1)">add</span>
+    </button>
   }
 </div>

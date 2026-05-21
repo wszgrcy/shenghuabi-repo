@@ -7,6 +7,6 @@ export const TextareaTemplateDefine = v.pipe(
 );
 export const RefDefine = v.pipe(
   v.any(),
-  setComponent('div'),
+  setComponent('div-control'),
   actions.wrappers.patch(['use-ref']),
 );
