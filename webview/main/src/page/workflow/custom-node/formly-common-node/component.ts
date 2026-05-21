@@ -32,7 +32,8 @@ import {
   simplifyEditorState,
 } from '@shenghuabi/lexical-textarea';
 import { ChatVariable } from '../../../../type/chat-variable';
-import { InputContextItem } from '@bridge/share';
+import { InputContextItem, InputRefItem } from '@bridge/share';
+import { CreateSchemaHandle } from './schema-handle';
 const FieldGlobalConfig = {
   types: {
     ...safeDefine.define.types,
@@ -135,6 +136,7 @@ export class FormlyCommonNodeComponent {
       },
     },
     fieldGlobalConfig: FieldGlobalConfig,
+    handle: CreateSchemaHandle,
   };
   valueChange(event: CustomNode['data']['config']) {
     console.log('变更');
@@ -146,5 +148,26 @@ export class FormlyCommonNodeComponent {
   }
   constructor() {
     this.nodeService.props$ = this.props;
+    let id$$ = computed(() => this.props().id);
+    effect(() => {
+      let nodeIdSet = this.nodeService.nodeIdSet$();
+      let refList: InputRefItem[] = [];
+      let obj = this.#bridge.edgeTargetObj$$()[id$$()];
+      nodeIdSet.forEach((field$$, key) => {
+        let field = field$$();
+        let item = obj?.[key];
+        if (!item) {
+          return
+        }
+        refList.push({
+          value: item.source,
+          key: field.form.control!.valuePath,
+          outlet: item.sourceHandle ?? undefined,
+        });
+      });
+      this.#service.patchDataOne(id$$(), {
+        config: { invalidList: refList },
+      });
+    });
   }
 }

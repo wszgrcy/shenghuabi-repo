@@ -38,28 +38,37 @@ export class HandleWC {
   readonly templateRef = viewChild.required('templateRef');
   readonly Handle = Handle;
   field$$ = inject(PI_VIEW_FIELD_TOKEN);
-  bridge = inject(BridgeService);
-  nodeService = inject(NodeService);
-  id = `input:${this.field$$().form.control!.valuePath.join('-')}`;
-  props = {
-    className: 'relative! w-full! h-auto! top-0! left-0! transform-none!',
-    type: 'target',
-    position: Position.Left,
-    id: this.id,
-  };
-  linkedEdge$$ = computed(() => {
-    let list = this.bridge.edges();
-    let props = this.nodeService.props$();
-    return list.find(
-      (item) => props.id === item.target && this.id === item.targetHandle,
-    );
+  #bridge = inject(BridgeService);
+  #nodeService = inject(NodeService);
+  #fieldPath$$ = computed(() => {    
+    return this.field$$().form.control!.fieldPath.join('-');
+  });
+  readonly #id$$ = computed(() => this.#nodeService.props$().id);
+  readonly #handleId$$ = computed(() => {
+    return `input:${this.#fieldPath$$()}`;
+  });
+  readonly props$$ = computed(() => {
+    return {
+      className: 'relative! w-full! h-auto! top-0! left-0! transform-none!',
+      type: 'target',
+      position: Position.Left,
+      id: this.#handleId$$(),
+    };
+  });
+  #linkedEdge$$ = computed(() => {
+    return this.#bridge.edgeTargetObj$$()[this.#id$$()]?.[this.#handleId$$()];
   });
   isUsed$$ = computed(() => {
-    return !!this.linkedEdge$$();
+    return !!this.#linkedEdge$$();
   });
-  constructor() {}
+  constructor() {
+    this.#nodeService.addCanLinkId(this.#handleId$$(), this.field$$);
+  }
   unLink() {
-    let edge = this.linkedEdge$$()!;
-    this.bridge.instance()?.deleteElements({ edges: [edge] });
+    let edge = this.#linkedEdge$$()!;
+    this.#bridge.instance()?.deleteElements({ edges: [edge] });
+  }
+  ngOnDestroy(): void {
+    this.#nodeService.removeCanLinkId(this.#handleId$$());
   }
 }

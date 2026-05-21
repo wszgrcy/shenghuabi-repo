@@ -72,6 +72,17 @@ export class FlowBseService<NODE extends Node> {
     return this.selectedNodeList$().length > 1;
   });
   edges = signal<Edge<any>[]>([]);
+  /** target 索引 */
+  edgeTargetObj$$ = computed(() => {
+    const obj: Record<string, Record<string, Edge<any>>> = {};
+    for (const item of this.edges()) {
+      obj[item.target] ??= {};
+      if (item.targetHandle) {
+        obj[item.target][item.targetHandle] = item;
+      }
+    }
+    return obj;
+  });
   setNodes = signal<React.Dispatch<React.SetStateAction<NODE[]>> | undefined>(
     undefined,
   );
