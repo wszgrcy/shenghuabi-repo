@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   input,
+  untracked,
 } from '@angular/core';
 import { BridgeService } from '../../service';
 import { PiyingView, PiViewConfig, actions } from '@piying/view-angular';
@@ -127,7 +128,7 @@ export class FormlyCommonNodeComponent {
         data.handle.output ??= [];
         data.handle!.output[index] ??= [];
         data.handle!.output[index] ??= list;
-        this.#bridge.patchDataOne(this.props().id, data);
+        this.#bridge.patchDataOne(this.props().id, { handle: data.handle });
       },
       setContextList: (key: any[], value: any) => {
         let config = this.props().data.config ?? {};
@@ -139,11 +140,15 @@ export class FormlyCommonNodeComponent {
     handle: CreateSchemaHandle,
   };
   valueChange(event: CustomNode['data']['config']) {
-    console.log('变更');
     // todo 没找到为什么会出现递归变更,因为发射的值确实是一样的
     // todo 重构 目前仅赋值有效,还有无效部分
     if (!deepEqual(event, this.props().data.config?.value)) {
-      this.#service.patchDataOne(this.props().id, { config: { value: event } });
+      this.#service.patchDataOne(this.props().id, {
+        config: {
+          ...this.props().data.config,
+          value: event,
+        },
+      });
     }
   }
   constructor() {
@@ -157,7 +162,7 @@ export class FormlyCommonNodeComponent {
         let field = field$$();
         let item = obj?.[key];
         if (!item) {
-          return
+          return;
         }
         refList.push({
           value: item.source,
@@ -165,8 +170,10 @@ export class FormlyCommonNodeComponent {
           outlet: item.sourceHandle ?? undefined,
         });
       });
-      this.#service.patchDataOne(id$$(), {
-        config: { invalidList: refList },
+      untracked(() => {
+        this.#service.patchDataOne(id$$(), {
+          config: { ...this.props().data.config, invalidList: refList },
+        });
       });
     });
   }
