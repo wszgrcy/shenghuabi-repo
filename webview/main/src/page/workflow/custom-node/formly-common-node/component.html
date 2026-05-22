@@ -1,5 +1,10 @@
 @let schema = schema$$();
 @if (schema) {
+  @if (errorList$$().length) {
+    <div role="alert" class="alert alert-warning mb-2">
+      <span>{{ errorList$$() }}</span>
+    </div>
+  }
   <piying-view
     class="noValid grid gap-2 nowheel nodrag"
     [schema]="schema"

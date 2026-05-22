@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   input,
+  signal,
   untracked,
 } from '@angular/core';
 import { BridgeService } from '../../service';
@@ -24,7 +25,12 @@ import { NodeService } from './node.service';
 import { safeDefine } from '@fe/piying/define';
 import { PromptListFCC } from '@fe/form/control/prompt-list/component';
 import { TextareaTemplateFCC } from '@fe/component/textarea-template/component';
-import { outputChange, valueChange } from '@piying/view-angular-core';
+import {
+  ErrorSummary,
+  getDeepError,
+  outputChange,
+  valueChange,
+} from '@piying/view-angular-core';
 import {
   Editor,
   extractVariableItems,
@@ -35,6 +41,8 @@ import {
 import { ChatVariable } from '../../../../type/chat-variable';
 import { InputContextItem, InputRefItem } from '@bridge/share';
 import { CreateSchemaHandle } from './schema-handle';
+import '@valibot/i18n/zh-CN';
+v.setGlobalConfig({ lang: 'zh-CN' });
 const FieldGlobalConfig = {
   types: {
     ...safeDefine.define.types,
@@ -111,7 +119,37 @@ export class FormlyCommonNodeComponent {
     if (!define) {
       return;
     }
-    return define;
+    return v.pipe(
+      define,
+      actions.hooks.merge({
+        allFieldsResolved: (field) => {
+          field.form.root.statusChanges.subscribe((status) => {
+            console.log('状态变更', status, field.form.root.value);
+
+            if (status === 'INVALID') {
+              let list = getDeepError(field.form.root);
+              this.errorList.set(list);
+            } else {
+              this.errorList.set([]);
+            }
+          });
+        },
+      }),
+    );
+  });
+  errorList = signal<ErrorSummary[]>([]);
+  errorList$$ = computed(() => {
+    let refList = this.props().data.config?.refList ?? [];
+    let contextList =
+      Object.values(this.props().data.config?.contextGroup ?? []).flat() ?? [];
+    let list = [...refList, ...contextList];
+    return this.errorList()
+      .filter((item) => {
+        return list.every((item2) => !deepEqual(item2.key, item.queryPathList));
+      })
+      .map((item) => {
+        return `${item.debugPathList.join('.')}:${item.valibotIssueSummary}`;
+      });
   });
   nodeService = inject(NodeService);
   children = computed(() => {

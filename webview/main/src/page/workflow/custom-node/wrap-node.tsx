@@ -77,50 +77,6 @@ function LeftHandles(props: {
   ));
 }
 
-function useWarnToolbar({
-  props,
-  bridge,
-}: {
-  bridge: BridgeService;
-  props: CustomNode;
-}) {
-  const message = useMemo(() => {
-    const type = props.type;
-    const nodeMeta = bridge.fullNodeObject$$()[type!];
-    if (!nodeMeta) {
-      return;
-    }
-    const config = nodeMeta.configDefine;
-    if (!config) {
-      return;
-    }
-    // todo 这里的验证,应该要过滤掉引用
-    const result = v.safeParse(config, props.data.config?.value, {
-      lang: 'zh-CN',
-    });
-    if (!result.success) {
-      const list: string[] = [];
-      result.issues.forEach((issue) => {
-        if (!issue.path) {
-          return;
-        }
-        const schema = getSchemaByIssuePath(config as any, issue.path);
-        if (!schema) {
-          return;
-        }
-        const metadata = getSchemaMetadata(schema);
-        // console.log(metadata, issue);
-        list.push(`${metadata.title}: ${issue.message}`);
-      });
-      if (!list.length) {
-        return [v.summarize(result.issues)];
-      }
-      return list;
-    }
-    return;
-  }, [props.data]);
-  return message;
-}
 const selector = (a: ReactFlowState) =>
   a.nodes.filter((node) => node.selected).length;
 function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
@@ -171,7 +127,6 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
     });
   }, [displayOutput, outputList]);
   const selectedLength = useStore(selector);
-  const valueWarn = useWarnToolbar(props);
   const excludeFn = useCallback(() => {
     props.bridge.patchDataOne(props.props.id, {
       excludeUsage: !excludeUsage,
@@ -181,31 +136,13 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
   // 切换出口
   return (
     <NodeToolbar
-      isVisible={valueWarn ? true : undefined}
+      isVisible={true}
       position={Position.Top}
       className="flex border-[1px] rounded-[4px] mat-elevation-z2  node-toolbar items-center select-none"
       onDoubleClickCapture={(e) => {
         e.stopPropagation();
       }}
     >
-      {valueWarn ? (
-        <>
-          <Tooltip
-            placement="top"
-            title={
-              <>
-                {valueWarn.map((a, i) => (
-                  <div key={i}>{a}</div>
-                ))}
-              </>
-            }
-            mouseEnterDelay={0}
-            className="toolbar-icon select-none"
-          >
-            <WarningTwoTone twoToneColor={'#faad14'} />
-          </Tooltip>
-        </>
-      ) : null}
       {/* 如果没有配置,那么这个参数应该被隐藏,比如纯节点 */}
       {selectedLength === 1 && props.props.selected ? (
         <>
