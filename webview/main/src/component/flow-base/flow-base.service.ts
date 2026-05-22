@@ -261,6 +261,14 @@ export class FlowBseService<NODE extends Node> {
       return { ...(oldNode.data as any), ...data };
     });
   }
+  patchDataConfigOne(id: string, data: NODE['data'] | Record<string, any>) {
+    this.instance()!.updateNodeData(id, (oldNode) => {
+      return {
+        ...oldNode.data,
+        config: { ...(oldNode.data?.['config'] as any), ...data },
+      };
+    });
+  }
   /** 获得布局级别的后代 */
   getAllDescent(
     node: NODE,

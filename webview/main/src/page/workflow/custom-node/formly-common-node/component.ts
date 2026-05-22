@@ -40,7 +40,11 @@ import {
   simplifyEditorState,
 } from '@shenghuabi/lexical-textarea';
 import { ChatVariable } from '../../../../type/chat-variable';
-import { InputContextItem, InputRefItem } from '@bridge/share';
+import {
+  InputContextItem,
+  InputInvalidItem,
+  InputRefItem,
+} from '@bridge/share';
 import { CreateSchemaHandle } from './schema-handle';
 import '@valibot/i18n/zh-CN';
 import { unset } from 'es-toolkit/compat';
@@ -133,22 +137,28 @@ export class FormlyCommonNodeComponent {
             injector: field.form.root.injector,
           }).subscribe((value) => {
             let status = field.form.root.status$$();
+            let invalidList: InputInvalidItem[] = [];
             if (status === 'INVALID') {
               let list = getDeepError(field.form.root);
               this.errorList.set(list);
               if (value) {
                 forEachErrorSummary(list, (summary) => {
-                  unset(value, summary.fieldList.slice(-1)[0].valuePath);
+                  let lastField = summary.fieldList.slice(-1)[0];
+                  unset(value, lastField.valuePath);
+                  invalidList.push({ key: lastField.valuePath });
                 });
               }
             } else {
               this.errorList.set([]);
             }
             let oldValue = this.props().data.config?.value;
-            if (!deepEqual(oldValue, value)) {
-              this.#bridge.patchDataOne(this.props().id, {
-                ...this.props().data.config,
-                config: value,
+            if (
+              !deepEqual(oldValue, value) ||
+              !deepEqual(this.props().data.config?.invalidList, invalidList)
+            ) {
+              this.#bridge.patchDataConfigOne(this.props().id, {
+                value,
+                invalidList,
               });
             }
           });
@@ -217,9 +227,7 @@ export class FormlyCommonNodeComponent {
         });
       });
       untracked(() => {
-        this.#service.patchDataOne(id$$(), {
-          config: { ...this.props().data.config, invalidList: refList },
-        });
+        this.#service.patchDataConfigOne(id$$(), { refList });
       });
     });
   }
