@@ -29,6 +29,7 @@ import {
   ErrorSummary,
   getDeepError,
   outputChange,
+  toObservable,
   valueChange,
 } from '@piying/view-angular-core';
 import {
@@ -42,6 +43,8 @@ import { ChatVariable } from '../../../../type/chat-variable';
 import { InputContextItem, InputRefItem } from '@bridge/share';
 import { CreateSchemaHandle } from './schema-handle';
 import '@valibot/i18n/zh-CN';
+import { unset } from 'es-toolkit/compat';
+import { forEachErrorSummary } from './error-handle';
 v.setGlobalConfig({ lang: 'zh-CN' });
 const FieldGlobalConfig = {
   types: {
@@ -123,14 +126,30 @@ export class FormlyCommonNodeComponent {
       define,
       actions.hooks.merge({
         allFieldsResolved: (field) => {
-          field.form.root.statusChanges.subscribe((status) => {
-            console.log('状态变更', status, field.form.root.value);
-
+          let data$$ = computed(() => {
+            return field.form.root.getRawValue(1);
+          });
+          toObservable(data$$, data$$, {
+            injector: field.form.root.injector,
+          }).subscribe((value) => {
+            let status = field.form.root.status$$();
             if (status === 'INVALID') {
               let list = getDeepError(field.form.root);
               this.errorList.set(list);
+              if (value) {
+                forEachErrorSummary(list, (summary) => {
+                  unset(value, summary.fieldList.slice(-1)[0].valuePath);
+                });
+              }
             } else {
               this.errorList.set([]);
+            }
+            let oldValue = this.props().data.config?.value;
+            if (!deepEqual(oldValue, value)) {
+              this.#bridge.patchDataOne(this.props().id, {
+                ...this.props().data.config,
+                config: value,
+              });
             }
           });
         },
@@ -177,18 +196,7 @@ export class FormlyCommonNodeComponent {
     fieldGlobalConfig: FieldGlobalConfig,
     handle: CreateSchemaHandle,
   };
-  valueChange(event: CustomNode['data']['config']) {
-    // todo 没找到为什么会出现递归变更,因为发射的值确实是一样的
-    // todo 重构 目前仅赋值有效,还有无效部分
-    if (!deepEqual(event, this.props().data.config?.value)) {
-      this.#service.patchDataOne(this.props().id, {
-        config: {
-          ...this.props().data.config,
-          value: event,
-        },
-      });
-    }
-  }
+
   constructor() {
     this.nodeService.props$ = this.props;
     let id$$ = computed(() => this.props().id);

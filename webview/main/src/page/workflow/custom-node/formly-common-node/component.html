@@ -10,7 +10,6 @@
     [schema]="schema"
     [options]="options"
     [model]="model$$()"
-    (modelChange)="valueChange($any($event))"
   ></piying-view>
 } @else if ($any(model$$())) {
   <div class="flex gap-2 flex-col" [valueFormat]="$any(model$$())"></div>

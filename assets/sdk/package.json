@@ -26,8 +26,8 @@
     "@shenghuabi/openai": "1.0.12",
     "@shenghuabi/python-addon": "1.0.12",
     "@shenghuabi/workflow": "1.0.12",
-    "@piying/view-angular-core": "2.9.4",
-    "@piying/view-angular": "2.9.4"
+    "@piying/view-angular-core": "2.9.6",
+    "@piying/view-angular": "2.9.6"
   },
   "sideEffects": false,
   "exports": {
