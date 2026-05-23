@@ -10,6 +10,7 @@ import { BridgeService } from '../../service';
 import { PI_VIEW_FIELD_TOKEN } from '@piying/view-angular-core';
 import { AddHandleDirective } from './add-children';
 import { NodeService } from '../../custom-node/formly-common-node/node.service';
+import { isValidConnection } from '@fe/component/flow-base/flow-base.service';
 @Component({
   selector: 'app-handle-wrapper',
   templateUrl: './component.html',
@@ -38,10 +39,12 @@ export class HandleWC {
   readonly props$$ = computed(() => {
     return {
       className:
-        'relative! w-full! h-auto! top-0! left-0! transform-none! rounded-none!  bg-transparent!',
+        'relative! w-full! h-auto! top-0! left-0! transform-none! rounded-none!  bg-transparent! pointer-events-auto!',
       type: 'target',
       position: Position.Left,
       id: this.#handleId$$(),
+      isValidConnection: isValidConnection,
+      isConnectableStart: false,
     };
   });
   #linkedEdge$$ = computed(() => {
