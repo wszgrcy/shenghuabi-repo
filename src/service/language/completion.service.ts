@@ -30,7 +30,6 @@ import { getNumberText } from '@share/util/format/get-number-text';
 import { isStringArray } from '@share/util/assert/is-string-array';
 import { CommandPrefix } from '@global';
 import { captureException } from '@sentry/node';
-import { result } from 'es-toolkit/compat';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {

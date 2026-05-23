@@ -4,7 +4,6 @@ import {
   asControl,
   asVirtualGroup,
   setComponent,
-  valueChange,
 } from '@piying/view-angular-core';
 
 import { INLINE_Template } from '../../../../share/workflow/node-define/common/inline-template.define';

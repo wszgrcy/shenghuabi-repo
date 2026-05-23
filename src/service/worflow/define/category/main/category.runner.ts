@@ -9,7 +9,6 @@ import { ChatService } from '../../../../ai/chat.service';
 
 import { ChatMessageListOutputType } from '@shenghuabi/openai';
 import { AbortSignalToken } from '@shenghuabi/workflow';
-import { TemplateFormatService } from '@shenghuabi/workflow';
 import { jsonParse } from '../../../../ai/util/json-parser';
 import { CATEGORY_NODE_DEFINE } from '../webview/category.node.define';
 
@@ -20,14 +19,14 @@ export class CategoryRunner extends NodeRunnerBase<
   #abort = inject(AbortSignalToken);
 
   override async run() {
-    let rawSys = this.inputs.systemPrompt;
-    let contextData = await this.nodeContextData$$();
-    let sysContent = serializeLexicalTextarea(rawSys, {
+    const rawSys = this.inputs.systemPrompt;
+    const contextData = await this.nodeContextData$$();
+    const sysContent = serializeLexicalTextarea(rawSys, {
       context: contextData,
       environmentContext: this.environmentContextData,
     });
-    let userSys = this.inputs.content;
-    let userContent = serializeLexicalTextarea(userSys, {
+    const userSys = this.inputs.content;
+    const userContent = serializeLexicalTextarea(userSys, {
       context: contextData,
       environmentContext: this.environmentContextData,
     });

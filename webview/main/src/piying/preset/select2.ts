@@ -17,12 +17,12 @@ export const Select2 = [
       setComponent('common-data'),
       actions.inputs.patchAsync({
         content: (field) => {
-          let serivce = field.injector.get(PickerRefService);
-          let valueMapFn = computed(() => {
+          const serivce = field.injector.get(PickerRefService);
+          const valueMapFn = computed(() => {
             return serivce.rootField$$().props()['valueMapFn'];
           });
           return computed(() => {
-            let fn = valueMapFn();
+            const fn = valueMapFn();
             const pickerValue = field.context['pickerValue']();
             if (fn) {
               return fn(pickerValue);

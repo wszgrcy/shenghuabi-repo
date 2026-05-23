@@ -6,7 +6,7 @@ import {
   setComponent,
 } from '@piying/view-angular-core';
 import * as v from 'valibot';
-import { RowClass, ColClass } from './create-group';
+import { ColClass } from './create-group';
 import { noKey } from './void.schema';
 export const NodeConfigDefine = v.pipe(
   v.intersect([
@@ -59,7 +59,10 @@ export const NodeConfigDefine = v.pipe(
         ),
       }),
       actions.wrappers.patch([
-        { type: 'div', attributes: { class: clsx('flex', 'items-end', 'gap-2') } },
+        {
+          type: 'div',
+          attributes: { class: clsx('flex', 'items-end', 'gap-2') },
+        },
       ]),
     ),
     v.pipe(

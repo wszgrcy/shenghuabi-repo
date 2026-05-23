@@ -7,22 +7,16 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { InputFormComponent } from './input/input-form/component';
 import { deepClone } from '../../util/clone';
 import {
   AssistantChatMessageType,
   CHAT_ITEM_TYPE,
-  ChatInputType,
   ChatMessageListOutputType,
   ChatMode,
   ChatOptions,
   CommonChat,
-  InputInvalidItem,
   LLMWorkflowData,
   ResolvedWorkflow,
   WorkflowData,
@@ -30,7 +24,6 @@ import {
   WorkflowStreamData,
 } from '@bridge/share';
 import { ChatService } from './chat.service';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ChatCommonInput } from './input/common-input/component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TrpcService } from '@fe/trpc';
@@ -49,7 +42,6 @@ import {
   WorkflowContextConfig,
   WorkflowRunnerEnvironmentParams,
 } from '@shenghuabi/workflow/share';
-import { workerData } from 'node:worker_threads';
 // todo
 export function isChatStream(
   data: WorkflowStreamData,

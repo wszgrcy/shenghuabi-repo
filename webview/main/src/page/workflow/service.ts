@@ -1,23 +1,17 @@
 import { Injectable, Injector, computed, inject, signal } from '@angular/core';
 import { Node } from '@xyflow/react';
 import { CustomNode } from './type';
-import { v4, v5 } from 'uuid';
+import { v4 } from 'uuid';
 import { wrapControlNode } from './custom-node/wrap-node';
 import { IterationStartNodeDefine } from './custom-node/iteration-start-node';
 import { IterationNodeDefine } from './custom-node/iteration-node';
 import { FlowBseService } from '../../component/flow-base/flow-base.service';
-import {
-  deepClone,
-  HandleNode,
-  UUID_NS,
-  WebviewNodeConfig,
-} from '@bridge/share';
+
 import { deepEqual } from 'fast-equals';
 import { FormlyCommonNodeComponent } from './custom-node/formly-common-node/component';
 import { isTruthy } from '@share/util/is-truthy';
 import { DefaultNodeComponent } from './custom-node/default/component';
 import { ChatNodeService } from '../../domain/chat-node/chat-node.service';
-import { ReactOutlet } from '@cyia/ngx-bridge/react-outlet';
 @Injectable()
 export class BridgeService extends FlowBseService<CustomNode> {
   #injector = inject(Injector);

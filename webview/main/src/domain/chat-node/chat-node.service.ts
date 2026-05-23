@@ -1,8 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { UUID_NS, WorkflowNodeConfigObj } from '@bridge/share';
+import { WorkflowNodeConfigObj } from '@bridge/share';
 import { PiResolvedViewFieldConfig } from '@piying/view-angular';
 import { KeyPath } from '@piying/view-angular-core';
-import { v5 } from 'uuid';
 import { ChatTemplateService } from '../../service/chat-template.service';
 import { ChatService } from '@fe/component/chat/chat.service';
 import { TrpcService } from '@fe/trpc';
@@ -44,7 +43,7 @@ export class ChatNodeService {
       {} as Record<string, WebviewNodeConfig>,
     );
   });
- readonly fullNodeObject$$ = computed(() => {
+  readonly fullNodeObject$$ = computed(() => {
     return { ...this.#nodeObject$$(), ...this.#pluginNodeObject$$() };
   });
   context = {

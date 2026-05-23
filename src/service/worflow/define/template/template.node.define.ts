@@ -44,9 +44,7 @@ export const TEMPLATE_NODE_DEFINE = v.pipe(
             },
           }),
         ),
-        content: v.pipe(
-          v.optional(v.string(), '{{内容}}'),
-        ),
+        content: v.pipe(v.optional(v.string(), '{{内容}}')),
       }),
     ),
   }),

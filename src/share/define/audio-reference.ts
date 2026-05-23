@@ -1,9 +1,5 @@
 import * as v from 'valibot';
-import {
-  mergeHooks,
-  setComponent,
-  actions,
-} from '@piying/view-angular-core';
+import { mergeHooks, setComponent, actions } from '@piying/view-angular-core';
 import { deepEqual } from 'fast-equals';
 import { BehaviorSubject } from 'rxjs';
 

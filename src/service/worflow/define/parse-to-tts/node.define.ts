@@ -1,11 +1,6 @@
 import { asColumn } from '@share/valibot';
 import * as v from 'valibot';
-import {
-  actions,
-  condition,
-  valueChange,
-  setComponent,
-} from '@piying/view-angular-core';
+import { actions, valueChange } from '@piying/view-angular-core';
 export const ResponseList = ['json', 'markdown', 'yaml'] as const;
 export const ResponseFormat = ['text', 'json_object', 'json_schema'] as const;
 export type ResponseType = (typeof ResponseList)[number];

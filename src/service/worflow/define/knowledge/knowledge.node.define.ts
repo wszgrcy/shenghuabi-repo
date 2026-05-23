@@ -33,15 +33,8 @@ export const KNOWLEDGE_NODE_DEFINE = v.object({
     }),
   ),
   template: v.pipe(INLINE_Template2),
-  question: v.pipe(
-    v.string(),
-    v.title('问题'),
-  ),
-  limit: v.pipe(
-    v.optional(v.number(), 10),
-    v.title('查询数量'),
-    v.minValue(1),
-  ),
+  question: v.pipe(v.string(), v.title('问题')),
+  limit: v.pipe(v.optional(v.number(), 10), v.title('查询数量'), v.minValue(1)),
   value: v.pipe(
     v.array(v.string()),
     asControl(),

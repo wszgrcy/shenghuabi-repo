@@ -1,16 +1,5 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
-import {
-  portalChildren,
-  ReactOutlet,
-  RootReactOutletToken,
-} from '@cyia/ngx-bridge/react-outlet';
+import { Component, computed, inject, viewChild } from '@angular/core';
+import { ReactOutlet } from '@cyia/ngx-bridge/react-outlet';
 import {
   AttributesDirective,
   EventsDirective,
@@ -21,7 +10,6 @@ import { BridgeService } from '../../service';
 import { PI_VIEW_FIELD_TOKEN } from '@piying/view-angular-core';
 import { AddHandleDirective } from './add-children';
 import { NodeService } from '../../custom-node/formly-common-node/node.service';
-import { MergeClassPipe } from '@piying-lib/angular-daisyui/pipe';
 @Component({
   selector: 'app-handle-wrapper',
   templateUrl: './component.html',
@@ -40,7 +28,7 @@ export class HandleWC {
   field$$ = inject(PI_VIEW_FIELD_TOKEN);
   #bridge = inject(BridgeService);
   #nodeService = inject(NodeService);
-  #fieldPath$$ = computed(() => {    
+  #fieldPath$$ = computed(() => {
     return this.field$$().form.control!.fieldPath.join('-');
   });
   readonly #id$$ = computed(() => this.#nodeService.props$().id);
@@ -49,7 +37,8 @@ export class HandleWC {
   });
   readonly props$$ = computed(() => {
     return {
-      className: 'relative! w-full! h-auto! top-0! left-0! transform-none! rounded-none!  bg-transparent!',
+      className:
+        'relative! w-full! h-auto! top-0! left-0! transform-none! rounded-none!  bg-transparent!',
       type: 'target',
       position: Position.Left,
       id: this.#handleId$$(),
@@ -65,7 +54,7 @@ export class HandleWC {
     this.#nodeService.addCanLinkId(this.#handleId$$(), this.field$$);
   }
   unLink() {
-    let edge = this.#linkedEdge$$()!;
+    const edge = this.#linkedEdge$$()!;
     this.#bridge.instance()?.deleteElements({ edges: [edge] });
   }
   ngOnDestroy(): void {

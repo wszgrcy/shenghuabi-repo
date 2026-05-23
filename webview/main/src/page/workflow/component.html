@@ -41,7 +41,10 @@
       >
         <span class="material-icons">help</span>
       </button>
-      <button class="btn btn-soft btn-primary" (click)="validatePanelStatus.set(true)">
+      <button
+        class="btn btn-soft btn-primary"
+        (click)="validatePanelStatus.set(true)"
+      >
         <mat-icon color="primary" style="transform: rotate(180deg)"
           >filter_alt</mat-icon
         >
@@ -49,7 +52,6 @@
       </button>
     </div>
     <div class="flex-1 flex gap-2 overflow-y-hidden">
-
       @if (validatePanelStatus() && flowData()) {
         <validate-panel
           [flowData]="{ flow: flowData() }"

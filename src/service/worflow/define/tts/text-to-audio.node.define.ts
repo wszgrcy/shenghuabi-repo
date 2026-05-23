@@ -1,6 +1,5 @@
 import * as v from 'valibot';
-import { actions, setComponent, valueChange } from '@piying/view-angular-core';
-import { ChatMessageListInputType } from '@shenghuabi/openai';
+import { actions } from '@piying/view-angular-core';
 import { Reference } from '../../../../share/define';
 export const ResponseList = ['json', 'markdown', 'yaml'] as const;
 export const ResponseFormat = ['text', 'json_object', 'json_schema'] as const;

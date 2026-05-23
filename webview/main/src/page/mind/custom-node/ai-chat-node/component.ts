@@ -34,8 +34,7 @@ import { MenuGroupComponent } from '@fe/component/menu-group/component';
 import { ChatService } from '@fe/component/chat/chat.service';
 import { NodeBase } from '../node.base';
 import { parseBuildNode } from '../../../../type-define/mind-node';
-import { ChatDataType, flatFilterHandleList, UUID_NS } from '@bridge/share';
-import { v5 } from 'uuid';
+import { ChatDataType, flatFilterHandleList } from '@bridge/share';
 
 @Component({
   templateUrl: './component.html',
@@ -163,7 +162,6 @@ export class AiChatNode extends NodeBase<ChatDataType> {
             if (!inited$()) {
               return;
             }
-         
 
             untracked(() => {
               const oldHandle = deepClone(this.data$()?.handle) || {

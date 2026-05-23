@@ -4,7 +4,6 @@ import {
   asControl,
   valueChange,
   setComponent,
-  renderConfig,
 } from '@piying/view-angular-core';
 export const SCRIPT_NODE_DEFINE = v.pipe(
   v.looseObject({

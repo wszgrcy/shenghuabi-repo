@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 
-import { actions, setComponent, valueChange } from '@piying/view-angular-core';
+import { actions, setComponent } from '@piying/view-angular-core';
 import { ChatMessageListInputType } from '@shenghuabi/openai';
 import { llmModelConfig } from '@shenghuabi/workflow/share';
 import { RefDefine } from '../../preset/ref-define';

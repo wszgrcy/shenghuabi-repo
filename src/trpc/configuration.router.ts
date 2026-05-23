@@ -93,7 +93,7 @@ export const EnvironmentConfigurationRouter = t.router({
     const workspace = ctx.injector.get(WorkspaceService);
     const rerankerConfig = ExtensionConfig.reranker();
 
-    let modelConfig = ExtensionConfig.chatModelList()[0];
+    const modelConfig = ExtensionConfig.chatModelList()[0];
     return {
       download: {
         direct: ExtensionConfig.download.direct(),

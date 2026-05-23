@@ -2,7 +2,6 @@ import {
   ErrorSummary,
   getDeepError,
   ValidationDescendantError2,
-  ValidationErrors2,
 } from '@piying/view-angular-core';
 
 /**
@@ -20,7 +19,7 @@ export function forEachErrorSummary<T>(
 function forEachDeepError<T>(handler: ErrorSummaryHandler<T>) {
   return (item: ErrorSummary) => {
     if (item.item.kind === 'descendant') {
-      let error = item.item as ValidationDescendantError2;
+      const error = item.item as ValidationDescendantError2;
 
       forEachErrorSummary(
         getDeepError({ errors: error.metadata } as any) ?? ([] as any),

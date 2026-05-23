@@ -1,11 +1,5 @@
 import * as v from 'valibot';
-import {
-  actions,
-  asControl,
-  setComponent,
-} from '@piying/view-angular-core';
-import { flatFilterHandleList } from '@shenghuabi/workflow/share';
-import { first, map } from 'rxjs';
+import { actions, asControl, setComponent } from '@piying/view-angular-core';
 export const FILE_NODE_DEFINE = v.object({
   splitPages: v.pipe(
     v.optional(v.boolean(), false),

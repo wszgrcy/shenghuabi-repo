@@ -3,7 +3,6 @@ import {
   EnvironmentInjector,
   OnInit,
   ViewContainerRef,
-  computed,
   effect,
   inject,
   signal,
@@ -52,7 +51,6 @@ import { BridgeService } from './service';
 import { TrpcService } from '../../service/trpc.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
-import { deepClone } from '../../util/clone';
 import { DocumentEvent } from '../../../../../src/share/mind.const';
 import { toObservable } from '@angular/core/rxjs-interop';
 
@@ -60,7 +58,6 @@ import { effectOnce } from '../../util/effect-once';
 import { wrapEdge } from './custom-node/wrap-edge';
 import { DefaultEdgeComponent } from './custom-edge/default/component';
 import { PurePipe } from '@cyia/ngx-common/pipe';
-import { deepEqual } from 'fast-equals';
 import { IterationNodeDefine } from './custom-node/iteration-node';
 import { ChatService } from '@fe/component/chat/chat.service';
 import { ValidatePanelComponent } from './panel/validate/component';

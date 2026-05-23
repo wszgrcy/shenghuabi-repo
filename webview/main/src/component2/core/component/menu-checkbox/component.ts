@@ -1,7 +1,5 @@
 import { Component, computed, forwardRef, input, signal } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BaseControl } from '@piying/view-angular';
@@ -11,11 +9,7 @@ import { MergeClassPipe } from '@piying-lib/angular-daisyui/pipe';
   selector: 'menu-checkbox',
   templateUrl: './component.html',
   standalone: true,
-  imports: [
-    MatMenuModule,
-    MatTooltipModule,
-    MergeClassPipe,
-  ],
+  imports: [MatMenuModule, MatTooltipModule, MergeClassPipe],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

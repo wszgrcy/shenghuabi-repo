@@ -1,11 +1,7 @@
 import { asColumn } from '@share/valibot';
 import * as v from 'valibot';
 
-import {
-  actions,
-  valueChange,
-  setComponent,
-} from '@piying/view-angular-core';
+import { actions, valueChange } from '@piying/view-angular-core';
 import { llmModelConfig } from '../common';
 import { debounceTime } from 'rxjs';
 

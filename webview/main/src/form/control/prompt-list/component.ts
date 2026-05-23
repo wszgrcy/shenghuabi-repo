@@ -3,14 +3,12 @@ import {
   Component,
   forwardRef,
   output,
-  signal,
 } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ChatMessageListOutputType } from '@bridge/share';
 import { ChatMessageItemType } from '@shenghuabi/openai/define';
-import { getHumanTemplate } from '@fe/component/chat/const';
 import { PromptTemplateFCC } from '@fe/component/chat/template-form/component';
 import { BaseControl } from '@piying/view-angular';
 import { ChatVariable } from '../../../type/chat-variable';

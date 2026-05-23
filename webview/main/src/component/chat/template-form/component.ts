@@ -2,7 +2,6 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   forwardRef,
   input,
   output,
@@ -16,23 +15,15 @@ import {
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { deepClone } from '@bridge/share';
-import {
-  ChatCompletionContentPartImage,
-  ChatCompletionContentPartStr,
-  UserChatMessageType,
-} from '@shenghuabi/openai/define';
-import { MenuCheckboxFCC, SpanInputFCC } from '@cyia/component/core';
+import { UserChatMessageType } from '@shenghuabi/openai/define';
+import { MenuCheckboxFCC } from '@cyia/component/core';
 
 import { deepEqual } from 'fast-equals';
 
-import * as v from 'valibot';
 import { MenuCheckboxOption } from '@cyia/component/core/component/menu-checkbox/type';
 import { TextareaTemplateFCC } from '@fe/component/textarea-template/component';
 import {
@@ -167,7 +158,7 @@ export class PromptTemplateFCC implements ControlValueAccessor {
           type: 'image_url',
         });
       }
-      let list: ChatVariable[] = [...this.#textVarList$()];
+      const list: ChatVariable[] = [...this.#textVarList$()];
       if (imageList) {
         list.push({ ...imageList.item, kind: 'image' });
       }

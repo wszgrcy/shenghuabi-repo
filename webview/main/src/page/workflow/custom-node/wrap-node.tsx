@@ -16,18 +16,13 @@ import { NodeHeadComponent } from './node-head/component';
 import { BridgeService } from '../service';
 import { Tooltip } from 'antd';
 import { isValidConnection } from '../../../component/flow-base/flow-base.service';
-import { flatFilterHandleList, HandleNode, NodeDefine } from '@bridge/share';
+import { flatFilterHandleList, HandleNode } from '@bridge/share';
 import { uniqBy } from 'lodash-es';
 import { ToggleActionButton } from '@fe/component/react/toggle-action.button';
 import { Segmented } from 'antd';
 import { deepEqual } from 'fast-equals';
 import { NgOutletReact } from '../../../bridge/component-wrapper';
-import * as v from 'valibot';
-import {
-  getSchemaByIssuePath,
-  getSchemaMetadata,
-} from '@piying/view-angular-core';
-import { WarningTwoTone } from '@ant-design/icons';
+
 import '@valibot/i18n/zh-CN';
 import { createDiffHandle } from '@fe/util/react';
 import { WebviewNodeConfig } from '@shenghuabi/workflow/share';

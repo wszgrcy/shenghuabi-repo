@@ -27,7 +27,7 @@ export class ChatService extends RootStaticInjectOptions {
   #channel = inject(LogFactoryService).getLog('chat');
   async chat(config?: Partial<ChatModelOptions>) {
     this.#channel.info('传入对话配置', config);
-    let model = ExtensionConfig.chatModelList()[0];
+    const model = ExtensionConfig.chatModelList()[0];
     this.#channel.info('默认配置', model);
     return this.#chatProvider.create({
       ...model,

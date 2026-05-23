@@ -1,5 +1,2 @@
-import {
-  SimpleVariableNode,
-  SimplifiedState,
-} from '@shenghuabi/lexical-textarea';
+import { SimpleVariableNode } from '@shenghuabi/lexical-textarea';
 export type ChatVariable = SimpleVariableNode['item'] & { kind?: 'image' };

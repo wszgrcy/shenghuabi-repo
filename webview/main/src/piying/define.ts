@@ -22,10 +22,8 @@ import { ResetButtonNFCC } from '@fe/form/un-control/reset-button/component';
 import { CardWrapper } from '@cyia/component/wrapper';
 import { BoxPickerFCC } from '@fe/component/box-picker/component';
 import { NodeTemplateApplyFCC } from '@fe/form/control/node-template/component';
-import { PromptListFCC } from '@fe/form/control/prompt-list/component';
 import { TreeSelectFCC } from '@fe/form/control/tree-select/component';
 import { AutoComplete2 } from './preset/autocomplete2';
-import { TextareaTemplateFCC } from '@fe/component/textarea-template/component';
 import { DivFCC } from '@cyia/component/core/component/div';
 const optionsMap = actions.inputs.mapAsync((field) => {
   const options$$ = computed(() => field.props()['options']);
@@ -144,7 +142,7 @@ export const safeDefine = typedComponent({
     'shadow-picker': {
       type: ShadowPickerFCC,
     },
- 
+
     'tree-select': { type: TreeSelectFCC },
     'div-control': { type: DivFCC },
   },
@@ -153,7 +151,6 @@ export const safeDefine = typedComponent({
     card: {
       type: CardWrapper,
     },
- 
   },
 });
 export const FieldGlobalConfig = safeDefine.define;

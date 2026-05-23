@@ -1,4 +1,4 @@
-import { Schema, SchemaOrPipe } from '@piying/valibot-visit';
+import { Schema } from '@piying/valibot-visit';
 import { NgSchemaHandle } from '@piying/view-angular';
 import { actions } from '@piying/view-angular-core';
 

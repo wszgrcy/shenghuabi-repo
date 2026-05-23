@@ -11,10 +11,7 @@ import * as vscode from 'vscode';
 import { path } from '@cyia/vfs2';
 import { ScriptEditorFileSystem } from '../service/script-editor/script-editor';
 import { WorkflowExecService } from '@shenghuabi/workflow';
-import {
-  WorkflowRunnerEnvironmentParams,
-  WorkflowStreamData,
-} from '@shenghuabi/workflow';
+import { WorkflowStreamData } from '@shenghuabi/workflow';
 import { MindService } from '../service/mind/mind.service';
 import { ChatService } from '../service/ai/chat.service';
 import { errorFormatByNode } from '@share/util/format/error-format-node';

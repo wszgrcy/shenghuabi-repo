@@ -1,4 +1,4 @@
-import { actions, renderConfig } from '@piying/view-angular-core';
+import { actions } from '@piying/view-angular-core';
 import { asColumn } from '@share/valibot';
 import * as v from 'valibot';
 

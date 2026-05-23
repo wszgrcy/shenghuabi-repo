@@ -9,42 +9,20 @@ import {
   untracked,
 } from '@angular/core';
 import { BridgeService } from '../../service';
-import { PiyingView, PiViewConfig, actions } from '@piying/view-angular';
-import { FormWrappers } from '../../define/node-form';
-import { asVirtualGroup } from '@piying/view-angular';
-import { Displayhandle } from '../../define/handle/display.handle';
+import { PiyingView, actions } from '@piying/view-angular';
 import * as v from 'valibot';
 import { CustomNode } from '../../type';
 import { FormsModule } from '@angular/forms';
 import { ValueFormatDirective } from '../../../../directive/value-format.directive';
 import { deepEqual } from 'fast-equals';
-import { DefaultFormTypes } from '@fe/form/default-type-config';
-import { HandleWC } from '../../wrapper/handle/component';
-import { UseRefWC } from '../../wrapper/use-ref/component';
 import { NodeService } from './node.service';
-import { safeDefine } from '@fe/piying/define';
-import { PromptListFCC } from '@fe/form/control/prompt-list/component';
-import { TextareaTemplateFCC } from '@fe/component/textarea-template/component';
 import {
   ErrorSummary,
   getDeepError,
-  outputChange,
   toObservable,
-  valueChange,
 } from '@piying/view-angular-core';
-import {
-  Editor,
-  extractVariableItems,
-  restoreEditorState,
-  SimpleVariableNode,
-  simplifyEditorState,
-} from '@shenghuabi/lexical-textarea';
-import { ChatVariable } from '../../../../type/chat-variable';
-import {
-  InputContextItem,
-  InputInvalidItem,
-  InputRefItem,
-} from '@bridge/share';
+
+import { InputInvalidItem, InputRefItem } from '@bridge/share';
 import { CreateSchemaHandle } from './schema-handle';
 import '@valibot/i18n/zh-CN';
 import { unset } from 'es-toolkit/compat';
@@ -80,20 +58,20 @@ export class FormlyCommonNodeComponent {
       define,
       actions.hooks.merge({
         allFieldsResolved: (field) => {
-          let data$$ = computed(() => {
+          const data$$ = computed(() => {
             return field.form.root.getRawValue(1);
           });
           toObservable(data$$, data$$, {
             injector: field.form.root.injector,
           }).subscribe((value) => {
-            let status = field.form.root.status$$();
-            let invalidList: InputInvalidItem[] = [];
+            const status = field.form.root.status$$();
+            const invalidList: InputInvalidItem[] = [];
             if (status === 'INVALID') {
-              let list = getDeepError(field.form.root);
+              const list = getDeepError(field.form.root);
               this.errorList.set(list);
               if (value) {
                 forEachErrorSummary(list, (summary) => {
-                  let lastField = summary.fieldList.slice(-1)[0];
+                  const lastField = summary.fieldList.slice(-1)[0];
                   unset(value, lastField.valuePath);
                   invalidList.push({ key: lastField.valuePath });
                 });
@@ -101,7 +79,7 @@ export class FormlyCommonNodeComponent {
             } else {
               this.errorList.set([]);
             }
-            let oldValue = this.props().data.config?.value;
+            const oldValue = this.props().data.config?.value;
             if (
               !deepEqual(oldValue, value) ||
               !deepEqual(this.props().data.config?.invalidList, invalidList)
@@ -118,10 +96,10 @@ export class FormlyCommonNodeComponent {
   });
   errorList = signal<ErrorSummary[]>([]);
   errorList$$ = computed(() => {
-    let refList = this.props().data.config?.refList ?? [];
-    let contextList =
+    const refList = this.props().data.config?.refList ?? [];
+    const contextList =
       Object.values(this.props().data.config?.contextGroup ?? []).flat() ?? [];
-    let list = [...refList, ...contextList];
+    const list = [...refList, ...contextList];
     return this.errorList()
       .filter((item) => {
         return list.every((item2) => !deepEqual(item2.key, item.queryPathList));
@@ -140,7 +118,7 @@ export class FormlyCommonNodeComponent {
     context: {
       ...this.context,
       setOutputHandle: (index: number, list: any[]) => {
-        let data = this.props().data;
+        const data = this.props().data;
         data.handle ??= { output: [] };
         data.handle.output ??= [];
         data.handle!.output[index] ??= [];
@@ -148,7 +126,7 @@ export class FormlyCommonNodeComponent {
         this.#bridge.patchDataOne(this.props().id, { handle: data.handle });
       },
       setContextList: (key: any[], value: any) => {
-        let config = this.props().data.config ?? {};
+        const config = this.props().data.config ?? {};
         config.contextGroup ??= {};
         config.contextGroup[key.join('-')] = value;
       },
@@ -159,14 +137,14 @@ export class FormlyCommonNodeComponent {
 
   constructor() {
     this.nodeService.props$ = this.props;
-    let id$$ = computed(() => this.props().id);
+    const id$$ = computed(() => this.props().id);
     effect(() => {
-      let nodeIdSet = this.nodeService.nodeIdSet$();
-      let refList: InputRefItem[] = [];
-      let obj = this.#bridge.edgeTargetObj$$()[id$$()];
+      const nodeIdSet = this.nodeService.nodeIdSet$();
+      const refList: InputRefItem[] = [];
+      const obj = this.#bridge.edgeTargetObj$$()[id$$()];
       nodeIdSet.forEach((field$$, key) => {
-        let field = field$$();
-        let item = obj?.[key];
+        const field = field$$();
+        const item = obj?.[key];
         if (!item) {
           return;
         }

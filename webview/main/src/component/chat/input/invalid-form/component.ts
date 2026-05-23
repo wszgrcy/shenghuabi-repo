@@ -2,17 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   forwardRef,
   inject,
   Injector,
   input,
-  output,
-  resource,
-  runInInjectionContext,
   untracked,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { actions, BaseControl, PiyingView } from '@piying/view-angular';
 import { SelectorlessOutlet } from '@cyia/ngx-common/directive';
 import * as v from 'valibot';
@@ -60,20 +55,20 @@ export class InvalidForm extends BaseControl {
     },
   };
   schema$$ = computed(() => {
-    let list = this.invalidConfigList();
+    const list = this.invalidConfigList();
     if (!list || !list.length) {
       return;
     }
     return untracked(() => {
-      let obj = {} as Record<string, any>;
+      const obj = {} as Record<string, any>;
       for (const item of list) {
-        let tupleList: v.BaseSchema<any, any, any>[] = [];
+        const tupleList: v.BaseSchema<any, any, any>[] = [];
         obj[item.id] = [];
-        let config = this.#chatNodeService.fullNodeObject$$()[item.type];
-        let define = config.configDefine!;
-        let result = createNoViewPiying(define as any, this.#injector);
+        const config = this.#chatNodeService.fullNodeObject$$()[item.type];
+        const define = config.configDefine!;
+        const result = createNoViewPiying(define as any, this.#injector);
         for (const child of item.list) {
-          let field = result.get(child.key)!;
+          const field = result.get(child.key)!;
           tupleList.push(
             v.object({
               key: v.pipe(

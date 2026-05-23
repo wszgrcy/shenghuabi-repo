@@ -1,7 +1,5 @@
 import { inject } from 'static-injector';
 
-import { ChatMessageListOutputType } from '@shenghuabi/openai';
-
 import { CHAT_VL_NODE_DEFINE } from '../chat.node.define';
 import { createAssistantMessage } from '@shenghuabi/openai';
 
@@ -13,7 +11,6 @@ import {
   createLLMData,
   EnviromentParametersToken,
   NodeRunnerBase,
-  serializeLexicalTextarea,
   TemplateFormatService,
   useChat,
 } from '@shenghuabi/workflow';

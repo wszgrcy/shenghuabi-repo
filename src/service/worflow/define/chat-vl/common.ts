@@ -1,4 +1,3 @@
-import { RUNNER_ORIGIN_OUTPUT } from '@shenghuabi/workflow/share';
 import { NodeComponentType } from '@shenghuabi/workflow/share';
 
 export const NODE_COMMON: NodeComponentType = {
