@@ -95,10 +95,6 @@ export function getDefaultChatConfig(mode: ChatMode) {
   standalone: true,
   imports: [
     FormsModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatProgressBarModule,
-    InputFormComponent,
     MenuCheckboxFCC,
     ChatCommonInput,
     MatTooltipModule,
@@ -358,8 +354,7 @@ export class ChatComponent {
     return new Promise<void>(async (resolve) => {
       this.#chatRef = this.#client.workflow.chat.subscribe(
         {
-          input: this.inputData$$(),
-          context: this.firstItem$().context!,
+          input: { inputs: this.invalidValue$() },
           data: this.#workflowData()!,
           modelConfigName: this.firstItem$().modelConfigName,
         },
@@ -374,7 +369,7 @@ export class ChatComponent {
     // if (1) {
     //   return
     // }
-    
+
     if (this.loading$()) {
       return;
     }
@@ -399,7 +394,6 @@ export class ChatComponent {
           break;
         }
         case ChatMode.workflow: {
-          this.lastData = this.inputData$$();
           await this.#chatWorkflow();
           break;
         }

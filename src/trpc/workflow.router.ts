@@ -28,6 +28,10 @@ import { effect } from 'static-injector';
 import { KnowledgeConfigService } from '../service/knowledge/knowledge-config.service';
 import { captureException } from '@sentry/node';
 import { WorkflowNativeSelectService } from '../native/workflow-select.service';
+import {
+  ResolvedWorkflow,
+  WorkflowRunnerInputsWithContext,
+} from '@shenghuabi/workflow/share';
 
 export const WorkflowRouter = t.router({
   parseTemplate: t.procedure
@@ -60,7 +64,7 @@ export const WorkflowRouter = t.router({
       const result = await service.get({ workflowName: input });
       const result2 = wpService.parse(result);
       // todo 重构 工作流运行相关,需要透传参数
-      return []
+      return [];
     }),
   /** 工作流开发使用 */
   parseDefine: t.procedure
@@ -91,9 +95,13 @@ export const WorkflowRouter = t.router({
   chat: t.procedure
     .input(
       v.object({
-        data: v.custom<WorkflowData>(Boolean),
-        input: v.optional(v.custom<Record<string, any>>(Boolean), {}),
-        context: v.optional(v.custom<Record<string, any>>(Boolean), {}),
+        data: v.custom<
+          Pick<WorkflowData, 'flow'> & { define?: ResolvedWorkflow }
+        >(Boolean),
+        input: v.optional(
+          v.custom<WorkflowRunnerInputsWithContext>(Boolean),
+          {},
+        ),
         modelConfigName: v.optional(v.string()),
       }),
     )
@@ -103,21 +111,10 @@ export const WorkflowRouter = t.router({
 
       const abort = new AbortController();
       return observable<WorkflowStreamData>((ob) => {
-        let parameters: WorkflowRunnerEnvironmentParams | undefined;
-        // todo 重构未处理
-        if (input.input['default']) {
-          parameters = input.input['default'];
-          delete input.input['default'];
-        }
-        // todo 模型用provider
         exec
           .exec(
             input.data,
-            {
-              inputs: input.input,
-              // context: input.context,
-              environmentParameters: parameters,
-            },
+            input.input,
             { showError: false },
             ob,
             abort.signal,

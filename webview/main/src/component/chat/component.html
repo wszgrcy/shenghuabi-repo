@@ -100,7 +100,7 @@
   <!-- 不同对话部分，有工具栏和显示的历史 -->
 
   @if (loading$()) {
-    <mat-progress-bar mode="buffer"></mat-progress-bar>
+    <progress class="progress w-full progress-info"></progress>
   }
   <form ngForm (ngSubmit)="chatAll()" class="chat-input-form">
     <div class="flex nodrag items-end">
