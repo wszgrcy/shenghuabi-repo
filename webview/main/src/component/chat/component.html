@@ -114,6 +114,14 @@
             [(ngModel)]="invalidValue$"
           ></app-invalid-form>
         }
+        @if (contextConfigList$().length) {
+          <context-form
+            name="agent"
+            class="flex-1"
+            [inputList]="contextConfigList$()"
+            [(ngModel)]="contextValue$"
+          ></context-form>
+        }
       } @else {
         <!-- 需要封装也就是新绑定 -->
         <chat-common-input

@@ -45,6 +45,11 @@ import { WorkflowInputComponent } from './workflow/input/component';
 import { CommonChatFn } from './type';
 import { MenuCheckboxFCC } from '@cyia/component/core';
 import { InvalidForm } from './input/invalid-form';
+import {
+  WorkflowContextConfig,
+  WorkflowRunnerEnvironmentParams,
+} from '@shenghuabi/workflow/share';
+import { workerData } from 'node:worker_threads';
 // todo
 export function isChatStream(
   data: WorkflowStreamData,
@@ -53,12 +58,7 @@ export function isChatStream(
     !!data.extra && 'content' in data.extra && 'thinkContent' in data.extra
   );
 }
-type InputVarList = {
-  label: string;
-  // id: string;
-  value: string;
-  inputType: ChatInputType;
-}[];
+
 export const INIT_TEMPLATE_LIST: ChatMessageListOutputType = [
   { role: 'system', content: [] },
   { role: 'user', content: [] },
@@ -103,6 +103,7 @@ export function getDefaultChatConfig(mode: ChatMode) {
     PromptTemplateFCC,
     WorkflowInputComponent,
     InvalidForm,
+    InputFormComponent,
   ],
   styleUrl: './component.scss',
 })
@@ -150,6 +151,9 @@ export class ChatComponent {
   /** 初始数据 */
   readonly firstItem$ = signal<ChatOptions>(deepClone(INIT_DEFAULT));
   readonly invalidValue$ = signal<any>(undefined);
+  readonly contextValue$ = signal<WorkflowRunnerEnvironmentParams | undefined>(
+    undefined,
+  );
   /** context/workflow */
   readonly chatResult$ = signal<WorkflowStreamData[] | undefined>(undefined);
   /** 通用输入 */
@@ -208,6 +212,8 @@ export class ChatComponent {
   });
 
   invalidConfigList$ = signal<WorkflowInvalidConfig[]>([]);
+  contextConfigList$ = signal<WorkflowContextConfig[]>([]);
+
   #workflowData = signal<
     (WorkflowData & { define: ResolvedWorkflow }) | undefined
   >(undefined);
@@ -262,6 +268,9 @@ export class ChatComponent {
                 this.#workflowData.set(workflowData);
                 this.invalidConfigList$.set(
                   workflowData.resolved.invalidConfigList ?? [],
+                );
+                this.contextConfigList$.set(
+                  workflowData.resolved.contextConfigList ?? [],
                 );
               });
           });
@@ -354,7 +363,10 @@ export class ChatComponent {
     return new Promise<void>(async (resolve) => {
       this.#chatRef = this.#client.workflow.chat.subscribe(
         {
-          input: { inputs: this.invalidValue$() },
+          input: {
+            inputs: this.invalidValue$(),
+            environmentParameters: this.contextValue$(),
+          },
           data: this.#workflowData()!,
           modelConfigName: this.firstItem$().modelConfigName,
         },
