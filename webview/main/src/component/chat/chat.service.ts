@@ -9,6 +9,7 @@ import {
 import { TrpcService } from '@fe/trpc';
 import { ChatTemplateService } from '../../service/chat-template.service';
 import { v5 } from 'uuid';
+import { ResolvedWorkflowResult } from '@shenghuabi/workflow';
 
 @Injectable()
 export class ChatService {
@@ -82,7 +83,12 @@ export class ChatService {
 
   async getWorkflowWithDefine(
     workflow: NonNullable<WorkflowChatOptions['workflow']>,
-  ): Promise<WorkflowData & { define: ResolvedWorkflow }> {
+  ): Promise<
+    WorkflowData & {
+      define: ResolvedWorkflow;
+      resolved: ResolvedWorkflowResult;
+    }
+  > {
     return this.#client.workflow.getWithDefine.query(workflow!) as any;
   }
   /** mind 中被重写了 */

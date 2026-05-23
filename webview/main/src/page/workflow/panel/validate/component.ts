@@ -62,7 +62,12 @@ export class ValidatePanelComponent {
       this.#client.workflow.parseDefine.query(data).then((item) => {
         console.log('解析结果', item);
         if (!item.error) {
-          this.service.workflow = { ...data, define: item.data! };
+          this.service.workflow = {
+            ...data,
+            define: item.data!,
+            resolved: item,
+          };
+
           comp.firstItem$.set({
             workflow: { path: v4() },
             mode: ChatMode.workflow,

@@ -106,14 +106,14 @@
     <div class="flex nodrag items-end">
       @let defulatType = useChatType$$() === 'default';
       @if (!defulatType) {
-        <input-form
-          name="agent"
-          [(ngModel)]="firstItem$"
-          [inputList]="inputNameList()"
-          (keyEnter)="chatAll()"
-          class="flex-1"
-          [disableInputObject]="disableInputObject()"
-        ></input-form>
+        @if (invalidConfigList$().length) {
+          <app-invalid-form
+            name="agent"
+            class="flex-1"
+            [invalidConfigList]="invalidConfigList$()"
+            [(ngModel)]="invalidValue$"
+          ></app-invalid-form>
+        }
       } @else {
         <!-- 需要封装也就是新绑定 -->
         <chat-common-input

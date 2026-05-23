@@ -49,7 +49,7 @@ export class HandleWC {
   });
   readonly props$$ = computed(() => {
     return {
-      className: 'relative! w-full! h-auto! top-0! left-0! transform-none!',
+      className: 'relative! w-full! h-auto! top-0! left-0! transform-none! rounded-none!  bg-transparent!',
       type: 'target',
       position: Position.Left,
       id: this.#handleId$$(),

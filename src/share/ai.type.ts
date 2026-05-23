@@ -18,8 +18,11 @@ export type CommonChat = ChatHistoryListType[number];
 export type PromptTemplateChatOption = ChatOptions & { title: string };
 
 export enum ChatMode {
+  /** 工作流 */
   workflow = 'workflow',
+  /** 模板 */
   template = 'template',
+  /** 对话 */
   default = 'default',
 }
 

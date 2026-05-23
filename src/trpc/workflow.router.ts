@@ -59,7 +59,8 @@ export const WorkflowRouter = t.router({
       const wpService = ctx.injector.get(WorkflowParserService);
       const result = await service.get({ workflowName: input });
       const result2 = wpService.parse(result);
-      return result2.data!.inputList;
+      // todo 重构 工作流运行相关,需要透传参数
+      return []
     }),
   /** 工作流开发使用 */
   parseDefine: t.procedure

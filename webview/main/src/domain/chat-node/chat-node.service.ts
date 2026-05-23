@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { UUID_NS, WorkflowNodeConfigObj } from '@bridge/share';
 import { PiResolvedViewFieldConfig } from '@piying/view-angular';
 import { KeyPath } from '@piying/view-angular-core';
@@ -26,6 +26,27 @@ export class ChatNodeService {
     ].sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
   );
 
+  #nodeObject$$ = computed(() => {
+    return this.nodeList$().reduce(
+      (obj, item) => {
+        obj[item.type] = item;
+        return obj;
+      },
+      {} as Record<string, WebviewNodeConfig>,
+    );
+  });
+  #pluginNodeObject$$ = computed(() => {
+    return this.pluginNodeList$().reduce(
+      (obj, item) => {
+        obj[item.type] = item;
+        return obj;
+      },
+      {} as Record<string, WebviewNodeConfig>,
+    );
+  });
+ readonly fullNodeObject$$ = computed(() => {
+    return { ...this.#nodeObject$$(), ...this.#pluginNodeObject$$() };
+  });
   context = {
     getModelList: () =>
       this.#client.chat.getChatModelConfigNameOptions.query(undefined),
@@ -129,8 +150,8 @@ export class ChatNodeService {
       console.log(value);
       return [{ id: 'default2', label: 'default2' }];
     },
-    editorInputChange: async (value:boolean) => {
-      console.log('xxxx',value);
+    editorInputChange: async (value: boolean) => {
+      console.log('xxxx', value);
     },
   };
 }

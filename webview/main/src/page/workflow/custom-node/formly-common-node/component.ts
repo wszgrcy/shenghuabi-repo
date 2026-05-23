@@ -49,59 +49,9 @@ import { CreateSchemaHandle } from './schema-handle';
 import '@valibot/i18n/zh-CN';
 import { unset } from 'es-toolkit/compat';
 import { forEachErrorSummary } from './error-handle';
+import { FieldGlobalConfig } from '../../define/field-global-config';
 v.setGlobalConfig({ lang: 'zh-CN' });
-const FieldGlobalConfig = {
-  types: {
-    ...safeDefine.define.types,
-    'prompt-list': {
-      type: PromptListFCC,
-      actions: [
-        outputChange((fn) => {
-          fn([{ list: undefined, output: 'variableChange' }]).subscribe(
-            ({ list: [[value]], field }) => {
-              field.context['setContextList'](
-                field.form.control!.fieldPath,
-                (value as ChatVariable[]).map((item) => {
-                  return {
-                    label: item.label,
-                    key: item.value,
-                    kind: item.kind,
-                  } as InputContextItem;
-                }),
-              );
-            },
-          );
-        }),
-      ],
-    },
-    'textarea-template': {
-      type: TextareaTemplateFCC,
-      actions: [
-        outputChange((fn) => {
-          fn([{ list: undefined, output: 'variableChange' }]).subscribe(
-            ({ list: [[value]], field }) => {
-              let list: SimpleVariableNode['item'][] = value.custom;
-              field.context['setContextList'](
-                field.form.control!.fieldPath,
-                list.map((item) => {
-                  return {
-                    label: item.label,
-                    key: item.value,
-                  } as InputContextItem;
-                }),
-              );
-            },
-          );
-        }),
-      ],
-    },
-  },
-  wrappers: {
-    ...FormWrappers,
-    'flow-handle': { type: HandleWC },
-    'use-ref': { type: UseRefWC },
-  },
-} as PiViewConfig;
+
 @Component({
   selector: 'formly-common-node',
   templateUrl: './component.html',

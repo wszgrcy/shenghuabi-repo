@@ -23,27 +23,7 @@ export class BridgeService extends FlowBseService<CustomNode> {
   #injector = inject(Injector);
   #chatNode = inject(ChatNodeService);
 
-  #nodeObject$$ = computed(() => {
-    return this.#chatNode.nodeList$().reduce(
-      (obj, item) => {
-        obj[item.type] = item;
-        return obj;
-      },
-      {} as Record<string, WebviewNodeConfig>,
-    );
-  });
-  #pluginNodeObject$$ = computed(() => {
-    return this.#chatNode.pluginNodeList$().reduce(
-      (obj, item) => {
-        obj[item.type] = item;
-        return obj;
-      },
-      {} as Record<string, WebviewNodeConfig>,
-    );
-  });
-  fullNodeObject$$ = computed(() => {
-    return { ...this.#nodeObject$$(), ...this.#pluginNodeObject$$() };
-  });
+  fullNodeObject$$ = this.#chatNode.fullNodeObject$$;
   #nodeTypes$$ = computed(() => {
     return this.#chatNode.nodeList$().reduce(
       (obj, item) => {

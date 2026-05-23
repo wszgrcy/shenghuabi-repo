@@ -163,19 +163,17 @@ export class AiChatNode extends NodeBase<ChatDataType> {
             if (!inited$()) {
               return;
             }
-            const inputList = comp.inputNameList();
-            if (!inputList) {
-              return;
-            }
+         
 
             untracked(() => {
               const oldHandle = deepClone(this.data$()?.handle) || {
                 input: [[]],
                 output: [],
               };
-              oldHandle.input[0] = inputList.map((item) => {
-                return { ...item, id: v5(item.value ?? item.label, UUID_NS) };
-              });
+              // todo 无用?好像还需要改mind中的
+              // oldHandle.input[0] = inputList.map((item) => {
+              //   return { ...item, id: v5(item.value ?? item.label, UUID_NS) };
+              // });
 
               this.#bridge.patchDataOne(this.props().id, {
                 handle: deepClone(oldHandle),

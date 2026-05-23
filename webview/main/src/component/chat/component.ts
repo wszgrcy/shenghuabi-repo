@@ -22,9 +22,11 @@ import {
   ChatMode,
   ChatOptions,
   CommonChat,
+  InputInvalidItem,
   LLMWorkflowData,
   ResolvedWorkflow,
   WorkflowData,
+  WorkflowInvalidConfig,
   WorkflowStreamData,
 } from '@bridge/share';
 import { ChatService } from './chat.service';
@@ -42,6 +44,7 @@ import { deepEqual } from 'fast-equals';
 import { WorkflowInputComponent } from './workflow/input/component';
 import { CommonChatFn } from './type';
 import { MenuCheckboxFCC } from '@cyia/component/core';
+import { InvalidForm } from './input/invalid-form';
 // todo
 export function isChatStream(
   data: WorkflowStreamData,
@@ -96,8 +99,6 @@ export function getDefaultChatConfig(mode: ChatMode) {
     MatFormFieldModule,
     MatProgressBarModule,
     InputFormComponent,
-    MatInputModule,
-    MatButtonModule,
     MenuCheckboxFCC,
     ChatCommonInput,
     MatTooltipModule,
@@ -105,6 +106,7 @@ export function getDefaultChatConfig(mode: ChatMode) {
     CommonChatResultComponent,
     PromptTemplateFCC,
     WorkflowInputComponent,
+    InvalidForm,
   ],
   styleUrl: './component.scss',
 })
@@ -151,6 +153,7 @@ export class ChatComponent {
   readonly list$ = signal<CommonChat[]>([]);
   /** 初始数据 */
   readonly firstItem$ = signal<ChatOptions>(deepClone(INIT_DEFAULT));
+  readonly invalidValue$ = signal<any>(undefined);
   /** context/workflow */
   readonly chatResult$ = signal<WorkflowStreamData[] | undefined>(undefined);
   /** 通用输入 */
@@ -207,8 +210,8 @@ export class ChatComponent {
     }
     return mode;
   });
-  /** 告知需要手动传入哪些 */
-  inputNameList = signal<InputVarList | undefined>(undefined);
+
+  invalidConfigList$ = signal<WorkflowInvalidConfig[]>([]);
   #workflowData = signal<
     (WorkflowData & { define: ResolvedWorkflow }) | undefined
   >(undefined);
@@ -247,7 +250,8 @@ export class ChatComponent {
               if (!value) {
                 return;
               }
-              this.inputNameList.set(value);
+              // this.inputNameList.set(value);
+              // todo 改为textarea-template
             }),
           );
         } else if (mode === ChatMode.workflow) {
@@ -260,15 +264,13 @@ export class ChatComponent {
               .getWorkflowWithDefine(workflow)
               .then((workflowData) => {
                 this.#workflowData.set(workflowData);
-                this.inputNameList.set(workflowData.define.inputList);
+                this.invalidConfigList$.set(
+                  workflowData.resolved.invalidConfigList ?? [],
+                );
               });
           });
         } else if (mode === ChatMode.default) {
-          untracked(() => {
-            if (this.inputNameList()) {
-              this.inputNameList.set([]);
-            }
-          });
+          // todo 初始化?
         }
       },
       { injector: this.#injector },
@@ -368,6 +370,11 @@ export class ChatComponent {
   /** 显示模板工作流上次输入内容 */
   lastData: any;
   async chatAll() {
+    // console.log(this.invalidValue$());
+    // if (1) {
+    //   return
+    // }
+    
     if (this.loading$()) {
       return;
     }

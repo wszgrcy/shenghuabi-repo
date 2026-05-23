@@ -11,6 +11,7 @@ import {
   valueChange,
 } from '@piying/view-angular-core';
 import { debounceTime, filter } from 'rxjs';
+import { TextareaTemplateDefine } from '@shenghuabi/workflow/share';
 
 const examples1 = {
   categories: [
@@ -37,15 +38,11 @@ export const CATEGORY_NODE_DEFINE = v.pipe(
           v.array(
             v.pipe(
               v.object({
-                value: v.pipe(
-                  v.optional(v.string(), ''),
-                  v.minLength(1),
-                  v.title('分类依据'),
-                ),
+                value: v.pipe(TextareaTemplateDefine, v.title('分类依据')),
               }),
             ),
           ),
-          [{ value: '水果' }],
+          [],
         ),
 
         v.minLength(1),
@@ -82,16 +79,8 @@ export const CATEGORY_NODE_DEFINE = v.pipe(
           output: { value: stringify(answer2) },
         },
       ]),
-      systemPrompt: v.pipe(
-        v.string(),
-        setComponent('textarea-template'),
-        actions.class.top('nodrag'),
-      ),
-      content: v.pipe(
-        v.string(),
-        setComponent('textarea-template'),
-        actions.class.top('nodrag'),
-      ),
+      systemPrompt: TextareaTemplateDefine,
+      content: TextareaTemplateDefine,
     }),
   ]),
   asVirtualGroup(),
