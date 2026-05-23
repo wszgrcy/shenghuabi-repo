@@ -169,7 +169,7 @@
     outline: none;
   }
   .variable-label {
-    @apply badge;
+    @apply badge badge-xs mx-1;
   }
   .variable-label-custom {
     @apply badge-success;

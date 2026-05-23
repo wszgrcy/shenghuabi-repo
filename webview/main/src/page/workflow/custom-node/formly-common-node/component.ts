@@ -28,6 +28,7 @@ import '@valibot/i18n/zh-CN';
 import { unset } from 'es-toolkit/compat';
 import { forEachErrorSummary } from './error-handle';
 import { FieldGlobalConfig } from '../../define/field-global-config';
+import { skip } from 'rxjs';
 v.setGlobalConfig({ lang: 'zh-CN' });
 
 @Component({
@@ -63,33 +64,29 @@ export class FormlyCommonNodeComponent {
           });
           toObservable(data$$, data$$, {
             injector: field.form.root.injector,
-          }).subscribe((value) => {
-            const status = field.form.root.status$$();
-            const invalidList: InputInvalidItem[] = [];
-            if (status === 'INVALID') {
-              const list = getDeepError(field.form.root);
-              this.errorList.set(list);
-              if (value) {
-                forEachErrorSummary(list, (summary) => {
-                  const lastField = summary.fieldList.slice(-1)[0];
-                  unset(value, lastField.valuePath);
-                  invalidList.push({ key: lastField.valuePath });
-                });
+          })
+            .pipe(skip(1))
+            .subscribe((value) => {
+              const status = field.form.root.status$$();
+              const invalidList: InputInvalidItem[] = [];
+              if (status === 'INVALID') {
+                const list = getDeepError(field.form.root);
+                this.errorList.set(list);
+                if (value) {
+                  forEachErrorSummary(list, (summary) => {
+                    const lastField = summary.fieldList.slice(-1)[0];
+                    unset(value, lastField.valuePath);
+                    invalidList.push({ key: lastField.valuePath });
+                  });
+                }
+              } else {
+                this.errorList.set([]);
               }
-            } else {
-              this.errorList.set([]);
-            }
-            const oldValue = this.props().data.config?.value;
-            if (
-              !deepEqual(oldValue, value) ||
-              !deepEqual(this.props().data.config?.invalidList, invalidList)
-            ) {
               this.#bridge.patchDataConfigOne(this.props().id, {
                 value,
                 invalidList,
               });
-            }
-          });
+            });
         },
       }),
     );
