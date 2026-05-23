@@ -168,6 +168,9 @@
   .editor-textarea {
     outline: none;
   }
+  .variable-node {
+    @apply inline-flex
+  }
   .variable-label {
     @apply badge badge-xs mx-1;
   }
