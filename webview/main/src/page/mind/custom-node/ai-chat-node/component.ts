@@ -105,126 +105,127 @@ export class AiChatNode extends NodeBase<ChatDataType> {
     );
     const inited$ = signal(false);
     // 更新数据用
-    effectOnce(
-      () => {
-        return this.comp();
-      },
-      (comp) => {
-        // 初始化及后续
-        effect(
-          () => {
-            const value = this.value$();
-            if (!value) {
-              return;
-            }
-            const title = this.#title();
-            if (typeof title !== 'string') {
-              return;
-            }
-            untracked(() => {
-              comp.list$.set(value.list || []);
-              comp.firstItem$.set(value.firstItem || deepClone(INIT_CONTEXT));
-              comp.chatResult$.set(value.chatResult);
-              comp.title.set(title || INIT_TITLE);
-              inited$.set(true);
-            });
-          },
-          { injector: this.#injector },
-        );
-        // 变更输出
-        effect(
-          () => {
-            const title = comp.title();
-            const list = comp.list$();
-            // todo 应该过滤空值
-            const firstItem = comp.firstItem$() as any;
-            const chatResult = comp.chatResult$();
-            untracked(() => {
-              if (this.inStore()) {
-                this.dataChange.emit({
-                  title,
-                  value: { list, firstItem, chatResult },
-                });
-              } else {
-                this.#bridge.patchDataOne(this.props().id, {
-                  title,
-                  value: { list, firstItem, chatResult },
-                });
-              }
-            });
-          },
-          { injector: this.#injector },
-        );
-        // 1。根据输入列表定义连接点
-        // 2。连接点已连接去掉输入列表的项
-        effect(
-          () => {
-            if (!inited$()) {
-              return;
-            }
+    // effectOnce(
+    //   () => {
+    //     return this.comp();
+    //   },
+    //   (comp) => {
+    //     // 初始化及后续
+    //     effect(
+    //       () => {
+    //         const value = this.value$();
+    //         if (!value) {
+    //           return;
+    //         }
+    //         const title = this.#title();
+    //         if (typeof title !== 'string') {
+    //           return;
+    //         }
+    //         untracked(() => {
+    //           comp.list$.set(value.list || []);
+    //           comp.firstItem$.set(value.firstItem || deepClone(INIT_CONTEXT));
+    //           comp.chatResult$.set(value.chatResult);
+    //           comp.title.set(title || INIT_TITLE);
+    //           inited$.set(true);
+    //         });
+    //       },
+    //       { injector: this.#injector },
+    //     );
+    //     // 变更输出
+    //     effect(
+    //       () => {
+    //         const title = comp.title();
+    //         const list = comp.list$();
+    //         // todo 应该过滤空值
+    //         const firstItem = comp.firstItem$() as any;
+    //         const chatResult = comp.chatResult$();
+    //         untracked(() => {
+    //           if (this.inStore()) {
+    //             this.dataChange.emit({
+    //               title,
+    //               value: { list, firstItem, chatResult },
+    //             });
+    //           } else {
+    //             this.#bridge.patchDataOne(this.props().id, {
+    //               title,
+    //               value: { list, firstItem, chatResult },
+    //             });
+    //           }
+    //         });
+    //       },
+    //       { injector: this.#injector },
+    //     );
+    //     // 1。根据输入列表定义连接点
+    //     // 2。连接点已连接去掉输入列表的项
+    //     effect(
+    //       () => {
+    //         if (!inited$()) {
+    //           return;
+    //         }
 
-            untracked(() => {
-              const oldHandle = deepClone(this.data$()?.handle) || {
-                input: [[]],
-                output: [],
-              };
-              // todo 无用?好像还需要改mind中的
-              // oldHandle.input[0] = inputList.map((item) => {
-              //   return { ...item, id: v5(item.value ?? item.label, UUID_NS) };
-              // });
+    //         untracked(() => {
+    //           const oldHandle = deepClone(this.data$()?.handle) || {
+    //             input: [[]],
+    //             output: [],
+    //           };
+    //           // todo 无用?好像还需要改mind中的
+    //           // oldHandle.input[0] = inputList.map((item) => {
+    //           //   return { ...item, id: v5(item.value ?? item.label, UUID_NS) };
+    //           // });
 
-              this.#bridge.patchDataOne(this.props().id, {
-                handle: deepClone(oldHandle),
-              });
-            });
-          },
-          { injector: this.#injector },
-        );
-        effect(
-          () => {
-            const inputHandle = this.handleInput$();
-            const edges = this.#linkedEdges$();
-            const disableInputObj = {} as Record<string, true>;
-            for (const inputItem of inputHandle) {
-              if (edges.some((item) => item.targetHandle === inputItem.id)) {
-                disableInputObj[inputItem.label!] = true;
-              }
-            }
-            untracked(() => {
-              comp.disableInputObject.set(disableInputObj);
-            });
-          },
-          { injector: this.#injector },
-        );
-      },
-      this.#injector,
-    );
+    //           this.#bridge.patchDataOne(this.props().id, {
+    //             handle: deepClone(oldHandle),
+    //           });
+    //         });
+    //       },
+    //       { injector: this.#injector },
+    //     );
+    //     effect(
+    //       () => {
+    //         const inputHandle = this.handleInput$();
+    //         const edges = this.#linkedEdges$();
+    //         const disableInputObj = {} as Record<string, true>;
+    //         for (const inputItem of inputHandle) {
+    //           if (edges.some((item) => item.targetHandle === inputItem.id)) {
+    //             disableInputObj[inputItem.label!] = true;
+    //           }
+    //         }
+    //         untracked(() => {
+    //           comp.disableInputObject.set(disableInputObj);
+    //         });
+    //       },
+    //       { injector: this.#injector },
+    //     );
+    //   },
+    //   this.#injector,
+    // );
   }
   canBuildNode = computed(() => {
-    return !!this.#chatResult();
+    return false
+    // return !!this.#chatResult();
   });
 
   #chatResult = computed(() => {
-    if (this.comp()?.firstItem$().mode !== ChatMode.workflow) {
-      return;
-    }
-    const list = this.comp()!.chatResult$();
-    if (!list || !list.length) {
-      return;
-    }
-    const lastItem = list[list.length - 1];
-    // todo 改为loading之前不处理
-    if (lastItem?.value instanceof Object) {
-      const result = parseBuildNode(lastItem.value);
-      if (!result) {
-        return;
-      }
-      return {
-        root: (lastItem as any).extra?.filePath as string | undefined,
-        data: result,
-      };
-    }
-    return;
+    // if (this.comp()?.firstItem$().mode !== ChatMode.workflow) {
+    //   return;
+    // }
+    // const list = this.comp()!.chatResult$();
+    // if (!list || !list.length) {
+    //   return;
+    // }
+    // const lastItem = list[list.length - 1];
+    // // todo 改为loading之前不处理
+    // if (lastItem?.value instanceof Object) {
+    //   const result = parseBuildNode(lastItem.value);
+    //   if (!result) {
+    //     return;
+    //   }
+    //   return {
+    //     root: (lastItem as any).extra?.filePath as string | undefined,
+    //     data: result,
+    //   };
+    // }
+    // return;
   });
 
   buildNode() {
@@ -256,25 +257,25 @@ export class AiChatNode extends NodeBase<ChatDataType> {
   }
 
   saveToPrompt(type: string) {
-    const firstItem = this.comp()!.firstItem$()!;
-    const data = deepClone(firstItem);
-    delete data.input;
-    delete data.context;
-    this.#client.chat.savePromptTemplateByMind.query({
-      type,
-      title: this.comp()!.title(),
-      ...data,
-    });
+    // const firstItem = this.comp()!.firstItem$()!;
+    // const data = deepClone(firstItem);
+    // delete data.input;
+    // delete data.context;
+    // this.#client.chat.savePromptTemplateByMind.query({
+    //   type,
+    //   title: this.comp()!.title(),
+    //   ...data,
+    // });
   }
   callbackGroup = {
     // 从模型中更新
     click: (data: string) => {
       this.#client.chat.getPromptByKey.query(data).then((data) => {
-        this.comp()?.title.set(data?.title || '');
+        // this.comp()?.title.set(data?.title || '');
         const saved = deepClone(data);
         delete (saved as any).title;
-        this.comp()?.firstItem$.set(saved as any);
-        this.comp()?.list$.set([]);
+        // this.comp()?.firstItem$.set(saved as any);
+        // this.comp()?.list$.set([]);
       });
     },
   };
