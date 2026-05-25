@@ -59,16 +59,10 @@ export class ChatNodeService {
       const result = field.get(keyPath);
       result?.form.control?.updateValue(value);
     },
-    parseTemplate: (
-      value: string,
-      language?: 'js' | 'plaintext',
-    ) => {
+    parseTemplate: (value: string, language?: 'js' | 'plaintext') => {
       return this.#chatTemplate.parseTemplate(value, language)();
     },
-    getActionList: (
-      value: string,
-      language?: 'js' | 'plaintext' ,
-    ) => {
+    getActionList: (value: string, language?: 'js' | 'plaintext') => {
       return this.#client.environment.pythonAddon.getPlayerIdList.query(
         undefined,
       );

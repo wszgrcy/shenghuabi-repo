@@ -3,12 +3,10 @@ import {
   Injector,
   SimpleChanges,
   computed,
-  effect,
   forwardRef,
   inject,
   input,
   signal,
-  untracked,
 } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputFormComponent } from './input/input-form/component';
@@ -34,13 +32,9 @@ import { TrpcService } from '@fe/trpc';
 
 import { CommonChatResultComponent } from './result/common-result/component';
 import { WorkflowChatResultComponent } from './result/chat-result/component';
-import { PromptTemplateFCC } from './template-form/component';
-import { getHumanTemplate } from './const';
 import { Unsubscribable } from '@trpc/server/observable';
-import { deepEqual } from 'fast-equals';
 import { WorkflowInputComponent } from './workflow/input/component';
 import { CommonChatFn } from './type';
-import { MenuCheckboxFCC } from '@cyia/component/core';
 import { InvalidForm } from './input/invalid-form';
 import {
   WorkflowContextConfig,
@@ -189,7 +183,7 @@ export class ChatComponent extends BaseControl<ChatValue> {
       this.valueAndTouchedChange({});
     }
     if (changes['stopSignal'] && this.stopSignal()) {
-      let stopSignal = this.stopSignal()!;
+      const stopSignal = this.stopSignal()!;
       this.#chatRef?.unsubscribe();
 
       if (stopSignal.clear) {

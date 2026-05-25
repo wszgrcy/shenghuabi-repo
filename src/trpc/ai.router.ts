@@ -4,7 +4,6 @@ import { t } from './t';
 import { observable } from '@trpc/server/observable';
 import { CHAT_ITEM_TYPE, CustomNode, PromptTemplateChatOption } from '../share';
 import { AiChatProvider } from '../webview/custom-sidebar/ai-chat.service';
-import { PromptInput } from '../service/ai/prompt.type';
 import { ChatService } from '../service/ai/chat.service';
 import { ChatMessageListOutputType } from '@shenghuabi/openai/define';
 import type { WorkflowStreamData } from '@shenghuabi/workflow/share';

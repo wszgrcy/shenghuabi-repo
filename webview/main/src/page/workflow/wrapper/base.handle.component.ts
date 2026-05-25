@@ -1,20 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  Directive,
-  inject,
-  viewChild,
-} from '@angular/core';
+import { computed, Directive, inject, viewChild } from '@angular/core';
 import { isValidConnection } from '@fe/component/flow-base/flow-base.service';
-import {
-  AttributesDirective,
-  EventsDirective,
-  InsertFieldDirective,
-  PI_VIEW_FIELD_TOKEN,
-} from '@piying/view-angular';
+import { PI_VIEW_FIELD_TOKEN } from '@piying/view-angular';
 import { Handle, Position } from '@xyflow/react';
-import { ReactOutlet } from '@cyia/ngx-bridge/react-outlet';
 import { NodeService } from '../custom-node/formly-common-node/node.service';
 import { BridgeService } from '../service';
 @Directive()

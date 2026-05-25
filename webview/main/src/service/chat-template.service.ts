@@ -1,7 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import { TrpcService } from './trpc.service';
-import { v5 } from 'uuid';
-import { UUID_NS } from '@bridge/share';
 
 @Injectable({
   providedIn: 'root',

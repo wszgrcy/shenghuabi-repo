@@ -17,11 +17,7 @@ import { FormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { TrpcService } from '@fe/trpc';
 import { ChatService } from '@fe/component/chat/chat.service';
-import {
-  ChatComponent,
-  ChatConfig,
-  ChatValue,
-} from '@fe/component/chat/component';
+import { ChatComponent, ChatConfig } from '@fe/component/chat/component';
 import { WorkflowTestChatService } from './workflow-test.chat.service';
 import { ChatMode } from '@bridge/share';
 import { v4 } from 'uuid';

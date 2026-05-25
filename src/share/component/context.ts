@@ -1,10 +1,9 @@
 import type { KeyPath } from '@piying/view-angular-core';
 
 export interface ComponentContext {
-
   parseTemplate: (
     value: string,
-    language?: 'js' | 'plaintext' ,
+    language?: 'js' | 'plaintext',
   ) => Promise<
     | {
         label: string;

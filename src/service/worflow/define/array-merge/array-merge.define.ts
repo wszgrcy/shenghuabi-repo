@@ -1,4 +1,4 @@
-import { actions, asControl, setComponent } from '@piying/view-angular-core';
+import { actions, asControl } from '@piying/view-angular-core';
 import * as v from 'valibot';
 
 export const ARRAY_MERGE_NODE_DEFINE = v.object({

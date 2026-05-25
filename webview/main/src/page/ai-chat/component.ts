@@ -1,15 +1,8 @@
 import { Component, computed, inject, signal, viewChild } from '@angular/core';
-import {
-  ChatComponent,
-  ChatValue,
-  getDefaultChatConfig,
-  INIT_TITLE,
-} from '../../component/chat/component';
+import { ChatComponent, ChatValue } from '../../component/chat/component';
 import { TrpcService } from '@fe/trpc';
-import { deepClone } from '../../util/clone';
 import { ChatService } from '@fe/component/chat/chat.service';
-import { ChatMode, ChatOptions } from '@bridge/share';
-import { isUndefined, omitBy } from 'lodash-es';
+import { ChatMode } from '@bridge/share';
 import { MenuCheckboxFCC } from '@cyia/component/core';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -96,7 +89,7 @@ export default class AiChatPage {
                 break;
               }
               case ChatMode.template: {
-                let template = await Promise.all(
+                const template = await Promise.all(
                   result.item.template?.map(async (item) => {
                     return {
                       role: item.role,

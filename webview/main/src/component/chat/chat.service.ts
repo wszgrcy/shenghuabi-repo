@@ -2,13 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import {
   ChatMessageListInputType,
   ResolvedWorkflow,
-  UUID_NS,
   WorkflowChatOptions,
   WorkflowData,
 } from '@bridge/share';
 import { TrpcService } from '@fe/trpc';
-import { ChatTemplateService } from '../../service/chat-template.service';
-import { v5 } from 'uuid';
 import { ResolvedWorkflowResult } from '@shenghuabi/workflow';
 
 @Injectable()
@@ -45,14 +42,14 @@ export class ChatService {
   #getArticleData() {
     return this.#client.fs.findAll.query({ flat: false });
   }
- 
+
   // todo llm是独立算的,这里使用的是上下文,不需要节点持久,所以可以一起
   // todo 已经修改
   async resolveInputs(template?: ChatMessageListInputType) {
     if (!template || !template.length) {
       return [];
     }
-    return []
+    return [];
   }
 
   async getWorkflowWithDefine(

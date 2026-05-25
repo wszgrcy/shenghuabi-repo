@@ -40,7 +40,7 @@ export const WorkflowRouter = t.router({
     )
     .query(async ({ input, ctx }) => {
       const service = ctx.injector.get(TemplateFormatService);
-      const content = input.content
+      const content = input.content;
       switch (input.language) {
         case 'js':
           return service.parserJs(content);
