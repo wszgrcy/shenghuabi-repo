@@ -355,8 +355,14 @@ export class ChatComponent extends BaseControl<ChatValue> {
     }));
   }
   contextValueChanged(value: WorkflowRunnerEnvironmentParams) {
-    this.value$.update((v) => ({
-      workflow: { ...v.workflow!, contextValue: value },
-    }));
+    if (this.mode() === ChatMode.workflow) {
+      this.value$.update((v) => ({
+        workflow: { ...v.workflow!, contextValue: value },
+      }));
+    } else {
+      this.value$.update((v) => ({
+        template: { ...v.template!, contextValue: value },
+      }));
+    }
   }
 }

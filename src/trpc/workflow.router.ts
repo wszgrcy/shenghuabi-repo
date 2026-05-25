@@ -34,23 +34,18 @@ export const WorkflowRouter = t.router({
   parseTemplate: t.procedure
     .input(
       v.object({
-        content: v.array(v.string()),
-        language: v.optional(
-          v.picklist(['plaintext', 'js', 'liquid']),
-          'plaintext',
-        ),
+        content: v.string(),
+        language: v.optional(v.picklist(['plaintext', 'js']), 'plaintext'),
       }),
     )
     .query(async ({ input, ctx }) => {
       const service = ctx.injector.get(TemplateFormatService);
-      const content = input.content.join('\n');
+      const content = input.content
       switch (input.language) {
         case 'js':
           return service.parserJs(content);
         case 'plaintext':
           return service.parse(content);
-        case 'liquid':
-          return service.parserLiquid(content);
       }
     }),
   getWorkflowInputList: t.procedure

@@ -131,6 +131,22 @@ export class PromptTemplateFCC implements ControlValueAccessor {
   addTemplateChange = output<any>();
   onChange = (_: any) => {};
 
+  #emitVariableChange(value: any): void {
+    const list: ChatVariable[] = [...this.#textVarList$()];
+    if (value.assets) {
+      const imageList: SimpleVariableNode = {
+        type: 'variable',
+        item: {
+          label: '图片',
+          value: [value.assets],
+          type: 'custom',
+        },
+      };
+      list.push({ ...imageList.item, kind: 'image' });
+    }
+    this.variableChange.emit(list);
+  }
+
   ngOnInit(): void {
     this.forms.valueChanges.subscribe((value) => {
       value = deepClone(value);
@@ -158,11 +174,7 @@ export class PromptTemplateFCC implements ControlValueAccessor {
           type: 'image_url',
         });
       }
-      const list: ChatVariable[] = [...this.#textVarList$()];
-      if (imageList) {
-        list.push({ ...imageList.item, kind: 'image' });
-      }
-      this.variableChange.emit(list);
+      this.#emitVariableChange(value);
 
       this.onChange({
         role: value.type,
@@ -192,5 +204,6 @@ export class PromptTemplateFCC implements ControlValueAccessor {
   #textVarList$ = signal<SimpleVariableNode['item'][]>([]);
   textVarChange(obj: any) {
     this.#textVarList$.set(obj.custom);
+    this.#emitVariableChange(this.forms.value);
   }
 }

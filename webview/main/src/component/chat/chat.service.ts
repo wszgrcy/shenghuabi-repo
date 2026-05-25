@@ -45,40 +45,14 @@ export class ChatService {
   #getArticleData() {
     return this.#client.fs.findAll.query({ flat: false });
   }
-  #chatTemplate = inject(ChatTemplateService);
+ 
   // todo llm是独立算的,这里使用的是上下文,不需要节点持久,所以可以一起
+  // todo 已经修改
   async resolveInputs(template?: ChatMessageListInputType) {
     if (!template || !template.length) {
       return [];
     }
-    return this.#chatTemplate
-      .parseTemplate(
-        template.flatMap((item) =>
-          item.content.map((item) => (item.type === 'text' ? item.text : '')),
-        ),
-      )()
-      .then((result) => {
-        if (!result) {
-          return;
-        }
-        return result.concat(
-          template
-            .flatMap((item) =>
-              item.content.map((item) =>
-                item.type === 'image_url' ? item.image_url.url : '',
-              ),
-            )
-            .filter(Boolean)
-            .map((item) => {
-              return {
-                inputType: 'image',
-                value: item!,
-                id: v5(item!, UUID_NS),
-                label: item!,
-              };
-            }),
-        );
-      });
+    return []
   }
 
   async getWorkflowWithDefine(

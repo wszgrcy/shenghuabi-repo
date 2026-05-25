@@ -35,7 +35,7 @@ export interface WorkflowChatOptions {
     path: string;
   };
 }
-/** @deprecated */
+/** @deprecated 模板还要使用 */
 export interface ChatOptions {
   mode: ChatMode;
   input?: Record<string, any>;

@@ -54,7 +54,7 @@ export const DISCOURSE_HELP_DEFINE = v.looseObject({
               if (typeof value !== 'string') {
                 return;
               }
-              field.context.changeHandleByTemplate(field, value, 1);
+         
             });
         }),
       ),

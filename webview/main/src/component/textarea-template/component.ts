@@ -71,6 +71,12 @@ export class TextareaTemplateFCC extends BaseControl {
     this.variableChange.emit(extractVariableItems(list));
     this.valueAndTouchedChange(list);
   };
+  override writeValue(obj: any) {
+    super.writeValue(obj);
+    if (Array.isArray(obj) && obj.length) {
+      this.variableChange.emit(extractVariableItems(obj));
+    }
+  }
   props$$ = computed(() => {
     return {
       value: this.#value2$$(),

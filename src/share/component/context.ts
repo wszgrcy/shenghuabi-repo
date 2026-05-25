@@ -1,14 +1,10 @@
 import type { KeyPath } from '@piying/view-angular-core';
 
 export interface ComponentContext {
-  changeHandleByTemplate: (
-    field: any,
-    value: string,
-    index: number,
-  ) => Promise<void>;
+
   parseTemplate: (
     value: string,
-    language?: 'js' | 'plaintext' | 'liquid',
+    language?: 'js' | 'plaintext' ,
   ) => Promise<
     | {
         label: string;

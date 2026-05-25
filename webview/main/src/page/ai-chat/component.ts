@@ -73,14 +73,90 @@ export default class AiChatPage {
   constructor() {
     // 代码编辑
     this.#client.ai.codeAction.subscribe(undefined, {
-      onData: async (result) => {},
+      onData: async (result) => {
+        console.log('aa', result);
+      },
     });
     // 编辑某个存在时触发
     this.#client.chat.dataChange.subscribe(undefined, {
-      onData: async (data) => {},
+      onData: async (result) => {
+        if (!result) {
+          return;
+        }
+        switch (result.from) {
+          case 'commonChat': {
+            if (!result.item) {
+              return;
+            }
+            this.title$.set(result.item?.title ?? '');
+            this.mode.set(result.item.mode);
+            this.modelConfigName.set(result.item.modelConfigName);
+            switch (this.mode()) {
+              case ChatMode.workflow: {
+                break;
+              }
+              case ChatMode.template: {
+                let template = await Promise.all(
+                  result.item.template?.map(async (item) => {
+                    return {
+                      role: item.role,
+                      content: await Promise.all(
+                        item.content.map(async (data) => {
+                          if (data.type === 'text') {
+                            return {
+                              type: data.type,
+                              text: (
+                                await this.#client.workflow.parseTemplate.query(
+                                  {
+                                    content: data.text,
+                                  },
+                                )
+                              ).list,
+                            };
+                          } else {
+                            return {
+                              type: data.type,
+                              image_url: {
+                                url: (
+                                  await this.#client.workflow.parseTemplate.query(
+                                    {
+                                      content: data.image_url.url,
+                                    },
+                                  )
+                                ).list,
+                              },
+                            };
+                          }
+                        }),
+                      ),
+                    };
+                  }) ?? [],
+                );
+                if (!template) {
+                  return;
+                }
+                console.log('xxxx', template);
+                this.value$.set({ template: { template: template as any } });
+
+                break;
+              }
+              case ChatMode.default: {
+                break;
+              }
+            }
+            this.value$;
+            break;
+          }
+
+          default:
+            break;
+        }
+      },
     });
     this.#client.command.listen.subscribe('promptTemplateSave', {
-      onData: (list) => {},
+      onData: (result) => {
+        console.log('cc', result);
+      },
     });
   }
   changeModelConfigName() {

@@ -61,35 +61,19 @@ export class ChatNodeService {
     },
     parseTemplate: (
       value: string,
-      language?: 'js' | 'plaintext' | 'liquid',
+      language?: 'js' | 'plaintext',
     ) => {
       return this.#chatTemplate.parseTemplate(value, language)();
     },
     getActionList: (
       value: string,
-      language?: 'js' | 'plaintext' | 'liquid',
+      language?: 'js' | 'plaintext' ,
     ) => {
       return this.#client.environment.pythonAddon.getPlayerIdList.query(
         undefined,
       );
     },
-    changeHandleByTemplate: (
-      field: any,
-      value: string,
-      index: number,
-      excludes?: any[],
-    ) => {
-      return this.#chatTemplate
-        .parseTemplate(value)()
-        .then((result) => {
-          if (!result) {
-            return;
-          }
-          if (excludes) {
-            result = result.filter((item) => !excludes.includes(item.value));
-          }
-        });
-    },
+
     selectRagKnowledgeList: () => {
       return this.#client.workflow.selectRagKnowledgeList
         .query(undefined)

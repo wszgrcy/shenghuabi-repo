@@ -53,7 +53,7 @@
             name="agent"
             class="flex-1"
             [inputList]="contextConfigList$()"
-            [ngModel]="contextValue$"
+            [ngModel]="contextValue$()"
             (ngModelChange)="contextValueChanged($event)"
           ></context-form>
         }

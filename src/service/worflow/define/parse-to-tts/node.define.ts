@@ -15,12 +15,7 @@ export const PARSE_TO_TTS_DEFINE = v.pipe(
           if (typeof value !== 'string') {
             return;
           }
-          field.context.parseTemplate([value]).then((value: any) => {
-            if (!value) {
-              return;
-            }
-            // field.context.changeHandleData(field, 'input', 1, value);
-          });
+     
         });
       }),
     ),
