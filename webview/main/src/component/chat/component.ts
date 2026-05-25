@@ -195,6 +195,7 @@ export class ChatComponent extends BaseControl<ChatValue> {
       if (stopSignal.clear) {
         this.valueAndTouchedChange({});
         this.list$.set([]);
+        this.chatResult$.set([]);
       }
     }
   }
