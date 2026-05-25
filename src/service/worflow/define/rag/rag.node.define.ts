@@ -1,7 +1,7 @@
 import * as v from 'valibot';
 import { selectOptions } from '@share/valibot';
 import { actions, setComponent } from '@piying/view-angular-core';
-import { TextareaTemplateDefine } from '@shenghuabi/workflow';
+import { TextareaTemplateDefine } from '@shenghuabi/workflow/share';
 const modeList = [
   {
     label: '低阶',

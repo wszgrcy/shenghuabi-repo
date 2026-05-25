@@ -7,7 +7,7 @@ import {
 } from '@piying/view-angular-core';
 
 import { INLINE_Template } from '../../../../share/workflow/node-define/common/inline-template.define';
-import { TextareaTemplateDefine } from '@shenghuabi/workflow';
+import { TextareaTemplateDefine } from '@shenghuabi/workflow/share';
 export const GRAPH_QUERY_NODE_DEFINE = v.pipe(
   v.intersect([
     v.pipe(

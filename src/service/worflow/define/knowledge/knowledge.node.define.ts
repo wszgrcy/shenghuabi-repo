@@ -7,7 +7,7 @@ import {
 } from '@piying/view-angular-core';
 import { selectOptions } from '@share/valibot';
 import { INLINE_Template2 } from '../../../../share/workflow/node-define/common/inline-template.define';
-import { TextareaTemplateDefine } from '@shenghuabi/workflow';
+import { TextareaTemplateDefine } from '@shenghuabi/workflow/share';
 const sourceList = [
   { label: '文章', value: 'article' },
   { label: '知识库', value: 'knowledge' },

@@ -1,7 +1,7 @@
 import * as v from 'valibot';
 import { actions } from '@piying/view-angular-core';
 import { Reference } from '../../../../share/define';
-import { TextareaTemplateDefine } from '@shenghuabi/workflow';
+import { TextareaTemplateDefine } from '@shenghuabi/workflow/share';
 export const ResponseList = ['json', 'markdown', 'yaml'] as const;
 export const ResponseFormat = ['text', 'json_object', 'json_schema'] as const;
 export type ResponseType = (typeof ResponseList)[number];

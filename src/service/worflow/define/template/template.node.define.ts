@@ -7,7 +7,7 @@ import {
   valueChange,
 } from '@piying/view-angular-core';
 import { map } from 'rxjs';
-import { TextareaTemplateDefine } from '@shenghuabi/workflow';
+import { TextareaTemplateDefine } from '@shenghuabi/workflow/share';
 const typeList = [
   { label: '卡片', value: 'card' },
   { label: '文本组', value: 'text' },
