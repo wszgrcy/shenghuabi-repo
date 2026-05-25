@@ -109,12 +109,10 @@ const DefaultUserTemplate = [{ role: 'user', content: [] }];
   standalone: true,
   imports: [
     FormsModule,
-    MenuCheckboxFCC,
     ChatCommonInput,
     MatTooltipModule,
     WorkflowChatResultComponent,
     CommonChatResultComponent,
-    PromptTemplateFCC,
     WorkflowInputComponent,
     InvalidForm,
     InputFormComponent,
