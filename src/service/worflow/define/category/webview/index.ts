@@ -1,6 +1,6 @@
 import { WebviewNodeConfig } from '@shenghuabi/workflow/share';
 import { NODE_COMMON } from '../common';
-import { CATEGORY_NODE_DEFINE } from './category.node.define';
+import { CATEGORY_NODE_DEFINE } from '../category.node.define';
 const systemPrompt = `###职位描述
 您是一个文本分类引擎，可以分析文本数据并根据用户输入自动确定的类别分配类别。
 ###任务

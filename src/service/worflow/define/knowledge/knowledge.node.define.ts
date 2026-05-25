@@ -7,6 +7,7 @@ import {
 } from '@piying/view-angular-core';
 import { selectOptions } from '@share/valibot';
 import { INLINE_Template2 } from '../../../../share/workflow/node-define/common/inline-template.define';
+import { TextareaTemplateDefine } from '@shenghuabi/workflow';
 const sourceList = [
   { label: '文章', value: 'article' },
   { label: '知识库', value: 'knowledge' },
@@ -14,7 +15,7 @@ const sourceList = [
 ] as const;
 export const KNOWLEDGE_NODE_DEFINE = v.object({
   source: v.pipe(
-    v.picklist(sourceList.map((item) => item.value)),
+    v.optional(v.picklist(sourceList.map((item) => item.value)), 'knowledge'),
     selectOptions(sourceList),
     v.title('来源'),
     valueChange((fn) => {
@@ -33,7 +34,17 @@ export const KNOWLEDGE_NODE_DEFINE = v.object({
     }),
   ),
   template: v.pipe(INLINE_Template2),
-  question: v.pipe(v.string(), v.title('问题')),
+  question: v.pipe(
+    v.optional(TextareaTemplateDefine, [
+      [
+        {
+          type: 'variable',
+          item: { label: '问题', value: ['问题'], type: 'custom' },
+        },
+      ],
+    ]),
+    v.title('问题'),
+  ),
   limit: v.pipe(v.optional(v.number(), 10), v.title('查询数量'), v.minValue(1)),
   value: v.pipe(
     v.array(v.string()),

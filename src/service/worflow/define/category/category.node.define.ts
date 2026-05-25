@@ -1,6 +1,6 @@
 import * as v from 'valibot';
-import { EXAMPLES_DEFINE } from '../../../../../share/workflow/node-define/common/examples.define';
-import { llmModelConfig } from '../../../../../share/workflow/node-define/common/llm.define';
+import { EXAMPLES_DEFINE } from '../../../../share/workflow/node-define/common/examples.define';
+import { llmModelConfig } from '../../../../share/workflow/node-define/common/llm.define';
 import { stringify } from 'yaml';
 import {
   actions,

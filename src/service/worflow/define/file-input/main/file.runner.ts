@@ -76,7 +76,7 @@ export class FileRunner extends NodeRunnerBase<typeof FILE_NODE_DEFINE> {
         };
       }
 
-      if (newList.length > 1 || config.alwaysArray) {
+      if (newList.length > 1) {
         return {
           value: newList,
           extra: extraList,

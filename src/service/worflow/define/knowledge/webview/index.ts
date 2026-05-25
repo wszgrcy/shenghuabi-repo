@@ -8,9 +8,6 @@ export const KnowledgeWebviewConfig: WebviewNodeConfig = {
   initData: () => {
     return {
       data: {
-        config: {
-          value: { source: 'knowledge', question: '{{问题}}', limit: 5 },
-        },
         transform: {
           resizable: true,
         },

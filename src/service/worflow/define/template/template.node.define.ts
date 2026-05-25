@@ -7,6 +7,7 @@ import {
   valueChange,
 } from '@piying/view-angular-core';
 import { map } from 'rxjs';
+import { TextareaTemplateDefine } from '@shenghuabi/workflow';
 const typeList = [
   { label: '卡片', value: 'card' },
   { label: '文本组', value: 'text' },
@@ -34,7 +35,14 @@ export const TEMPLATE_NODE_DEFINE = v.pipe(
         ),
         // 按条件隐藏
         title: v.pipe(
-          v.optional(v.string(), '{{标题}}'),
+          v.optional(TextareaTemplateDefine, [
+            [
+              {
+                type: 'variable',
+                item: { label: '问题', value: ['标题'], type: 'custom' },
+              },
+            ],
+          ]),
           hideWhen({
             disabled: true,
             listen: (fn) => {
@@ -44,7 +52,16 @@ export const TEMPLATE_NODE_DEFINE = v.pipe(
             },
           }),
         ),
-        content: v.pipe(v.optional(v.string(), '{{内容}}')),
+        content: v.pipe(
+          v.optional(TextareaTemplateDefine, [
+            [
+              {
+                type: 'variable',
+                item: { label: '内容', value: ['内容'], type: 'custom' },
+              },
+            ],
+          ]),
+        ),
       }),
     ),
   }),

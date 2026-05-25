@@ -14,19 +14,7 @@ export const FILE_NODE_DEFINE = v.object({
       'label',
     ]),
   ),
-  alwaysArray: v.pipe(
-    v.optional(v.boolean(), false),
-    v.title('数组'),
-    v.description(
-      '(废弃,推荐使用出口)选中时返回一个文件数组即使只有一个文件；不选中时只在多个文件的时候返回文件数组',
-    ),
 
-    actions.wrappers.set([
-      { type: 'div', attributes: { class: '!flex-none' } },
-      'tooltip',
-      'label',
-    ]),
-  ),
   value: v.pipe(
     v.optional(v.array(v.string()), []),
 

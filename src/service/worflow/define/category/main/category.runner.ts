@@ -10,7 +10,7 @@ import { ChatService } from '../../../../ai/chat.service';
 import { ChatMessageListOutputType } from '@shenghuabi/openai';
 import { AbortSignalToken } from '@shenghuabi/workflow';
 import { jsonParse } from '../../../../ai/util/json-parser';
-import { CATEGORY_NODE_DEFINE } from '../webview/category.node.define';
+import { CATEGORY_NODE_DEFINE } from '../category.node.define';
 
 export class CategoryRunner extends NodeRunnerBase<
   typeof CATEGORY_NODE_DEFINE
