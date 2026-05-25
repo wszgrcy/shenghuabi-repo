@@ -1,18 +1,22 @@
 import {
   Component,
   Injector,
+  SimpleChanges,
   computed,
   effect,
+  forwardRef,
   inject,
+  input,
   signal,
   untracked,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputFormComponent } from './input/input-form/component';
 import { deepClone } from '../../util/clone';
 import {
   AssistantChatMessageType,
   CHAT_ITEM_TYPE,
+  ChatMessageListInputType,
   ChatMessageListOutputType,
   ChatMode,
   ChatOptions,
@@ -42,6 +46,9 @@ import {
   WorkflowContextConfig,
   WorkflowRunnerEnvironmentParams,
 } from '@shenghuabi/workflow/share';
+import { BaseControl } from '@piying/view-angular';
+import { PromptListFCC } from '@fe/form/control/prompt-list/component';
+import { ChatVariable } from '../../type/chat-variable';
 // todo
 export function isChatStream(
   data: WorkflowStreamData,
@@ -58,7 +65,6 @@ export const INIT_TEMPLATE_LIST: ChatMessageListOutputType = [
 export const INIT_TITLE = '';
 export const INIT_CONTEXT: ChatOptions = {
   input: {},
-  context: {},
   template: INIT_TEMPLATE_LIST,
   mode: ChatMode.template,
 };
@@ -80,6 +86,22 @@ export function getDefaultChatConfig(mode: ChatMode) {
       return deepClone(INIT_WORKFLOW);
   }
 }
+export type ChatValue = {
+  default?: {
+    input?: CHAT_ITEM_TYPE;
+  };
+  template?: {
+    template: ChatMessageListInputType;
+    contextValue?: WorkflowRunnerEnvironmentParams;
+  };
+  workflow?: {
+    list: any[];
+    invalidValue?: any;
+    contextValue?: WorkflowRunnerEnvironmentParams;
+  };
+};
+export type ChatConfig = { workflow?: { path?: string } };
+const DefaultUserTemplate = [{ role: 'user', content: [] }];
 
 @Component({
   selector: 'ai-chat',
@@ -96,125 +118,64 @@ export function getDefaultChatConfig(mode: ChatMode) {
     WorkflowInputComponent,
     InvalidForm,
     InputFormComponent,
+    PromptListFCC,
   ],
   styleUrl: './component.scss',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => ChatComponent),
+      multi: true,
+    },
+  ],
 })
-export class ChatComponent {
-  readonly CHAT_TYPE_LIST = [
-    {
-      value: ChatMode.default,
-      icon: 'chat',
-      color: 'primary',
-      description: '默认对话',
-    },
-    {
-      value: ChatMode.template,
-      icon: 'attach_file',
-      color: 'primary',
-      description: '模板',
-    },
-    {
-      value: ChatMode.workflow,
-      icon: 'polyline',
-      color: 'primary',
-      description: '工作流',
-      beforeChange: async () => {
-        return await this.#client.workflow.selectWorkflow
-          .query(undefined)
-          .then((value) => {
-            if (value) {
-              this.firstItem$.update((item) => {
-                return { ...item, workflow: { path: value } };
-              });
-              return true;
-            }
-            return false;
-          });
-      },
-    },
-  ];
+export class ChatComponent extends BaseControl<ChatValue> {
+  override value$ = signal<ChatValue>({});
+  mode = input<ChatMode>(ChatMode.workflow);
+  modelConfigName = input<string>();
+  config = input<ChatConfig>();
+  stopSignal = input<{ clear: boolean }>();
   provider = inject(ChatService);
-  /** todo 需要修改  */
-  codeAction = signal(false);
-  /** 解析输入和上下文。获得要手动输入的变量名 */
-  title = signal(INIT_TITLE);
+  readonly DefaultUserTemplate = DefaultUserTemplate;
   /** 通用对话历史 */
   readonly list$ = signal<CommonChat[]>([]);
-  /** 初始数据 */
-  readonly firstItem$ = signal<ChatOptions>(deepClone(INIT_DEFAULT));
-  readonly invalidValue$ = signal<any>(undefined);
-  readonly contextValue$ = signal<WorkflowRunnerEnvironmentParams | undefined>(
-    undefined,
-  );
   /** context/workflow */
   readonly chatResult$ = signal<WorkflowStreamData[] | undefined>(undefined);
   /** 通用输入 */
-  commonInput = signal<CHAT_ITEM_TYPE | undefined>(undefined);
   disableInputObject = signal<Record<string, boolean>>({});
   // todo 暂时不能改,因为workflow是先设置的,而之前清空会导致都没了;可以改成内部切换?不用事件
-  modeChange(mode: ChatMode) {
-    this.reset(true);
-    switch (mode) {
-      case ChatMode.workflow: {
-        this.firstItem$.update((value: ChatOptions) => {
-          value = { ...value };
-          value.input = {};
-          value.template = undefined;
-          return { ...value, mode: mode };
-        });
-        break;
-      }
-      case ChatMode.template: {
-        this.firstItem$.update((value: ChatOptions) => {
-          value = { ...value };
-          value.input = {};
-          value.workflow = undefined;
-          return { ...value, ...deepClone(INIT_CONTEXT), mode: mode };
-        });
-        break;
-      }
-      case ChatMode.default: {
-        this.firstItem$.update((value: ChatOptions) => {
-          value = { ...value };
-          value.input = {};
-          value.workflow = undefined;
-          value.template = undefined;
-          value.context = undefined;
-          return { ...value, mode: mode };
-        });
-        break;
-      }
-      default: {
-        throw new Error('');
-      }
-    }
-  }
+
+  /** todo 需要修改  */
+  codeAction = signal(false);
   #injector = inject(Injector);
-  /** 选中的模式 */
-  mode$$ = computed(() => {
-    return this.firstItem$().mode;
-  });
+
   /** 是否切换为普通对话模式 */
   useChatType$$ = computed(() => {
-    const mode = this.mode$$();
+    const mode = this.mode();
     if (mode === ChatMode.default || !!this.#lastChatResult()) {
       return ChatMode.default;
     }
     return mode;
   });
-
+  /** 工作流配置 */
   invalidConfigList$ = signal<WorkflowInvalidConfig[]>([]);
   contextConfigList$ = signal<WorkflowContextConfig[]>([]);
 
   #workflowData = signal<
     (WorkflowData & { define: ResolvedWorkflow }) | undefined
   >(undefined);
+  invalidValue$ = computed(() => this.value$().workflow?.invalidValue);
+  contextValue$ = computed(() => this.value$().workflow?.contextValue);
+
   #lastChatResult = computed(() => {
     return this.chatResult$()
       ?.slice()
       .reverse()
       .find((item) => isChatStream(item));
   });
+  override writeValue(obj: any) {
+    super.writeValue(obj ?? {});
+  }
   /** 使用普通对话历史,还是context/workflow返回的历史 */
   readonly #nextChatHistory$ = computed(() => {
     const lastItem = this.list$().at(-1);
@@ -224,55 +185,22 @@ export class ChatComponent {
     const item = this.#lastChatResult();
     return item?.extra!.historyList || [];
   });
-  #workflow$$ = computed(
-    () => {
-      return this.firstItem$().workflow;
-    },
-    { equal: deepEqual },
-  );
-  #ctxTemplate = computed(() => this.firstItem$().template, {
-    equal: deepEqual,
-  });
-  ngOnInit(): void {
-    effect(
-      () => {
-        const mode = this.mode$$();
-        if (mode === ChatMode.template) {
-          const template = this.#ctxTemplate();
-          untracked(() =>
-            this.provider.resolveInputs(template).then((value) => {
-              if (!value) {
-                return;
-              }
-              // this.inputNameList.set(value);
-              // todo 改为textarea-template
-            }),
-          );
-        } else if (mode === ChatMode.workflow) {
-          const workflow = this.#workflow$$();
-          if (!workflow) {
-            return;
-          }
-          untracked(() => {
-            this.provider
-              .getWorkflowWithDefine(workflow)
-              .then((workflowData) => {
-                this.#workflowData.set(workflowData);
-                this.invalidConfigList$.set(
-                  workflowData.resolved.invalidConfigList ?? [],
-                );
-                this.contextConfigList$.set(
-                  workflowData.resolved.contextConfigList ?? [],
-                );
-              });
-          });
-        } else if (mode === ChatMode.default) {
-          // todo 初始化?
-        }
-      },
-      { injector: this.#injector },
-    );
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['mode'] && !changes['mode'].firstChange) {
+      this.valueAndTouchedChange({});
+    }
+    if (changes['stopSignal'] && this.stopSignal()) {
+      let stopSignal = this.stopSignal()!;
+      this.#chatRef?.unsubscribe();
+
+      if (stopSignal.clear) {
+        this.valueAndTouchedChange({});
+        this.list$.set([]);
+      }
+    }
   }
+
   loading$ = signal(false);
 
   commonChat: CommonChatFn = (input, historyList, nextIndex) => {
@@ -288,7 +216,7 @@ export class ChatComponent {
         {
           input: input,
           historyList: historyList,
-          modelConfigName: this.firstItem$().modelConfigName,
+          modelConfigName: this.modelConfigName(),
         },
         {
           onData: (data) => {
@@ -335,17 +263,14 @@ export class ChatComponent {
     } as const;
   }
   #chatRef?: Unsubscribable;
-  inputData$$ = computed(() => {
-    return this.provider.mergeInputParams(this.firstItem$().input!);
-  });
-  #chatContext() {
+
+  #chatTemplate() {
     return new Promise<void>(async (resolve) => {
       this.#chatRef = this.#client.ai.agentChat.subscribe(
         {
-          input: this.inputData$$(),
-          template: this.firstItem$().template!,
-          context: this.firstItem$().context!,
-          modelConfigName: this.firstItem$().modelConfigName,
+          context: this.value$().template!.contextValue!,
+          template: this.value$().template!.template!,
+          modelConfigName: this.modelConfigName(),
         },
         this.chatOneResponseFactory(resolve),
       );
@@ -360,7 +285,7 @@ export class ChatComponent {
             environmentParameters: this.contextValue$(),
           },
           data: this.#workflowData()!,
-          modelConfigName: this.firstItem$().modelConfigName,
+          modelConfigName: this.modelConfigName(),
         },
         this.chatOneResponseFactory(resolve),
       );
@@ -369,11 +294,6 @@ export class ChatComponent {
   /** 显示模板工作流上次输入内容 */
   lastData: any;
   async chatAll() {
-    // console.log(this.invalidValue$());
-    // if (1) {
-    //   return
-    // }
-
     if (this.loading$()) {
       return;
     }
@@ -384,17 +304,15 @@ export class ChatComponent {
         case ChatMode.default: {
           const historyList = this.#nextChatHistory$() || [];
           const length = this.list$().length;
-          const commonInput = this.commonInput();
-          if (!commonInput) {
-            return;
-          }
-          await this.commonChat(commonInput, historyList, length);
-          this.commonInput.set(undefined);
+          await this.commonChat(
+            this.value$().default!.input!,
+            historyList,
+            length,
+          );
           break;
         }
         case ChatMode.template: {
-          this.lastData = this.inputData$$();
-          await this.#chatContext();
+          await this.#chatTemplate();
           break;
         }
         case ChatMode.workflow: {
@@ -407,73 +325,38 @@ export class ChatComponent {
     } catch (error) {
     } finally {
       this.loading$.set(false);
-      this.firstItem$.update((items) => {
-        return {
-          ...items,
-          context: undefined,
-          input: undefined,
-        };
-      });
     }
-  }
-  reset(clear: boolean) {
-    this.#chatRef?.unsubscribe();
-    this.commonInput.set(undefined);
-    if (clear) {
-      this.chatResult$.set(undefined);
-      this.list$.set([]);
-    }
-    this.loading$.set(false);
-    this.firstItem$.update((item) => {
-      item.input = {};
-      item.context = {};
-      return { ...item };
-    });
   }
 
   #client = inject(TrpcService).client;
-  menuTooltip = computed(() => {
-    const item = this.firstItem$();
-    if (item.mode === ChatMode.workflow) {
-      return `\n工作流: ${item.workflow?.path || ''}`;
-    }
-    return '';
-  });
 
-  addTemplate() {
-    this.firstItem$.update((item) => {
-      item = { ...item };
-      item!.template = [...item!.template!, getHumanTemplate()];
-      return item;
+  templateListChange(list: any) {
+    this.value$.update((v) => {
+      return { template: { ...v.template!, template: list } };
     });
   }
-  templateChange(index: number, value: any) {
-    this.firstItem$.update((item) => {
-      item = { ...item };
-      item!.template = deepClone(item!.template);
-      item!.template![index] = value;
-      return item;
+  variableChanged(list: ChatVariable[]) {
+    this.contextConfigList$.set(
+      list.map((item) => {
+        return { kind: item.kind, key: item.value, label: item.label };
+      }),
+    );
+  }
+  chatDefaultChange(input: any) {
+    this.value$.update((value) => {
+      return {
+        default: { ...value.default, input: input },
+      };
     });
   }
-  templateRemove(index: number) {
-    this.firstItem$.update((item) => {
-      item!.template = deepClone(item!.template);
-      item!.template!.splice(index, 1);
-      item!.template = item!.template!.slice();
-      return { ...item };
-    });
+  invalidValueChanged(value: any) {
+    this.value$.update((v) => ({
+      workflow: { ...v.workflow!, invalidValue: value },
+    }));
   }
-  changeModelConfigName() {
-    this.#client.chat.getChatModelConfigName
-      .query(undefined)
-      .then((configName) => {
-        if (!configName) {
-          return;
-        }
-        this.firstItem$.update((item) => {
-          item.modelConfigName = configName;
-          return { ...item };
-        });
-      });
+  contextValueChanged(value: WorkflowRunnerEnvironmentParams) {
+    this.value$.update((v) => ({
+      workflow: { ...v.workflow!, contextValue: value },
+    }));
   }
 }

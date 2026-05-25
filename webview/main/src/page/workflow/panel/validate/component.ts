@@ -6,6 +6,7 @@ import {
   effect,
   inject,
   input,
+  signal,
   untracked,
   viewChild,
 } from '@angular/core';
@@ -16,7 +17,11 @@ import { FormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { TrpcService } from '@fe/trpc';
 import { ChatService } from '@fe/component/chat/chat.service';
-import { ChatComponent } from '@fe/component/chat/component';
+import {
+  ChatComponent,
+  ChatConfig,
+  ChatValue,
+} from '@fe/component/chat/component';
 import { WorkflowTestChatService } from './workflow-test.chat.service';
 import { ChatMode } from '@bridge/share';
 import { v4 } from 'uuid';
@@ -46,6 +51,8 @@ export class ValidatePanelComponent {
   #client = inject(TrpcService).client;
   chatComp = viewChild<ChatComponent>('chat');
   service = inject(WorkflowTestChatService);
+  readonly mode = ChatMode.workflow;
+  readonly config$ = signal<Pick<ChatConfig, 'workflow'>>({});
   constructor() {
     effect(() => {
       const comp = this.chatComp();
@@ -68,23 +75,19 @@ export class ValidatePanelComponent {
             resolved: item,
           };
 
-          comp.firstItem$.set({
-            workflow: { path: v4() },
-            mode: ChatMode.workflow,
-            input: {},
-          });
+          this.config$.set({ workflow: { path: v4() } });
         } else {
           console.error(item.error);
         }
       });
     });
   }
-
+  stopSignal = signal<{ clear: boolean } | undefined>(undefined);
   closeSelf() {
     this.close$().set(false);
   }
 
   reset(clear: boolean) {
-    this.chatComp()!.reset(clear);
+    this.stopSignal.set({ clear });
   }
 }

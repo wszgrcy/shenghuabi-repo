@@ -35,12 +35,12 @@ export interface WorkflowChatOptions {
     path: string;
   };
 }
+/** @deprecated */
 export interface ChatOptions {
   mode: ChatMode;
   input?: Record<string, any>;
   template?: ChatMessageListInputType;
-  /** todo 不确定是否保留 */
-  context?: Record<string, CustomNode>;
+
   workflow?: {
     path: string;
   };

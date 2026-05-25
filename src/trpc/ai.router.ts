@@ -37,7 +37,6 @@ export const AiRouter = t.router({
     .input(
       v.object({
         template: v.optional(v.custom<ChatMessageListOutputType>(Boolean), []),
-        input: v.optional(v.custom<PromptInput>(Boolean), {}),
         context: v.optional(v.custom<Record<string, CustomNode>>(Boolean), {}),
         modelConfigName: v.optional(v.string()),
       }),
@@ -48,22 +47,27 @@ export const AiRouter = t.router({
       const abort = new AbortController();
       return observable<WorkflowStreamData>((emit) => {
         (async () => {
-          await exec.agentChat(
-            {
-              ...input,
-            },
-            (chatResult) => {
-              emit.next(chatResult);
-            },
-            abort.signal,
-            [
+          try {
+            await exec.agentChat(
               {
-                provide: ModelOptionsToken,
-                useValue: chatService.getModelConfig(input.modelConfigName),
+                template: input.template,
+                environmentParameters: input.context,
               },
-            ],
-          );
-          emit.complete();
+              (chatResult) => {
+                emit.next(chatResult);
+              },
+              abort.signal,
+              [
+                {
+                  provide: ModelOptionsToken,
+                  useValue: chatService.getModelConfig(input.modelConfigName),
+                },
+              ],
+            );
+            emit.complete();
+          } catch (error) {
+            emit.error(error);
+          }
         })();
         return () => {
           abort.abort();

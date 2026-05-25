@@ -46,6 +46,7 @@ import { deepEqual } from 'fast-equals';
     ReactOutlet,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './component.scss',
 })
 export class TextareaTemplateFCC extends BaseControl {
   // static __version = 2;

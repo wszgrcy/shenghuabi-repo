@@ -11,7 +11,7 @@
 
 <mat-menu #menu="matMenu">
   <ng-template matMenuContent>
-    <div>
+    <div class="flex min-w-20 gap-2">
       @for (item of options(); track $index) {
         <button
           [class]="

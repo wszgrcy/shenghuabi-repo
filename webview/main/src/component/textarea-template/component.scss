@@ -1,0 +1,39 @@
+@reference '../../styles.css';
+
+:host ::ng-deep {
+  .editor-textarea-wrapper {
+    display: grid;
+    width: 100%;
+    outline: none;
+    @apply min-h-10;
+  }
+
+  .editor-textarea-wrapper > div {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .editor-textarea-wrapper > div[aria-hidden] {
+    z-index: 0;
+    pointer-events: none;
+    position: relative;
+  }
+  .editor-textarea {
+    outline: none;
+  }
+
+  .variable-node {
+    @apply inline-flex;
+  }
+  .variable-label {
+    @apply badge badge-xs mx-1;
+  }
+  .variable-label-custom {
+    @apply badge-success;
+  }
+  .variable-label-missing {
+    @apply badge-warning;
+  }
+  .variable-label-default {
+    @apply badge-info;
+  }
+}
