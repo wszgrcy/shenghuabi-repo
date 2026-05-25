@@ -5,7 +5,6 @@ export const NODE_COMMON: NodeComponentType = {
   label: `文章`,
   icon: { fontIcon: 'article' },
   disableHead: false,
-  disableConnect: false,
   color: 'accent',
   help: ['- 读取工作区文章内容(非知识库内读取)', '- 与`文件`节点读取类似'].join(
     '\n',

@@ -5,7 +5,6 @@ export const NODE_COMMON: NodeComponentType = {
   label: `文本解析TTS配置`,
   icon: { fontIcon: 'audiotrack' },
   disableHead: false,
-  disableConnect: false,
   color: 'accent',
   help: [`- 文本解析TTS配置`].join('\n'),
   // config: defineConfig,

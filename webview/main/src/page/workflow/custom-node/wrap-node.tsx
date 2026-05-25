@@ -34,16 +34,16 @@ function getPosition(position: number, count: number) {
 }
 
 const LEFT_HANDLES = [
-  { id: '[connect]', title: '连接点' },
+  // { id: '[connect]', title: '连接点' },
   { id: '[context]', title: '上下文' },
 ];
 
 function LeftHandles(props: {
-  disableConnect?: boolean;
+  // disableConnect?: boolean;
   disableContext?: boolean;
 }) {
   const hideMap: Record<string, boolean> = {
-    '[connect]': !!props.disableConnect,
+    // '[connect]': !!props.disableConnect,
     '[context]': !!props.disableContext,
   };
   const list = LEFT_HANDLES.filter((h) => !hideMap[h.id]);
@@ -150,7 +150,7 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
           {displayOutput ? (
             <Segmented<string>
               options={options}
-              value={props.props.data.outputName}
+              value={props.props.data.outputHandleId}
               onChange={(value) => {
                 props.bridge.patchDataOne(props.props.id, {
                   outputName: value,
@@ -297,7 +297,7 @@ export function wrapControlNode(
             list={flatFilterHandleList(props.data.handle?.output)}
           />
           <LeftHandles
-            disableConnect={componentConfig.nodeDefine?.disableConnect}
+            // disableConnect={componentConfig.nodeDefine?.disableConnect}
             disableContext={componentConfig.nodeDefine?.disableContext}
           />
         </div>

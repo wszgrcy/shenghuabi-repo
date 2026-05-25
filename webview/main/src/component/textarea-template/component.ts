@@ -3,7 +3,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   forwardRef,
+  inject,
+  Injector,
   input,
   output,
   signal,
@@ -24,8 +27,12 @@ import {
   restoreEditorState,
   SimpleVariableNode,
   simplifyEditorState,
+  VariableEntry,
 } from '@shenghuabi/lexical-textarea';
 import { deepEqual } from 'fast-equals';
+import { NodeService } from '../../page/workflow/custom-node/formly-common-node/node.service';
+import { BridgeToken } from '../../page/workflow/type';
+import { flatFilterHandleList } from '@shenghuabi/workflow/share';
 @Component({
   selector: 'cyia-textarea-template',
   templateUrl: 'component.html',
@@ -56,7 +63,7 @@ export class TextareaTemplateFCC extends BaseControl {
     const value = this.value$();
     return value ? restoreEditorState(value) : undefined;
   });
-  options = input<any[]>();
+  // options = input<any[]>();
   placeholder = input<string>();
   minHeight = input<number>(40);
   variableChange = output<{
@@ -64,7 +71,35 @@ export class TextareaTemplateFCC extends BaseControl {
     default: SimpleVariableNode['item'][];
     custom: SimpleVariableNode['item'][];
   }>();
+  #injector = inject(Injector);
+  #bridge = inject(BridgeToken, { optional: true });
+  #nodeService = inject(NodeService, { optional: true });
+  readonly #id$$ = computed(() => this.#nodeService?.props$().id);
+  #linkedEdge$$ = computed(() => {
+    let id = this.#id$$();
+    if (!id) {
+      return undefined;
+    }
+    return this.#bridge?.edgeTargetList$$()[id];
+  });
   readonly Editor = Editor;
+  variableList$$ = computed(() => {
+    let ctxList: VariableEntry[] = [];
+    for (const edge of this.#linkedEdge$$() ?? []) {
+      let node = this.#bridge?.nodesObj$()[edge.source];
+      let list = flatFilterHandleList(node?.data.handle?.output);
+      let sourceHandle = list.find((item) => item.id === edge.sourceHandle);
+      if (!sourceHandle || sourceHandle?.type === 'connect') {
+        continue;
+      }
+      let data = node!.data!;
+      ctxList.push({
+        label: `${data.title}-${sourceHandle.label}`,
+        value: [node!.id, sourceHandle.name!],
+      });
+    }
+    return ctxList;
+  });
 
   onChange = (value: any) => {
     const list = simplifyEditorState(value);
@@ -81,7 +116,7 @@ export class TextareaTemplateFCC extends BaseControl {
     return {
       value: this.#value2$$(),
       onChange: this.onChange,
-      variables: this.options(),
+      variables: this.variableList$$(),
       className: 'textarea',
       minHeight: this.minHeight(),
       placeholder: this.placeholder(),

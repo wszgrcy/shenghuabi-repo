@@ -5,7 +5,6 @@ export const NODE_COMMON: NodeComponentType = {
   label: `索引增强生成`,
   icon: { fontIcon: 'document_scanner' },
   disableHead: false,
-  disableConnect: false,
   color: 'primary',
   help: [
     '- 实验性功能',

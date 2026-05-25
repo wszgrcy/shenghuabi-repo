@@ -17,7 +17,6 @@ export const NODE_COMMON: NodeComponentType = {
   label: '图谱知识库查询',
   icon: { fontIcon: 'document_scanner' },
   disableHead: false,
-  disableConnect: false,
   color: 'accent',
   help: helpList.join('\n'),
 

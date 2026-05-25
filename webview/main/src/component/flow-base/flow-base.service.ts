@@ -73,6 +73,14 @@ export class FlowBseService<NODE extends Node> {
   });
   edges = signal<Edge<any>[]>([]);
   /** target 索引 */
+  edgeTargetList$$ = computed(() => {
+    const obj: Record<string, Edge<any>[]> = {};
+    for (const item of this.edges()) {
+      obj[item.target] ??= [];
+      obj[item.target].push(item);
+    }
+    return obj;
+  });
   edgeTargetObj$$ = computed(() => {
     const obj: Record<string, Record<string, Edge<any>>> = {};
     for (const item of this.edges()) {

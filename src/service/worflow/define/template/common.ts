@@ -6,7 +6,6 @@ export const NODE_COMMON: NodeComponentType = {
   label: `模板`,
   icon: { fontIcon: 'data_object' },
   disableHead: false,
-  disableConnect: false,
   color: 'primary',
   help: [
     `- 用于帮助脑图创建卡片和文本组`,

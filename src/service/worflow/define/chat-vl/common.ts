@@ -6,7 +6,6 @@ export const NODE_COMMON: NodeComponentType = {
   label: `图片视觉`,
   icon: { fontIcon: 'chat' },
   disableHead: false,
-  disableConnect: false,
   color: 'accent',
   help: [].join('\n'),
   // config: defineConfig,

@@ -5,7 +5,6 @@ export const NODE_COMMON: NodeComponentType = {
   label: `图片输入`,
   icon: { fontIcon: 'image' },
   disableHead: false,
-  disableConnect: false,
   color: 'accent',
   help: [`- 仅用于进行对话使用`].join('\n'),
 

@@ -47,7 +47,6 @@ export const NodeDefine = v.object({
   inputs: v.optional(v.array(v.array(InputHandleDefine))),
   outputs: v.optional(v.array(v.array(HandleDefine))),
   disableHead: v.optional(v.boolean(), false),
-  disableConnect: v.optional(v.boolean(), false),
   /** 出口表示分支 */
   nodeMode: v.optional(v.picklist(['condition', 'default'])),
 });

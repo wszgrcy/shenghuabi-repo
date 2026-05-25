@@ -98,6 +98,7 @@ export const WorkflowRouter = t.router({
       }),
     )
     .subscription(async ({ input, ctx }) => {
+      console.log('进来了?', input);
       const exec = ctx.injector.get(WorkflowExecService);
       const chatService = ctx.injector.get(ChatService);
 

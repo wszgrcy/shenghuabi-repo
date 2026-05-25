@@ -12,7 +12,6 @@ export const NODE_COMMON: NodeComponentType = {
   label: `代码`,
   icon: { fontIcon: 'code' },
   disableHead: false,
-  disableConnect: false,
   color: 'accent',
   help: helpList.join('\n'),
   // config: defineConfig,

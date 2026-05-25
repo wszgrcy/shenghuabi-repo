@@ -61,7 +61,7 @@ import { PurePipe } from '@cyia/ngx-common/pipe';
 import { IterationNodeDefine } from './custom-node/iteration-node';
 import { ChatService } from '@fe/component/chat/chat.service';
 import { ValidatePanelComponent } from './panel/validate/component';
-import { CustomNode } from './type';
+import { BridgeToken, CustomNode } from './type';
 import {
   FlowBseService,
   FlowDefaultConfig,
@@ -98,6 +98,7 @@ import { isNumber } from 'lodash-es';
     BridgeService,
     ChatService,
     { provide: FlowBseService, useExisting: BridgeService },
+    { provide: BridgeToken, useExisting: BridgeService },
     ChatNodeService,
   ],
   styleUrl: './component.scss',

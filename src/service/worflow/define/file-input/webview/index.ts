@@ -8,7 +8,7 @@ export const FileInputWebviewConfig: WebviewNodeConfig = {
   initData: () => {
     return {
       data: {
-        outputName: 'first',
+        outputHandleId: 'first',
         transform: {
           resizable: true,
         },

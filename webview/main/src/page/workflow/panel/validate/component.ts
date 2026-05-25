@@ -3,6 +3,7 @@ import {
   Component,
   Injector,
   WritableSignal,
+  computed,
   effect,
   inject,
   input,
@@ -55,9 +56,6 @@ export class ValidatePanelComponent {
       if (!comp) {
         return;
       }
-      untracked(() => {
-        this.reset(true);
-      });
       const data = this.flowData();
       if (!data.flow.nodes.length) {
         return;
@@ -84,6 +82,7 @@ export class ValidatePanelComponent {
   }
 
   reset(clear: boolean) {
+    console.log('充值?', clear);
     this.stopSignal.set({ clear });
   }
 }

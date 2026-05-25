@@ -12,7 +12,6 @@ export const NODE_COMMON: NodeComponentType = {
   label: `知识库`,
   type: 'knowledge',
   disableHead: false,
-  disableConnect: false,
   help: helpList.join('\n'),
 
   // config: knowledgeConfig,

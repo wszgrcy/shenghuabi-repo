@@ -5,7 +5,6 @@ export const NODE_COMMON: NodeComponentType = {
   label: `序列化`,
   icon: { fontIcon: 'data_object' },
   disableHead: false,
-  disableConnect: false,
   color: 'primary',
   help: [
     `- 前置节点: 文件输入`,

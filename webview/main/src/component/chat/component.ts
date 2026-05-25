@@ -94,7 +94,7 @@ export type ChatValue = {
     contextValue?: WorkflowRunnerEnvironmentParams;
   };
 };
-export type ChatConfig = { workflow?: { path?: string } };
+export type ChatConfig = { workflow?: { path: string } };
 const DefaultUserTemplate = [{ role: 'user', content: [] }];
 
 @Component({
@@ -191,6 +191,23 @@ export class ChatComponent extends BaseControl<ChatValue> {
         this.list$.set([]);
         this.chatResult$.set([]);
       }
+    }
+    if (
+      changes['config'] &&
+      this.mode() === ChatMode.workflow &&
+      this.config()?.workflow?.path
+    ) {
+      this.provider
+        .getWorkflowWithDefine(this.config()!.workflow!)
+        .then((workflowData) => {
+          this.#workflowData.set(workflowData);
+          this.invalidConfigList$.set(
+            workflowData.resolved.invalidConfigList ?? [],
+          );
+          this.contextConfigList$.set(
+            workflowData.resolved.contextConfigList ?? [],
+          );
+        });
     }
   }
 

@@ -9,7 +9,6 @@ export const IterationNodeDefine: WebviewNodeConfig = {
   label: `迭代`,
   icon: { fontIcon: 'repeat' },
   disableHead: false,
-  disableConnect: false,
   color: 'accent',
   help: [
     `### 用于处理列表数据`,

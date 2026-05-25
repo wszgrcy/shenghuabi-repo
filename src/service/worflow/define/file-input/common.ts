@@ -6,7 +6,6 @@ export const NODE_COMMON: NodeComponentType = {
   color: 'accent' as const,
   label: `文件输入`,
   disableHead: false,
-  disableConnect: false,
   type: 'file',
   help: [
     `- 所有输入文件都会被尝试转换为文本`,
