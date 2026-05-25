@@ -43,7 +43,7 @@ export const SCRIPT_NODE_DEFINE = v.pipe(
         });
       }),
     ),
-    title: v.pipe(v.string(), setComponent('')),
+    // title: v.pipe(v.string(), setComponent('')),
     value: v.pipe(
       v.string(),
       setComponent('button-input'),

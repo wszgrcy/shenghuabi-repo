@@ -7,6 +7,7 @@ import {
 } from '@piying/view-angular-core';
 
 import { INLINE_Template } from '../../../../share/workflow/node-define/common/inline-template.define';
+import { TextareaTemplateDefine } from '@shenghuabi/workflow';
 export const GRAPH_QUERY_NODE_DEFINE = v.pipe(
   v.intersect([
     v.pipe(
@@ -25,7 +26,7 @@ export const GRAPH_QUERY_NODE_DEFINE = v.pipe(
             options: (field) => field.context!.selectRagKnowledgeList(),
           }),
         ),
-        question: v.pipe(v.optional(v.string()), v.title('问题')),
+        question: v.pipe(v.optional(TextareaTemplateDefine), v.title('问题')),
         list: v.pipe(
           v.optional(v.array(v.string())),
           asControl(),

@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 import { selectOptions } from '@share/valibot';
 import { actions, setComponent } from '@piying/view-angular-core';
+import { TextareaTemplateDefine } from '@shenghuabi/workflow';
 const modeList = [
   {
     label: '低阶',
@@ -124,7 +125,7 @@ export const RAG_NODE_DEFINE = v.pipe(
         { type: 'div', attributes: { class: 'flex gap-2' } },
       ]),
     ),
-    searchContent: v.pipe(v.string(), setComponent('textarea-template')),
+    searchContent: v.pipe(TextareaTemplateDefine),
   }),
   actions.wrappers.patch([
     { type: 'div', attributes: { class: 'grid gap-2' } },
