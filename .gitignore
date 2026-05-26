@@ -20,3 +20,4 @@ coverage
 .traceDist
 /.agents
 /skills-lock.json
+/lib/vscode
