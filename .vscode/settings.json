@@ -8,5 +8,13 @@
     },
     "files.exclude": {
         "**/lib": true
-    }
+    },
+    // Exclude from file watcher to improve performance
+    "files.watcherExclude": {
+        "**/lib": true
+    },
+    // Ignore this sub-repo in Git source control view
+    "git.ignoredRepositories": [
+        "./lib/vscode"
+    ]
 }

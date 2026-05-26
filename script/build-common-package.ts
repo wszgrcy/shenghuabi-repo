@@ -16,7 +16,6 @@ export async function main() {
 
   const { $ } = await import('execa');
   const ENV = {
-    ELECTRON_MIRROR: 'https://npmmirror.com/mirrors/electron/',
     ...TENV,
   };
   // console.log('环境变量', process.env);
@@ -38,7 +37,7 @@ export async function main() {
           `reset`,
           `--hard`,
           // vscode依赖版本,只有vscode更新才更新这个
-          process.env['VSCODE_VERSION'] ?? `1.103.2`,
+          process.env['VSCODE_VERSION'] ?? `1.122.0`,
         ]);
         await $({
           stdio: 'inherit',

@@ -125,7 +125,7 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
         {
           query:
             'property:has(>string[value*="update-build-ts-version"])::children(1)',
-          replace: '"tsc -p ./build/tsconfig.build.json"',
+          replace: '"cd build && npm run typecheck"',
         },
         {
           query:
@@ -154,7 +154,7 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
         {
           query: 'property:has(>string[value=\\"version"])::children(-1)',
           // 与修改版本用于发新版本.修订版本
-          replace: `"${process.env['PUBLISH_VERSION'] ?? '1.103.999'}"`,
+          replace: `"${process.env['PUBLISH_VERSION'] ?? '1.122.999'}"`,
         },
         {
           query:
@@ -319,7 +319,7 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
       path: 'build/linux/dependencies-generator.ts',
       list: [
         {
-          query: `ImportEqualsDeclaration:like(product)`,
+          query: `ImportDeclaration:like(product)`,
           delete: true,
           description: '删除导入',
         },
@@ -336,7 +336,7 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
       ],
     },
     {
-      path: 'build/gulpfile.vscode.js',
+      path: 'build/gulpfile.vscode.ts',
       list: [
         // todo 为何删除?感觉好像没有理由...
         // {
@@ -439,10 +439,10 @@ async function getDefaultZhLanguage(userDataPath = '',) {
       ],
     },
     {
-      path: 'src/vs/workbench/electron-browser/parts/dialogs/dialogHandler.ts',
+      path: 'src/vs/platform/dialogs/electron-browser/dialog.ts',
       list: [
         {
-          query: `VariableStatement:has(Identifier[value=detailString]) CallExpression:like(localize)>SyntaxList>CommaToken+StringLiteral`,
+          query: `VariableStatement:has(Identifier[value=getDetails]) CallExpression:like(localize)>SyntaxList>CommaToken+StringLiteral`,
           replace: (data) => {
             let value = data.pipe['ctxValue']('') as string;
 
@@ -454,7 +454,7 @@ async function getDefaultZhLanguage(userDataPath = '',) {
           description: '关于修改',
         },
         {
-          query: `VariableStatement:has(Identifier[value=detailString]) CallExpression:like(localize) StringLiteral[value*=aboutDetail]`,
+          query: `VariableStatement:has(Identifier[value=getDetails]) CallExpression:like(localize) StringLiteral[value*=aboutDetail]`,
           replace: `'shenghuabi.aboutDetail'`,
           description: '改翻译key',
         },
@@ -663,16 +663,16 @@ async function getDefaultZhLanguage(userDataPath = '',) {
         },
       ],
     },
-    {
-      path: 'src/vs/workbench/contrib/inlineChat/browser/utils.ts',
-      list: [
-        {
-          query: `FunctionDeclaration:has(>[value=asProgressiveEdit]) CallExpression:has(>[value=getNWords]) NumericLiteral`,
-          replace: `500`,
-          description: '修改对话速率',
-        },
-      ],
-    },
+    // {
+    //   path: 'src/vs/workbench/contrib/inlineChat/browser/utils.ts',
+    //   list: [
+    //     {
+    //       query: `FunctionDeclaration:has(>[value=asProgressiveEdit]) CallExpression:has(>[value=getNWords]) NumericLiteral`,
+    //       replace: `500`,
+    //       description: '修改对话速率',
+    //     },
+    //   ],
+    // },
     {
       path: 'src/vs/workbench/contrib/files/browser/views/explorerViewer.ts',
       list: [
@@ -768,7 +768,7 @@ async function getDefaultZhLanguage(userDataPath = '',) {
     //   ],
     // },
     {
-      path: 'build/gulpfile.vscode.linux.js',
+      path: 'build/gulpfile.vscode.linux.ts',
       list: [
         {
           query: `FunctionDeclaration:has(>[value=buildDebPackage]) CallExpression:has([value*=fakeroot])`,
@@ -779,22 +779,29 @@ async function getDefaultZhLanguage(userDataPath = '',) {
       ],
     },
     {
-      path: 'build/gulpfile.vscode.js',
+      path: 'build/gulpfile.vscode.ts',
       list: [
         {
-          query: `VariableDeclaration:has(>[value=tasks]) ArrayLiteralExpression CallExpression[value^=packageTask]`,
+          query: `VariableDeclaration:has(>[value=packageTasks]) ArrayLiteralExpression CallExpression[value^=packageTask]`,
+          delete: true,
+          description: `普通构建时去掉,手动调用`,
+          offset:[0,1]
+        },
+        {
+          query: `VariableDeclaration:has(>[value=packageTasks]) ArrayLiteralExpression CallExpression[value^=prepareCopilotRipgrepShimTask]`,
           delete: true,
           description: `普通构建时去掉,手动调用`,
         },
         {
           query: `CallExpression[value^=BUILD_TARGETS] IfStatement:has(>[value^=platform])`,
-          replace: `let outputList = [packageTask(platform, arch, sourceFolderName, destinationFolderName, opts)]
+          replace: `let outputList = [packageTask(platform, arch, sourceFolderName, destinationFolderName, opts),
+			prepareCopilotRipgrepShimTask(platform, arch, destinationFolderName)]
 		if (platform === 'win32') {
 			outputList.push(patchWin32DependenciesTask(destinationFolderName))
 		}
-		gulp.task(task.define(\`vscode-output\${dashed(platform)}\${dashed(arch)}\`,
+		task.define(\`vscode-output\${dashed(platform)}\${dashed(arch)}\`,
 			task.series(...outputList)
-		));`,
+		);`,
           description: `普通构建时去掉,手动调用`,
         },
       ],
@@ -864,7 +871,7 @@ function appendWebgpu() {
           query: `FunctionDeclaration:has(>Identifier[value=createApiFactoryAndRegisterActors])>Block  ReturnStatement>TypeAssertionExpression:like(<typeof vscode>)`,
           insertAfter: true,
           offset: [-1, -1],
-          replace: `,shenghuabi`,
+          replace: `shenghuabi`,
           description: `注入`,
         },
       ],
@@ -952,15 +959,15 @@ window.customElements.define(C_EL_NAME, CustomElement);`,
 		});
 		let instance = document.createElement(C_EL_NAME) as any;
 		customEl = (instance as CustomElement).setHtml(MY_TT.createHTML(markdown.value))
-    while (element.firstChild) {
-			element.removeChild(element.firstChild);
+    while (outElement.firstChild) {
+			outElement.removeChild(outElement.firstChild);
 		}
-		element.appendChild(instance);
+		outElement.appendChild(instance);
 	}`,
           description: `前面的声明`,
         },
         {
-          query: `IfStatement:has(>PropertyAccessExpression[value=options.actionHandler]) Identifier[value=element]`,
+          query: `IfStatement:has(>PropertyAccessExpression[value=options.actionHandler]) Identifier[value=outElement]`,
           multi: true,
           replace: `customEl ?? {{''|ctxValue}}`,
           description: `中间`,
@@ -970,7 +977,7 @@ window.customElements.define(C_EL_NAME, CustomElement);`,
           insertAfter: true,
           replace: `\n	if ((markdown as any).isCustomHtml) {
 		return {
-			element: element, dispose: () => {
+			element: outElement, dispose: () => {
 				isDisposed = true;
 				disposables.dispose();
 			}
@@ -982,7 +989,7 @@ window.customElements.define(C_EL_NAME, CustomElement);`,
           query: `VariableDeclaration:has([value=allowedLinkSchemes]) ArrayLiteralExpression`,
           insertAfter: true,
           offset: [-1, -1],
-          replace: `,'shb'`,
+          replace: `'shb'`,
           description: `图片预请求`,
         },
       ],
@@ -1046,7 +1053,7 @@ window.customElements.define(C_EL_NAME, CustomElement);`,
           insertAfter: true,
           replace: ` else {
 			frame.executeJavaScript(\`window.document.querySelector('iframe').contentWindow.find('\${text}',false,\${!options.forward},true,false,true,false)\`,).then((result) => {
-				this._onFoundInFrame.fire({ requestId: 1, activeMatchOrdinal: 1, matches: result ? 1 : 0, selectionArea: undefined, finalUpdate: true });
+				this._onFoundInFrame.fire({ requestId: 1, activeMatchOrdinal: 1, matches: result ? 1 : 0, finalUpdate: true });
 			})
 		}`,
           description: `搜索支持`,

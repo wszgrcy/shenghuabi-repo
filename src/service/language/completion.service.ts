@@ -73,43 +73,55 @@ export class CompletionService extends RootStaticInjectOptions {
     const modelObject = {} as Record<string, NonNullable<typeof list>[number]>;
 
     const providerList: vscode.LanguageModelChatInformation[] = [];
-    if (list?.length) {
-      for (let index = 0; index < list.length; index++) {
-        const item = list[index];
-        modelObject[item.name] = item;
-        providerList.push({
-          id: 'shenghuabi',
-          name: item.name,
-          family: 'custom',
-          version: '1.0',
-          maxInputTokens: 99999999,
-          maxOutputTokens: 99999999,
-          isDefault: index === 0,
-          isUserSelectable: true,
-        });
-      }
-    } else {
-      providerList.push({
-        id: 'shenghuabi',
-        name: 'shenghuabi',
-        family: 'inline',
-        version: '1.0',
-        maxInputTokens: 99999999,
-        maxOutputTokens: 99999999,
-        isDefault: true,
-        isUserSelectable: true,
-      });
-    }
-    this.#inlineChat.modelList = providerList;
-    if (list?.length) {
-      for (let index = 0; index < list.length; index++) {
-        const item = list[index];
-        modelObject[item.name] = item;
-        vscode.lm.registerChatModelProvider(item.name, this.#inlineChat);
-      }
-    } else {
-      vscode.lm.registerChatModelProvider('shenghuabi', this.#inlineChat);
-    }
+    // if (list?.length) {
+    //   for (let index = 0; index < list.length; index++) {
+    //     const item = list[index];
+    //     modelObject[item.name] = item;
+    //     providerList.push({
+    //       id: 'shenghuabi',
+    //       name: item.name,
+    //       family: 'custom',
+    //       version: '1.0',
+    //       maxInputTokens: 99999999,
+    //       maxOutputTokens: 99999999,
+    //       isDefault: index === 0,
+    //       isUserSelectable: true,
+    //     });
+    //   }
+    // } else {
+    //   providerList.push({
+    //     id: 'shenghuabi',
+    //     name: 'shenghuabi',
+    //     family: 'inline',
+    //     version: '1.0',
+    //     maxInputTokens: 99999999,
+    //     maxOutputTokens: 99999999,
+    //     isDefault: true,
+    //     isUserSelectable: true,
+    //   });
+    // }
+    // this.#inlineChat.modelList = providerList;
+
+    vscode.lm.registerLanguageModelChatProvider(
+      'shenghuabi',
+      this.#inlineChat.createProvider({
+        provideTokenCount: async (model, text, token) => {
+          return 0;
+        },
+        provideLanguageModelChatInformation: () => {
+          return [];
+        },
+        provideLanguageModelChatResponse: async (
+          model,
+          message,
+          options,
+          progress,
+          token,
+        ) => {
+          console.log(model, message, options, progress);
+        },
+      }),
+    );
     const chatHistory = new Map<string, ChatMessageListInputType>();
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor',
@@ -374,17 +386,18 @@ export class CompletionService extends RootStaticInjectOptions {
       };
     } else {
       // todo 重构未验证
-      const { error, list } = this.#templateFormat.parse(
-        actionItem.template!.map((item) => item.content).join('\n'),
-      );
-      if (error) {
-        throw new Error('模板解析失败');
-      }
-      editorInput = list.some((item) => item.value === 'input');
+      // const { error, list } = this.#templateFormat.parse(
+      //   actionItem.template!.map((item) => item.content).join('\n'),
+      // );
+      // if (error) {
+      //   throw new Error('模板解析失败');
+      // }
+      // editorInput = list.some((item) => item.value === 'input');
 
-      data = {
-        template: actionItem.template!,
-      };
+      // data = {
+      //   template: actionItem.template!,
+      // };
+      throw new Error('未实现');
     }
     this.#selectedEditorTemplate.set(options.filePath, {
       ...data,
