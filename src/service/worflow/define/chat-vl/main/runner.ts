@@ -21,7 +21,6 @@ import * as fs from 'fs/promises';
 import sharp from 'sharp';
 
 export class ChatVlRunner extends NodeRunnerBase<typeof CHAT_VL_NODE_DEFINE> {
-  #format = inject(TemplateFormatService);
   #chatService = inject(ChatServiceToken);
   #envParameters = inject(EnviromentParametersToken);
   #abort = inject(AbortSignalToken);

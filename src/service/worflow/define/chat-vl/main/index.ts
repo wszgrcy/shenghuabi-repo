@@ -5,5 +5,5 @@ import { ChatVlRunner } from './runner';
 export const ChatMainConfig = {
   ...NODE_COMMON,
   runner: ChatVlRunner,
-  define: CHAT_VL_NODE_DEFINE,
+  configDefine: CHAT_VL_NODE_DEFINE,
 } as const;

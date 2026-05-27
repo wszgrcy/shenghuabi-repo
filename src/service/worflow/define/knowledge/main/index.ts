@@ -5,5 +5,5 @@ import { KnowledgeRunner } from './knowledge.runner';
 export const KnowledgeMainConfig = {
   ...NODE_COMMON,
   runner: KnowledgeRunner,
-  define: KNOWLEDGE_NODE_DEFINE,
+  configDefine: KNOWLEDGE_NODE_DEFINE,
 } as const;

@@ -1,6 +1,11 @@
 import * as vscode from 'vscode';
 import { Hanyu } from './const';
-import { inject, RootStaticInjectOptions } from 'static-injector';
+import {
+  inject,
+  RootStaticInjectOptions,
+  Injector,
+  createInjector,
+} from 'static-injector';
 import { InlineChatService } from './inline-chat.service';
 import { PromptService } from '../ai/prompt.service';
 import { ChatService } from '../ai/chat.service';
@@ -14,6 +19,7 @@ import {
   WorkflowExecService,
   ResolvedWorkflow,
   ModelOptionsToken,
+  SingleNodeConfig,
 } from '@shenghuabi/workflow';
 import { WorkflowSelectService } from '@shenghuabi/workflow';
 import { filter, Subject, Subscription, take } from 'rxjs';
@@ -41,6 +47,8 @@ import und from '@angular/common/locales/und';
 import { convertVSCodeMessagesToOpenAI } from './vscodeToOpenAIConverter';
 import { EventEmitter } from 'vscode';
 import { OpenAI } from 'openai';
+import { NodeMainObj, SingleNodeRunnerService } from '@shenghuabi/workflow';
+import * as v from 'valibot';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -73,6 +81,7 @@ export class CompletionService extends RootStaticInjectOptions {
   #selectedEditorTemplate = new Map<string, InlineEditorData>();
   listSelect = new Subject<{ filePath: string; value: string }>();
   #selectSubscriptionMap = new Map<string, Subscription>();
+  #injector = inject(Injector);
   init() {
     vscode.languages.registerInlineCompletionItemProvider(Hanyu, {
       provideInlineCompletionItems: async (doc, pos, context, token) => {
@@ -83,6 +92,34 @@ export class CompletionService extends RootStaticInjectOptions {
     const list = ExtensionConfig.chatModelList();
     const modelObject = {} as Record<string, NonNullable<typeof list>[number]>;
     let event = new EventEmitter<void>();
+
+    for (const item of [
+      // ChatMainConfig,
+      // CategoryMainConfig,
+      NodeMainObj.TextMainConfig,
+    ]) {
+      vscode.lm.registerTool(item.type, {
+        invoke: async (options) => {
+          let injector = createInjector({
+            providers: [SingleNodeRunnerService],
+            parent: this.#injector,
+          });
+          let result = await injector
+            .get(SingleNodeRunnerService)
+            .run(item, options.input as any, { outputId: 'tool' });
+          if (typeof result === 'string') {
+            return new vscode.LanguageModelToolResult([
+              new vscode.LanguageModelTextPart(result),
+            ]);
+          } else if (typeof result === 'object') {
+            return new vscode.LanguageModelToolResult([
+              vscode.LanguageModelDataPart.json(result),
+            ]);
+          }
+          return;
+        },
+      });
+    }
     vscode.lm.registerLanguageModelChatProvider(
       'shenghuabi',
       this.#inlineChat.createProvider({
@@ -143,7 +180,7 @@ export class CompletionService extends RootStaticInjectOptions {
           let toolList:
             | OpenAI.ChatCompletionChunk.Choice.Delta.ToolCall[]
             | undefined;
-          function sendTool() {
+          const sendTool = () => {
             if (toolList) {
               for (const item of toolList) {
                 progress.report(
@@ -158,7 +195,7 @@ export class CompletionService extends RootStaticInjectOptions {
               }
               toolList = undefined;
             }
-          }
+          };
           for await (const item of resultxx) {
             if (item.choices[0].finish_reason === 'stop') {
               break;
@@ -189,9 +226,6 @@ export class CompletionService extends RootStaticInjectOptions {
       }),
     );
     event.fire();
-    setTimeout(() => {
-      event.fire();
-    }, 200);
     const chatHistory = new Map<string, ChatMessageListInputType>();
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor',

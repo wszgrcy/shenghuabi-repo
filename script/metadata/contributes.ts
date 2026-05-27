@@ -619,6 +619,12 @@ async function main() {
   }
 
   data['contributes']['configuration'] = await getConfig();
+  
+  // 工具注册
+  const { getNodeDefineToolList } = await import('./get-tool-list');
+  const toolList = await getNodeDefineToolList();
+  data['contributes']['languageModelTools'] = toolList;
+  
   writeFileSync(filePath, JSON.stringify(data, undefined, 2));
 }
 

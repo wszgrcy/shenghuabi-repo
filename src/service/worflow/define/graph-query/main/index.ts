@@ -5,5 +5,5 @@ import { GraphQueryNodeRunner } from './graph-query-node.runner';
 export const GraphQueryMainConfig = {
   ...NODE_COMMON,
   runner: GraphQueryNodeRunner,
-  define: GRAPH_QUERY_NODE_DEFINE,
+  configDefine: GRAPH_QUERY_NODE_DEFINE,
 } as const;

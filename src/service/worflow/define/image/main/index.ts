@@ -5,5 +5,5 @@ import { ImageRunner } from './image.runner';
 export const ImageMainConfig = {
   ...NODE_COMMON,
   runner: ImageRunner,
-  define: IMAGE_NODE_DEFINE,
+  configDefine: IMAGE_NODE_DEFINE,
 } as const;

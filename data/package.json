@@ -9136,6 +9136,100 @@
         "language": "wenzhang",
         "path": "./language/snippets.json"
       }
+    ],
+    "languageModelTools": [
+      {
+        "name": "textarea",
+        "tags": [
+          "shenghuabi",
+          "textarea"
+        ],
+        "toolReferenceName": "textarea",
+        "displayName": "textarea",
+        "modelDescription": "- 变量定义格式: {{xx}},{{xx.yy}}",
+        "canBeReferencedInPrompt": true,
+        "icon": "$(files)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "text": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "const": "text"
+                        }
+                      },
+                      "required": [
+                        "text",
+                        "type"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "item": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "array",
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "number"
+                                  }
+                                ]
+                              }
+                            },
+                            "type": {
+                              "enum": [
+                                "custom"
+                              ],
+                              "type": "string"
+                            },
+                            "suffix": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "label",
+                            "value"
+                          ]
+                        },
+                        "type": {
+                          "const": "variable"
+                        }
+                      },
+                      "required": [
+                        "item",
+                        "type"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        }
+      }
     ]
   },
   "dependencies": {

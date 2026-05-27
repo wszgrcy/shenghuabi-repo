@@ -5,5 +5,5 @@ import { CategoryRunner } from './category.runner';
 export const CategoryMainConfig = {
   ...NODE_COMMON,
   runner: CategoryRunner,
-  define: CATEGORY_NODE_DEFINE,
+  configDefine: CATEGORY_NODE_DEFINE,
 } as const;

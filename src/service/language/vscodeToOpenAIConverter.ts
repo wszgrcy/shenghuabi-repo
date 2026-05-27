@@ -60,8 +60,11 @@ export function convertVSCodeMessageToOpenAI(
   // Converts vscode part types → OpenAI content part types
   for (const part of parts) {
     if (part instanceof vscode.LanguageModelTextPart) {
-      // vscode.LanguageModelTextPart → text content part
-      contentParts.push({ type: 'text', text: part.value });
+      let text = part.value.trim();
+      if (text) {
+        // vscode.LanguageModelTextPart → text content part
+        contentParts.push({ type: 'text', text: text });
+      }
     } else if (
       part instanceof vscode.LanguageModelDataPart &&
       part.mimeType === 'application/pdf'
@@ -134,7 +137,6 @@ export function convertVSCodeMessageToOpenAI(
       content: contentParts,
     } as ChatCompletionMessageParam;
   }
-
   // Default fallback for unrecognized content
   return {
     role: vscodeToOpenAIRole(message.role),
@@ -151,10 +153,6 @@ export function convertVSCodeMessageToOpenAI(
 function convertVSCodeToolCalls(
   message: vscode.LanguageModelChatRequestMessage,
 ): ChatCompletionMessageToolCall[] {
-  if (message.role !== vscode.LanguageModelChatMessageRole.Assistant) {
-    return [];
-  }
-
   // vscode.LanguageModelChatRequestMessage.content is always ReadonlyArray<LanguageModelInputPart | unknown>
   const parts = message.content as Array<vscode.LanguageModelInputPart>;
 
@@ -164,6 +162,7 @@ function convertVSCodeToolCalls(
 
   // Source: src/extension/conversation/vscode-node/languageModelAccess.ts L756-L759
   // Maps vscode tool call → OpenAI function call format
+
   return toolCallParts.map((part) => ({
     id: part.callId,
     type: 'function',
