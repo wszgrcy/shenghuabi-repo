@@ -18,11 +18,9 @@
     "textSearchProvider",
     "textSearchProvider2",
     "fileSearchProvider2",
-    "aiTextSearchProvider"
+    "aiTextSearchProvider",
+    "languageModelSystem"
   ],
-  "languageModels": {
-    "vendor": "shenghuabi"
-  },
   "activationEvents": [
     "*",
     "onFileSystem:editorWorkflowChanged",
@@ -32,13 +30,18 @@
   ],
   "main": "./extension.js",
   "contributes": {
+    "languageModelChatProviders": [
+      {
+        "vendor": "shenghuabi",
+        "displayName": "生花笔"
+      }
+    ],
     "chatParticipants": [
       {
         "id": "shenghuabi.chat.editor",
         "name": "chat",
         "fullName": "chat",
         "description": "对话",
-        "isDefault": true,
         "locations": [
           "editor"
         ],

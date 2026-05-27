@@ -30,6 +30,17 @@ import { getNumberText } from '@share/util/format/get-number-text';
 import { isStringArray } from '@share/util/assert/is-string-array';
 import { CommandPrefix } from '@global';
 import { captureException } from '@sentry/node';
+import {
+  ChatCompletionContentPartText,
+  ChatCompletionMessageParam,
+  ChatCompletionMessageToolCall,
+  ChatCompletionToolMessageParam,
+  FunctionParameters,
+} from 'openai/resources';
+import und from '@angular/common/locales/und';
+import { convertVSCodeMessagesToOpenAI } from './vscodeToOpenAIConverter';
+import { EventEmitter } from 'vscode';
+import { OpenAI } from 'openai';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -71,45 +82,31 @@ export class CompletionService extends RootStaticInjectOptions {
     });
     const list = ExtensionConfig.chatModelList();
     const modelObject = {} as Record<string, NonNullable<typeof list>[number]>;
-
-    const providerList: vscode.LanguageModelChatInformation[] = [];
-    // if (list?.length) {
-    //   for (let index = 0; index < list.length; index++) {
-    //     const item = list[index];
-    //     modelObject[item.name] = item;
-    //     providerList.push({
-    //       id: 'shenghuabi',
-    //       name: item.name,
-    //       family: 'custom',
-    //       version: '1.0',
-    //       maxInputTokens: 99999999,
-    //       maxOutputTokens: 99999999,
-    //       isDefault: index === 0,
-    //       isUserSelectable: true,
-    //     });
-    //   }
-    // } else {
-    //   providerList.push({
-    //     id: 'shenghuabi',
-    //     name: 'shenghuabi',
-    //     family: 'inline',
-    //     version: '1.0',
-    //     maxInputTokens: 99999999,
-    //     maxOutputTokens: 99999999,
-    //     isDefault: true,
-    //     isUserSelectable: true,
-    //   });
-    // }
-    // this.#inlineChat.modelList = providerList;
-
+    let event = new EventEmitter<void>();
     vscode.lm.registerLanguageModelChatProvider(
       'shenghuabi',
       this.#inlineChat.createProvider({
+        onDidChangeLanguageModelChatInformation: event.event,
         provideTokenCount: async (model, text, token) => {
-          return 0;
+          // 不准确
+          return typeof text === 'string' ? text.length : 0;
         },
-        provideLanguageModelChatInformation: () => {
-          return [];
+        provideLanguageModelChatInformation: (a) => {
+          return list.map((item) => {
+            return {
+              id: item.name,
+              name: item.name,
+              tooltip: '',
+              family: 'shenghuabi',
+              maxInputTokens: 9999999,
+              maxOutputTokens: 9999999,
+              version: '1.0.0',
+              capabilities: {
+                toolCalling: true,
+                imageInput: true,
+              },
+            };
+          });
         },
         provideLanguageModelChatResponse: async (
           model,
@@ -118,10 +115,83 @@ export class CompletionService extends RootStaticInjectOptions {
           progress,
           token,
         ) => {
-          console.log(model, message, options, progress);
+          let result = convertVSCodeMessagesToOpenAI(message);
+          const model2 = ExtensionConfig.chatModelList()[0];
+
+          let openai = new OpenAI({
+            baseURL: model2.baseURL,
+            apiKey: model2.apiKey,
+          });
+          let resultxx = await openai.chat.completions.create({
+            model: model2.model,
+            messages: result,
+            stream: true,
+            tool_choice: options.toolMode === 1 ? 'auto' : 'required',
+            tools: options.tools?.map((item) => {
+              return {
+                type: 'function',
+                function: {
+                  description: item.description,
+                  name: item.name,
+                  parameters: item.inputSchema as
+                    | FunctionParameters
+                    | undefined,
+                },
+              };
+            }),
+          });
+          let toolList:
+            | OpenAI.ChatCompletionChunk.Choice.Delta.ToolCall[]
+            | undefined;
+          function sendTool() {
+            if (toolList) {
+              for (const item of toolList) {
+                progress.report(
+                  new vscode.LanguageModelToolCallPart(
+                    item.id!,
+                    item.function!.name!,
+                    item.function!.arguments
+                      ? JSON.parse(item.function!.arguments)
+                      : {},
+                  ),
+                );
+              }
+              toolList = undefined;
+            }
+          }
+          for await (const item of resultxx) {
+            if (item.choices[0].finish_reason === 'stop') {
+              break;
+            }
+
+            let tool_calls = item.choices[0].delta.tool_calls;
+            if (tool_calls) {
+              if (!toolList) {
+                toolList = tool_calls;
+              } else {
+                tool_calls.forEach((item, index) => {
+                  let argStr = item.function?.arguments;
+                  if (argStr) {
+                    toolList![index].function!.arguments += argStr;
+                  }
+                });
+              }
+            }
+            let deltaContent = item.choices[0].delta.content;
+
+            if (typeof deltaContent === 'string') {
+              sendTool();
+              progress.report(new vscode.LanguageModelTextPart(deltaContent));
+            }
+          }
+          sendTool();
         },
       }),
     );
+    event.fire();
+    setTimeout(() => {
+      event.fire();
+    }, 200);
     const chatHistory = new Map<string, ChatMessageListInputType>();
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor',
