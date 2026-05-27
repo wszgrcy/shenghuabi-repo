@@ -11,7 +11,6 @@ import {
   createLLMData,
   EnviromentParametersToken,
   NodeRunnerBase,
-  TemplateFormatService,
   useChat,
 } from '@shenghuabi/workflow';
 import { bufferToImageBase64, imageExtract } from '@shenghuabi/knowledge/image';

@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   forwardRef,
   inject,
   Injector,
@@ -76,7 +75,7 @@ export class TextareaTemplateFCC extends BaseControl {
   #nodeService = inject(NodeService, { optional: true });
   readonly #id$$ = computed(() => this.#nodeService?.props$().id);
   #linkedEdge$$ = computed(() => {
-    let id = this.#id$$();
+    const id = this.#id$$();
     if (!id) {
       return undefined;
     }
@@ -84,15 +83,15 @@ export class TextareaTemplateFCC extends BaseControl {
   });
   readonly Editor = Editor;
   variableList$$ = computed(() => {
-    let ctxList: VariableEntry[] = [];
+    const ctxList: VariableEntry[] = [];
     for (const edge of this.#linkedEdge$$() ?? []) {
-      let node = this.#bridge?.nodesObj$()[edge.source];
-      let list = flatFilterHandleList(node?.data.handle?.output);
-      let sourceHandle = list.find((item) => item.id === edge.sourceHandle);
+      const node = this.#bridge?.nodesObj$()[edge.source];
+      const list = flatFilterHandleList(node?.data.handle?.output);
+      const sourceHandle = list.find((item) => item.id === edge.sourceHandle);
       if (!sourceHandle || sourceHandle?.type === 'connect') {
         continue;
       }
-      let data = node!.data!;
+      const data = node!.data!;
       ctxList.push({
         label: `${data.title}-${sourceHandle.label}`,
         value: [node!.id, sourceHandle.name!],

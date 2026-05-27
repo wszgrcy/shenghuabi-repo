@@ -8,10 +8,8 @@ import type {
   ChatCompletionContentPartImage,
   ChatCompletionContentPartText,
   ChatCompletionFunctionTool,
-  ChatCompletionMessageFunctionToolCall,
   ChatCompletionMessageParam,
   ChatCompletionMessageToolCall,
-  FunctionParameters,
 } from 'openai/resources';
 import * as vscode from 'vscode';
 
@@ -60,7 +58,7 @@ export function convertVSCodeMessageToOpenAI(
   // Converts vscode part types → OpenAI content part types
   for (const part of parts) {
     if (part instanceof vscode.LanguageModelTextPart) {
-      let text = part.value.trim();
+      const text = part.value.trim();
       if (text) {
         // vscode.LanguageModelTextPart → text content part
         contentParts.push({ type: 'text', text: text });

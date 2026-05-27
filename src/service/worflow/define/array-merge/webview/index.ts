@@ -7,10 +7,9 @@ export const ArrayMergeWebviewConfig: WebviewNodeConfig = {
   configDefine: ARRAY_MERGE_NODE_DEFINE,
   initData: () => {
     console.log('被调用');
-    
+
     return {
-      data: {
-      },
+      data: {},
       width: 300,
     };
   },

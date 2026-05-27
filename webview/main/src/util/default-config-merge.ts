@@ -12,7 +12,7 @@ export function defaultConfigMerge(
   schema: v.BaseSchema<any, any, any> | undefined,
 ) {
   const { outputs, label, nodeMode, initData } = config;
-  let handle: { input?: any[]; output: any[] } = {
+  const handle: { input?: any[]; output: any[] } = {
     output: nodeMode === 'condition' ? [] : [RUNNER_ORIGIN_OUTPUT],
   };
 

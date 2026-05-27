@@ -19,7 +19,6 @@ import {
   WorkflowExecService,
   ResolvedWorkflow,
   ModelOptionsToken,
-  SingleNodeConfig,
 } from '@shenghuabi/workflow';
 import { WorkflowSelectService } from '@shenghuabi/workflow';
 import { filter, Subject, Subscription, take } from 'rxjs';
@@ -36,19 +35,11 @@ import { getNumberText } from '@share/util/format/get-number-text';
 import { isStringArray } from '@share/util/assert/is-string-array';
 import { CommandPrefix } from '@global';
 import { captureException } from '@sentry/node';
-import {
-  ChatCompletionContentPartText,
-  ChatCompletionMessageParam,
-  ChatCompletionMessageToolCall,
-  ChatCompletionToolMessageParam,
-  FunctionParameters,
-} from 'openai/resources';
-import und from '@angular/common/locales/und';
+import { FunctionParameters } from 'openai/resources';
 import { convertVSCodeMessagesToOpenAI } from './vscodeToOpenAIConverter';
 import { EventEmitter } from 'vscode';
 import { OpenAI } from 'openai';
 import { NodeMainObj, SingleNodeRunnerService } from '@shenghuabi/workflow';
-import * as v from 'valibot';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -91,7 +82,7 @@ export class CompletionService extends RootStaticInjectOptions {
     });
     const list = ExtensionConfig.chatModelList();
     const modelObject = {} as Record<string, NonNullable<typeof list>[number]>;
-    let event = new EventEmitter<void>();
+    const event = new EventEmitter<void>();
 
     for (const item of [
       // ChatMainConfig,
@@ -100,11 +91,11 @@ export class CompletionService extends RootStaticInjectOptions {
     ]) {
       vscode.lm.registerTool(item.type, {
         invoke: async (options) => {
-          let injector = createInjector({
+          const injector = createInjector({
             providers: [SingleNodeRunnerService],
             parent: this.#injector,
           });
-          let result = await injector
+          const result = await injector
             .get(SingleNodeRunnerService)
             .run(item, options.input as any, { outputId: 'tool' });
           if (typeof result === 'string') {
@@ -152,14 +143,14 @@ export class CompletionService extends RootStaticInjectOptions {
           progress,
           token,
         ) => {
-          let result = convertVSCodeMessagesToOpenAI(message);
+          const result = convertVSCodeMessagesToOpenAI(message);
           const model2 = ExtensionConfig.chatModelList()[0];
 
-          let openai = new OpenAI({
+          const openai = new OpenAI({
             baseURL: model2.baseURL,
             apiKey: model2.apiKey,
           });
-          let resultxx = await openai.chat.completions.create({
+          const resultxx = await openai.chat.completions.create({
             model: model2.model,
             messages: result,
             stream: true,
@@ -201,20 +192,20 @@ export class CompletionService extends RootStaticInjectOptions {
               break;
             }
 
-            let tool_calls = item.choices[0].delta.tool_calls;
+            const tool_calls = item.choices[0].delta.tool_calls;
             if (tool_calls) {
               if (!toolList) {
                 toolList = tool_calls;
               } else {
                 tool_calls.forEach((item, index) => {
-                  let argStr = item.function?.arguments;
+                  const argStr = item.function?.arguments;
                   if (argStr) {
                     toolList![index].function!.arguments += argStr;
                   }
                 });
               }
             }
-            let deltaContent = item.choices[0].delta.content;
+            const deltaContent = item.choices[0].delta.content;
 
             if (typeof deltaContent === 'string') {
               sendTool();
