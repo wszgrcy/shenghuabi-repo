@@ -59,13 +59,13 @@ export class KnowledgeConfigService extends RootStaticInjectOptions {
 
   getOriginConfigList() {
     return new Promise<KnowledgeFileType['list']>((res, rej) => {
-      let ref = effect(
+      const ref = effect(
         () => {
           if (this.configList$.isLoading()) {
             return;
           }
-          res(this.configList$.value()??[] as any)
-          ref.destroy()
+          res(this.originConfigList$() as any);
+          ref.destroy();
         },
         { injector: this.#injector },
       );

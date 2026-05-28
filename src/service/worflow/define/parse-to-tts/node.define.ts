@@ -13,7 +13,7 @@ export const PARSE_TO_TTS_DEFINE = v.pipe(
         [
           {
             type: 'variable',
-            item: { label: '问题', value: ['filePath'] },
+            item: { label: '路径', value: ['filePath'] },
           },
         ],
       ]),
@@ -25,17 +25,19 @@ export const PARSE_TO_TTS_DEFINE = v.pipe(
           }
         });
       }),
+      v.title('文件路径'),
     ),
     content: v.pipe(
       v.optional(TextareaTemplateDefine, [
         [
           {
             type: 'variable',
-            item: { label: '问题', value: ['content'] },
+            item: { label: '内容', value: ['content'] },
           },
         ],
       ]),
       actions.class.top('nodrag'),
+      v.title('文件内容'),
     ),
   }),
   asColumn(),

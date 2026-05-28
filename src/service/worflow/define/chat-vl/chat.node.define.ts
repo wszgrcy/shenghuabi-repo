@@ -1,10 +1,7 @@
 import * as v from 'valibot';
 
 import { actions, setComponent } from '@piying/view-angular-core';
-import {
-  ChatMessageListDefine,
-  ChatMessageListInputType,
-} from '@shenghuabi/openai';
+
 import { llmModelConfig } from '@shenghuabi/workflow/share';
 import { RefDefine } from '../../preset/ref-define';
 export const CHAT_VL_NODE_DEFINE = v.pipe(
@@ -19,7 +16,10 @@ export const CHAT_VL_NODE_DEFINE = v.pipe(
         {
           role: 'user',
           content: [
-            { type: 'text', content: [[{ type: 'text', text: '识别图中文件' }]] },
+            {
+              type: 'text',
+              content: [[{ type: 'text', text: '识别图中文件' }]],
+            },
           ],
         },
       ]),

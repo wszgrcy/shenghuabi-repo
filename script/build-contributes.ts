@@ -12,10 +12,9 @@ async function main() {
     bundle: true,
     platform: 'node',
     format: 'esm',
-    target: 'node20',
     outdir: OUT_DIR,
     packages: 'external',
-    tsconfig: join(cwd, 'tsconfig.build.json'),
+    tsconfig: join(cwd, 'tsconfig.build2.json'),
     banner: {
       js: [
         `import { createRequire as ɵcreateRequire } from 'node:module';`,

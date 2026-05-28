@@ -19,7 +19,6 @@ import {
   WorkflowExecService,
   ResolvedWorkflow,
   ModelOptionsToken,
-  SingleNodeConfig,
 } from '@shenghuabi/workflow';
 import { WorkflowSelectService } from '@shenghuabi/workflow';
 import { filter, Subject, Subscription, take } from 'rxjs';
@@ -40,11 +39,9 @@ import { FunctionParameters } from 'openai/resources';
 import { convertVSCodeMessagesToOpenAI } from './vscodeToOpenAIConverter';
 import { EventEmitter } from 'vscode';
 import { OpenAI } from 'openai';
-import { NodeMainObj, SingleNodeRunnerService } from '@shenghuabi/workflow';
+import { SingleNodeRunnerService } from '@shenghuabi/workflow';
 import { KnowledgeConfigService } from '../knowledge/knowledge-config.service';
-import { ArticleMainConfig } from '../worflow/define/index.main';
-import { WorkspaceDirToken } from '../worflow/define/const';
-import { ChatVlMainConfig } from '../worflow/define/chat-vl/main';
+import { TOOL_CONFIG_LIST } from '../../share/tool-config';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -91,13 +88,7 @@ export class CompletionService extends RootStaticInjectOptions {
     const modelObject = {} as Record<string, NonNullable<typeof list>[number]>;
     const event = new EventEmitter<void>();
 
-    for (const item of [
-      // ChatMainConfig,
-      // CategoryMainConfig,
-      NodeMainObj.TextMainConfig,
-      // ArticleMainConfig,
-      ChatVlMainConfig
-    ] as SingleNodeConfig<any>[]) {
+    for (const item of TOOL_CONFIG_LIST) {
       vscode.lm.registerTool(item.type, {
         invoke: async (options) => {
           const injector = createInjector({
@@ -159,12 +150,11 @@ export class CompletionService extends RootStaticInjectOptions {
           token,
         ) => {
           const result = convertVSCodeMessagesToOpenAI(message);
-          let list = await this.#knowledgeConfig.getOriginConfigList();
-          let data = list.map((item) => {
+          const list = await this.#knowledgeConfig.getOriginConfigList();
+          const data = list.map((item) => {
             return `\n- 类型: ${item.type} 名称: ${item.name}`;
           });
-
-          result[0].content = `\n## 知识库\n${data.join('\n')}`;
+          result[0].content = `\n## 当前存在知识库\n${data.join('\n')}`;
           const model2 = ExtensionConfig.chatModelList()[0];
 
           const openai = new OpenAI({

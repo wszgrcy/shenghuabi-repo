@@ -1,9 +1,5 @@
 import { toJsonSchema } from '@valibot/to-json-schema';
-import { SingleNodeConfig } from '@shenghuabi/workflow';
-import * as v from 'valibot';
-// import { ArticleMainConfig } from '../../src/service/worflow/define/article/main/index';
-import { ChatVlMainConfig } from '../../src/service/worflow/define/chat-vl/main';
-import { NodeMainObj } from '@shenghuabi/workflow';
+import { TOOL_CONFIG_LIST } from '../../src/share/tool-config';
 export interface LanguageModelToolSchema {
   name: string;
   tags: string[];
@@ -18,13 +14,7 @@ export interface LanguageModelToolSchema {
 export async function getNodeDefineToolList(): Promise<
   LanguageModelToolSchema[]
 > {
-  const toolConfigs: SingleNodeConfig<v.BaseSchema<any, any, any>>[] = [
-    // ChatMainConfig,
-    // CategoryMainConfig,
-    NodeMainObj.TextMainConfig,
-    // ArticleMainConfig,
-    ChatVlMainConfig
-  ];
+  const toolConfigs = TOOL_CONFIG_LIST;
 
   return toolConfigs.map((item) => {
     const inputSchema = item.configDefine

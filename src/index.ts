@@ -11,7 +11,11 @@ import {
 } from 'static-injector';
 import { WebViewMessageService } from './trpc';
 import { WebviewMapService } from './webview/webview.map';
-import { DynamicInjectToken, ExtensionContext } from './token';
+import {
+  DocumentVectorServiceTokenToken,
+  DynamicInjectToken,
+  ExtensionContext,
+} from './token';
 import { HanyuService } from './service/language';
 import { CommandService } from './service/command.service';
 import { AiChatProvider } from './webview/custom-sidebar/ai-chat.service';
@@ -124,6 +128,7 @@ import { WorkflowNativeSelectService } from './native/workflow-select.service';
 import { EditorWorkflowService } from './service/editor-workflow.service';
 import * as InlineDefine from './service/worflow/define/index.main';
 import { WorkspaceDirToken } from './service/worflow/define/const';
+import { DocumentVectorService } from './service/vector-query/document-vector.service';
 
 // todo 需要判断环境使用
 v.setGlobalConfig({ lang: 'zh-CN' });
@@ -408,6 +413,10 @@ export async function activate(context: vscode.ExtensionContext) {
             parent: injector,
           });
         }),
+      },
+      {
+        provide: DocumentVectorServiceTokenToken,
+        useExisting: DocumentVectorService,
       },
     ],
   });

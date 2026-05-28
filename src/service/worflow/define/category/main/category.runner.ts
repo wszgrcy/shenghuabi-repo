@@ -95,7 +95,7 @@ export class CategoryRunner extends NodeRunnerBase<
       },
     ] as ChatMessageListOutputType;
     const llm = await this.#chatService.chat(this.mergeChatModel(config.llm));
-    let vJsonSchema = v.object({
+    const vJsonSchema = v.object({
       category_name: v.picklist(inputList.map((item) => item.category_name)),
       category_id: v.picklist(inputList.map((item) => item.category_id)),
     });

@@ -3,7 +3,6 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { ChatContextType } from '../../../../../share';
 import { minChunkOverlap, separators } from '../../../../vector-query/const';
 import { chunk } from 'lodash-es';
-import { WorkflowExtraMetadata } from '@shenghuabi/workflow';
 import { ARTICLE_NODE_DEFINE } from '../article.define';
 import fs from 'fs/promises';
 import { path } from '@cyia/vfs2';

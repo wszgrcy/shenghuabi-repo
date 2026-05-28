@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "exclude": [],
+  "files": [
+    "./script/metadata/contributes.ts"
+  ],
+  "include": [],
+  "compilerOptions": {
+    "outDir": "./.tmp-build",
+    "incremental": false
+  }
+}

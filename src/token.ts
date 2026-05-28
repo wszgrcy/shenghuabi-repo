@@ -7,6 +7,7 @@ import {
   computed,
 } from 'static-injector';
 import type * as vscode from 'vscode';
+import type { DocumentVectorService } from './service/vector-query/document-vector.service';
 export const ExtensionContext = new InjectionToken<vscode.ExtensionContext>(
   'ExtensionContext',
 );
@@ -25,6 +26,8 @@ export const CoreInjectorToken = new InjectionToken<Injector>('coreInjector');
 export const DynamicInjectToken = new InjectionToken<Signal<Injector>>(
   'DynamicInject',
 );
+export const DocumentVectorServiceTokenToken =
+  new InjectionToken<DocumentVectorService>('DocumentVectorServiceToken');
 
 export function dynamicInject<T>(type: ProviderToken<T>) {
   const injector = inject(DynamicInjectToken);

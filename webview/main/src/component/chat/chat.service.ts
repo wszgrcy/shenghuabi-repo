@@ -16,28 +16,23 @@ export class ChatService {
     tooltip: true,
   };
 
-  async getContextTree(type: string): Promise<{
+  async getContextTree(type?: string): Promise<{
     data: { key: any; title: string; children?: any[] }[];
     multi: boolean;
   }> {
-    if (type === 'article') {
-      return { data: await this.#getArticleData(), multi: true };
-    } else {
-      return {
-        data: await this.#client.knowledge.findAll
-          .query({ type: type })
-          .then((list) => {
-            return list.map((item) => {
-              return {
-                title: item.name,
-                key: item.name,
-              };
-            });
-          }),
-        multi: false,
-      };
-    }
-    throw new Error(`未知类型：${type}`);
+    return {
+      data: await this.#client.knowledge.findAll
+        .query({ type: type })
+        .then((list) => {
+          return list.map((item) => {
+            return {
+              title: item.name,
+              key: item.name,
+            };
+          });
+        }),
+      multi: false,
+    };
   }
   #getArticleData() {
     return this.#client.fs.findAll.query({ flat: false });

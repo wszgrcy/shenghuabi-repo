@@ -9153,75 +9153,82 @@
           "type": "object",
           "properties": {
             "value": {
-              "type": "array",
-              "items": {
-                "type": "array",
-                "items": {
-                  "anyOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "text": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "const": "text"
-                        }
-                      },
-                      "required": [
-                        "text",
-                        "type"
-                      ]
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "item": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
                           "type": "object",
                           "properties": {
-                            "label": {
+                            "text": {
                               "type": "string"
-                            },
-                            "value": {
-                              "type": "array",
-                              "items": {
-                                "anyOf": [
-                                  {
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "number"
-                                  }
-                                ]
-                              }
                             },
                             "type": {
-                              "enum": [
-                                "custom"
-                              ],
-                              "type": "string"
-                            },
-                            "suffix": {
-                              "type": "string"
+                              "const": "text"
                             }
                           },
                           "required": [
-                            "label",
-                            "value"
+                            "text",
+                            "type"
                           ]
                         },
-                        "type": {
-                          "const": "variable"
+                        {
+                          "type": "object",
+                          "properties": {
+                            "item": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "number"
+                                      }
+                                    ]
+                                  }
+                                },
+                                "type": {
+                                  "enum": [
+                                    "custom"
+                                  ],
+                                  "type": "string"
+                                },
+                                "suffix": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "value"
+                              ]
+                            },
+                            "type": {
+                              "const": "variable"
+                            }
+                          },
+                          "required": [
+                            "item",
+                            "type"
+                          ]
                         }
-                      },
-                      "required": [
-                        "item",
-                        "type"
                       ]
                     }
-                  ]
+                  }
                 }
-              }
+              ]
             }
           },
           "required": [
@@ -9231,84 +9238,125 @@
         }
       },
       {
-        "name": "chat-vl",
+        "name": "knowledge",
         "tags": [
           "shenghuabi",
-          "chat-vl"
+          "knowledge"
         ],
-        "toolReferenceName": "chat-vl",
-        "displayName": "chat-vl",
-        "modelDescription": "识别理解图片\n生成文本/markdown",
+        "toolReferenceName": "knowledge",
+        "displayName": "knowledge",
+        "modelDescription": "查询知识库,并返回文本片段",
         "canBeReferencedInPrompt": true,
         "icon": "$(files)",
         "inputSchema": {
           "type": "object",
           "properties": {
-            "llm": {
-              "allOf": [
+            "question": {
+              "anyOf": [
                 {
-                  "allOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "title": "预定义模型配置"
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "text": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "const": "text"
+                            }
+                          },
+                          "required": [
+                            "text",
+                            "type"
+                          ]
                         },
-                        "model": {
-                          "type": "string",
-                          "title": "模型"
-                        },
-                        "baseURL": {
-                          "type": "string",
-                          "title": "地址"
+                        {
+                          "type": "object",
+                          "properties": {
+                            "item": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "number"
+                                      }
+                                    ]
+                                  }
+                                },
+                                "type": {
+                                  "enum": [
+                                    "custom"
+                                  ],
+                                  "type": "string"
+                                },
+                                "suffix": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "value"
+                              ]
+                            },
+                            "type": {
+                              "const": "variable"
+                            }
+                          },
+                          "required": [
+                            "item",
+                            "type"
+                          ]
                         }
-                      },
-                      "required": []
-                    }
-                  ],
-                  "title": "对话模型"
-                }
-              ]
-            },
-            "format": {
-              "enum": [
-                "markdown",
-                "plaintext"
-              ],
-              "type": "string",
-              "default": "markdown",
-              "title": "生成格式"
-            },
-            "value": {
-              "type": "array",
-              "items": {},
-              "default": [
-                {
-                  "role": "user",
-                  "content": [
-                    {
-                      "type": "text",
-                      "content": [
-                        [
-                          {
-                            "type": "text",
-                            "text": "识别图中文件"
-                          }
-                        ]
                       ]
                     }
-                  ]
+                  }
                 }
               ],
-              "title": "提示词"
+              "default": [
+                [
+                  {
+                    "type": "variable",
+                    "item": {
+                      "label": "问题",
+                      "value": [
+                        "问题"
+                      ],
+                      "type": "custom"
+                    }
+                  }
+                ]
+              ],
+              "title": "问题"
             },
-            "image": {
-              "title": "图片文件路径"
+            "limit": {
+              "type": "number",
+              "default": 10,
+              "title": "查询数量",
+              "minimum": 1
+            },
+            "value": {
+              "type": "string",
+              "title": "知识库名字"
             }
           },
           "required": [
-            "image"
+            "value"
           ],
           "$schema": "http://json-schema.org/draft-07/schema#"
         }

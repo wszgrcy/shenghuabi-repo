@@ -1,7 +1,4 @@
-import {
-  NodeComponentType,
-  RUNNER_ORIGIN_OUTPUT,
-} from '@shenghuabi/workflow/share';
+import { NodeComponentType } from '@shenghuabi/workflow/share';
 const helpList = [
   '- 使用之前请保证已有知识库启用`图索引`',
   '- 使用`问题`对知识库进行动态查询或使用`选择`指定某些节点',
