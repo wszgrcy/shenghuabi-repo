@@ -28,14 +28,14 @@ export const ARTICLE_NODE_DEFINE = v.pipe(
     step: v.pipe(
       v.optional(v.number(), 0),
       v.title('文章数'),
-      v.description('按照数量将所有文章切分为多段,0为不切分'),
+      v.description('按照数量将所有文章切分为[step]段,0为不切分'),
 
       actions.wrappers.set(['tooltip', 'label']),
     ),
     chunkSize: v.pipe(
       v.optional(v.number(), 1000),
       v.title('分隔长度'),
-      v.description('知识库中每条内容保存的长度'),
+      v.description('每条内容保存的长度'),
       actions.wrappers.set(['tooltip', 'label']),
       hideWhen({
         disabled: true,
@@ -49,6 +49,7 @@ export const ARTICLE_NODE_DEFINE = v.pipe(
     value: v.pipe(
       v.optional(v.array(v.string()), []),
       v.title('文章'),
+      v.description('当前工作区内,有效的相对文件路径列表'),
       v.minLength(1),
       asControl(),
       setComponent('tree-select'),

@@ -19,7 +19,7 @@ export const FILE_NODE_DEFINE = v.object({
     v.optional(v.array(v.string()), []),
 
     v.minLength(1),
-    v.title('文件'),
+    v.title('文件路径列表'),
     asControl(),
     setComponent('file-input'),
     actions.inputs.set({ mode: 'file' }),

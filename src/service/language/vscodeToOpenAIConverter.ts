@@ -52,8 +52,7 @@ export function convertVSCodeMessageToOpenAI(
   const contentParts: ChatMessageContentPart[] = [];
 
   // vscode.LanguageModelChatRequestMessage.content is always ReadonlyArray<LanguageModelInputPart | unknown>
-  const parts = [...message.content] as Array<vscode.LanguageModelInputPart>;
-
+  const parts = message.content as Array<vscode.LanguageModelInputPart>;
   // Source: src/extension/conversation/vscode-node/languageModelAccess.ts L720-L740
   // Converts vscode part types → OpenAI content part types
   for (const part of parts) {
@@ -82,6 +81,7 @@ export function convertVSCodeMessageToOpenAI(
         type: 'image_url',
         image_url: { url: `data:${part.mimeType};base64,${base64Data}` },
       });
+    } else if (part instanceof vscode.LanguageModelDataPart) {
     } else if (part instanceof vscode.LanguageModelToolCallPart) {
       // Tool calls are handled separately — skip here, added to tool_calls below
       // Source: src/extension/conversation/vscode-node/languageModelAccess.ts L752-L760
@@ -95,6 +95,7 @@ export function convertVSCodeMessageToOpenAI(
               return item.value;
             } else if (item instanceof vscode.LanguageModelPromptTsxPart) {
               return item.value;
+            } else if (item instanceof vscode.LanguageModelDataPart) {
             }
             return '';
           })

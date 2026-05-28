@@ -11,6 +11,8 @@ import { ChatMessageListOutputType } from '@shenghuabi/openai';
 import { AbortSignalToken } from '@shenghuabi/workflow';
 import { jsonParse } from '../../../../ai/util/json-parser';
 import { CATEGORY_NODE_DEFINE } from '../category.node.define';
+import * as v from 'valibot';
+import { toJsonSchema } from '@valibot/to-json-schema';
 
 export class CategoryRunner extends NodeRunnerBase<
   typeof CATEGORY_NODE_DEFINE
@@ -93,10 +95,17 @@ export class CategoryRunner extends NodeRunnerBase<
       },
     ] as ChatMessageListOutputType;
     const llm = await this.#chatService.chat(this.mergeChatModel(config.llm));
+    let vJsonSchema = v.object({
+      category_name: v.picklist(inputList.map((item) => item.category_name)),
+      category_id: v.picklist(inputList.map((item) => item.category_id)),
+    });
     const result = await llm.chat(
       {
         messages: templatePrompt,
-        response_format: { type: 'json_object' },
+        response_format: {
+          type: 'json_schema',
+          json_schema: { name: '', schema: toJsonSchema(vJsonSchema) as any },
+        },
       },
       { signal: this.#abort },
     );

@@ -1,7 +1,8 @@
 import { toJsonSchema } from '@valibot/to-json-schema';
 import { SingleNodeConfig } from '@shenghuabi/workflow';
 import * as v from 'valibot';
-
+// import { ArticleMainConfig } from '../../src/service/worflow/define/article/main/index';
+import { NodeMainObj } from '@shenghuabi/workflow';
 export interface LanguageModelToolSchema {
   name: string;
   tags: string[];
@@ -16,14 +17,11 @@ export interface LanguageModelToolSchema {
 export async function getNodeDefineToolList(): Promise<
   LanguageModelToolSchema[]
 > {
-  // 从 completion.service.ts 中获取实际使用的工具列表
-  // 这里需要导入实际的 NodeMainConfig 配置
-  const { NodeMainObj } = await import('@shenghuabi/workflow');
-
   const toolConfigs: SingleNodeConfig<v.BaseSchema<any, any, any>>[] = [
     // ChatMainConfig,
     // CategoryMainConfig,
     NodeMainObj.TextMainConfig,
+    // ArticleMainConfig,
   ];
 
   return toolConfigs.map((item) => {
@@ -36,6 +34,12 @@ export async function getNodeDefineToolList(): Promise<
             'asVirtualGroup',
             'defineType',
           ],
+          overrideAction: (context) => {
+            if (!context.valibotAction.type) {
+              console.log(context.valibotAction);
+            }
+            return context.jsonSchema;
+          },
         })
       : { type: 'object', properties: {} };
 

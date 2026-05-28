@@ -27,14 +27,15 @@ export class GraphQueryNodeRunner extends NodeRunnerBase<
     if (!instance) {
       throw new Error(`未找到[${config.name}]知识库`);
     }
-    const question = serializeLexicalTextarea(config.question, {
-      context: await this.nodeContextData$$(),
-      environmentContext: this.environmentContextData,
-    });
+
     const query = instance.createQuery(EMPTY_QUERY);
     let resultList: Awaited<ReturnType<GraphQueryService['fuzzyQueryNode']>> =
       [];
-    if (question) {
+    if (config.question) {
+      const question = serializeLexicalTextarea(config.question, {
+        context: await this.nodeContextData$$(),
+        environmentContext: this.environmentContextData,
+      });
       resultList = await query.fuzzyQueryNode(question, {
         nodeLimit: config.nodeLimit,
         nodeSizeLimit: config.nodeSizeLimit,
@@ -87,22 +88,17 @@ export class GraphQueryNodeRunner extends NodeRunnerBase<
       };
     });
     return async (id: string) => {
-      if (id === 'default') {
-        return {
-          value: originList,
-        };
+      if (id === 'default' || !id || id === 'tool') {
+        return originList;
       } else {
         if (!config.template.enable || !config.template.value) {
-          return { value: result2 };
+          return result2;
         }
         const list = [];
         for (const result of result2) {
           list.push(this.#format.interpolate(config.template.value, result));
         }
-        return {
-          value: list,
-          extra: undefined,
-        };
+        return list;
       }
     };
   }

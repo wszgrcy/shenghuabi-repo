@@ -9,13 +9,6 @@ export const EXAMPLES_DEFINE = v.pipe(
         v.object({
           input: v.pipe(
             v.object({
-              format: v.pipe(
-                v.optional(v.boolean(), false),
-                v.description(
-                  '选中后会尝试使用yaml解析为对象,再序列化为对应的响应类型',
-                ),
-                actions.wrappers.patch(['tooltip']),
-              ),
               value: v.pipe(
                 v.string(),
                 v.title('问题'),
@@ -29,11 +22,6 @@ export const EXAMPLES_DEFINE = v.pipe(
 
           output: v.pipe(
             v.object({
-              format: v.pipe(
-                v.optional(v.boolean(), false),
-                v.description('是否需要格式化'),
-                actions.wrappers.patch(['tooltip']),
-              ),
               value: v.pipe(
                 v.string(),
                 v.title('回答'),

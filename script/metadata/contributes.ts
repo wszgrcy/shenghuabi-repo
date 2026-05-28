@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { CommandPrefix } from './const';
+import { getNodeDefineToolList } from './get-tool-list';
 
 type MenuType = Record<
   | 'editor/title'
@@ -621,7 +622,6 @@ async function main() {
   data['contributes']['configuration'] = await getConfig();
   
   // 工具注册
-  const { getNodeDefineToolList } = await import('./get-tool-list');
   const toolList = await getNodeDefineToolList();
   data['contributes']['languageModelTools'] = toolList;
   

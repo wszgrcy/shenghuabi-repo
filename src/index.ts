@@ -123,6 +123,7 @@ import {
 import { WorkflowNativeSelectService } from './native/workflow-select.service';
 import { EditorWorkflowService } from './service/editor-workflow.service';
 import * as InlineDefine from './service/worflow/define/index.main';
+import { WorkspaceDirToken } from './service/worflow/define/const';
 
 // todo 需要判断环境使用
 v.setGlobalConfig({ lang: 'zh-CN' });
@@ -198,6 +199,13 @@ export async function activate(context: vscode.ExtensionContext) {
               parseTo: result.extra?.data.format,
             };
           };
+        },
+      },
+      {
+        provide: WorkspaceDirToken,
+        useFactory: () => {
+          const workflowExec = inject(WorkspaceService);
+          return workflowExec.nFolder();
         },
       },
       DownloadService,

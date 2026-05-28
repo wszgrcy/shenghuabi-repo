@@ -21,3 +21,4 @@ coverage
 /.agents
 /skills-lock.json
 /lib/vscode
+/.contributes-dist

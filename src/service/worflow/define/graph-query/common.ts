@@ -21,5 +21,5 @@ export const NODE_COMMON: NodeComponentType = {
   help: helpList.join('\n'),
 
   // config: defineConfig,
-  outputs: [RUNNER_ORIGIN_OUTPUT],
+  // outputs: [RUNNER_ORIGIN_OUTPUT],
 };

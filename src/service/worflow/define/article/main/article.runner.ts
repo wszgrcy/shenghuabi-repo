@@ -1,14 +1,14 @@
-import { inject } from 'static-injector';
-
 import { NodeRunnerBase } from '@shenghuabi/workflow';
-import { WorkspaceService } from '../../../../workspace.service';
-
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { ChatContextType } from '../../../../../share';
 import { minChunkOverlap, separators } from '../../../../vector-query/const';
 import { chunk } from 'lodash-es';
 import { WorkflowExtraMetadata } from '@shenghuabi/workflow';
 import { ARTICLE_NODE_DEFINE } from '../article.define';
+import fs from 'fs/promises';
+import { path } from '@cyia/vfs2';
+import { WorkspaceDirToken } from '../../const';
+import { inject } from 'static-injector';
 
 export interface ArticleChunk {
   content: string;
@@ -17,14 +17,18 @@ export interface ArticleChunk {
     filePath: string[];
   };
 }
+// 选择使用绝对路径
 export class ArticleRunner extends NodeRunnerBase<typeof ARTICLE_NODE_DEFINE> {
   /** 读取当前的文章 */
-  #vfs = inject(WorkspaceService).vfs;
+  // #vfs = inject(WorkspaceService).vfs;
+  #dir = inject(WorkspaceDirToken);
   override async run() {
     const list = this.inputs.value;
     const newList: { filePath: string; content: string }[] = [];
     for (const filePath of list) {
-      const content = await this.#vfs.readContent(filePath);
+      const content = await fs.readFile(path.resolve(this.#dir, filePath), {
+        encoding: 'utf-8',
+      });
       if (content) {
         newList.push({ filePath, content });
       }
@@ -36,7 +40,6 @@ export class ArticleRunner extends NodeRunnerBase<typeof ARTICLE_NODE_DEFINE> {
 
     const fileChunkList: ArticleChunk[] | ArticleChunk[][] = [];
     if (config.mode === 'chunk') {
-      config.chunkSize ||= 1000;
       for (const fileList of fileGroup) {
         const textSplitter = new RecursiveCharacterTextSplitter({
           chunkSize: config.chunkSize,
@@ -88,8 +91,12 @@ export class ArticleRunner extends NodeRunnerBase<typeof ARTICLE_NODE_DEFINE> {
 
     // 没有切片的是一维数组，有切片的是二位
     // fixme 可以改reduce优化下
-    return async (outputName: string) => {
-      if (outputName === 'flat') {
+    return async (id: string) => {
+      if (id === 'tool' || !id) {
+        const flatList = fileChunkList.flat();
+        return flatList.map((item) => flatList.map((item) => item.content));
+      }
+      if (id === 'flat') {
         const flatList = fileChunkList.flat();
         return flatList.reduce(
           (obj, item) => {
@@ -110,7 +117,7 @@ export class ArticleRunner extends NodeRunnerBase<typeof ARTICLE_NODE_DEFINE> {
             extra: WorkflowExtraMetadata[];
           },
         );
-      } else if (outputName === 'first') {
+      } else if (id === 'first') {
         const item = fileChunkList.flat()[0];
         return {
           value: item.content,

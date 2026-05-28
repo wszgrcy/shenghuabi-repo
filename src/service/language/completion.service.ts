@@ -19,6 +19,7 @@ import {
   WorkflowExecService,
   ResolvedWorkflow,
   ModelOptionsToken,
+  SingleNodeConfig,
 } from '@shenghuabi/workflow';
 import { WorkflowSelectService } from '@shenghuabi/workflow';
 import { filter, Subject, Subscription, take } from 'rxjs';
@@ -40,6 +41,9 @@ import { convertVSCodeMessagesToOpenAI } from './vscodeToOpenAIConverter';
 import { EventEmitter } from 'vscode';
 import { OpenAI } from 'openai';
 import { NodeMainObj, SingleNodeRunnerService } from '@shenghuabi/workflow';
+import { KnowledgeConfigService } from '../knowledge/knowledge-config.service';
+import { ArticleMainConfig } from '../worflow/define/index.main';
+import { WorkspaceDirToken } from '../worflow/define/const';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -73,6 +77,8 @@ export class CompletionService extends RootStaticInjectOptions {
   listSelect = new Subject<{ filePath: string; value: string }>();
   #selectSubscriptionMap = new Map<string, Subscription>();
   #injector = inject(Injector);
+  #knowledgeConfig = inject(KnowledgeConfigService);
+
   init() {
     vscode.languages.registerInlineCompletionItemProvider(Hanyu, {
       provideInlineCompletionItems: async (doc, pos, context, token) => {
@@ -88,7 +94,8 @@ export class CompletionService extends RootStaticInjectOptions {
       // ChatMainConfig,
       // CategoryMainConfig,
       NodeMainObj.TextMainConfig,
-    ]) {
+      ArticleMainConfig,
+    ] as SingleNodeConfig<any>[]) {
       vscode.lm.registerTool(item.type, {
         invoke: async (options) => {
           const injector = createInjector({
@@ -97,15 +104,21 @@ export class CompletionService extends RootStaticInjectOptions {
           });
           const result = await injector
             .get(SingleNodeRunnerService)
-            .run(item, options.input as any, { outputId: 'tool' });
+            .run(item, options.input as any, {
+              outputId: 'tool',
+            });
           if (typeof result === 'string') {
             return new vscode.LanguageModelToolResult([
               new vscode.LanguageModelTextPart(result),
             ]);
           } else if (typeof result === 'object') {
             return new vscode.LanguageModelToolResult([
-              vscode.LanguageModelDataPart.json(result),
+              new vscode.LanguageModelTextPart(JSON.stringify(result)),
             ]);
+            // todo 有问题,不支持传入
+            // return new vscode.LanguageModelToolResult([
+            //   vscode.LanguageModelDataPart.json(result),
+            // ]);
           }
           return;
         },
@@ -144,6 +157,12 @@ export class CompletionService extends RootStaticInjectOptions {
           token,
         ) => {
           const result = convertVSCodeMessagesToOpenAI(message);
+          let list = await this.#knowledgeConfig.getOriginConfigList();
+          let data = list.map((item) => {
+            return `\n- 类型: ${item.type} 名称: ${item.name}`;
+          });
+
+          result[0].content = `## 知识库\n${data.join('\n')}`;
           const model2 = ExtensionConfig.chatModelList()[0];
 
           const openai = new OpenAI({
@@ -208,7 +227,9 @@ export class CompletionService extends RootStaticInjectOptions {
             const deltaContent = item.choices[0].delta.content;
 
             if (typeof deltaContent === 'string') {
-              sendTool();
+              if (deltaContent) {
+                sendTool();
+              }
               progress.report(new vscode.LanguageModelTextPart(deltaContent));
             }
           }
