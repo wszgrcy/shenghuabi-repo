@@ -44,6 +44,7 @@ import { NodeMainObj, SingleNodeRunnerService } from '@shenghuabi/workflow';
 import { KnowledgeConfigService } from '../knowledge/knowledge-config.service';
 import { ArticleMainConfig } from '../worflow/define/index.main';
 import { WorkspaceDirToken } from '../worflow/define/const';
+import { ChatVlMainConfig } from '../worflow/define/chat-vl/main';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -94,7 +95,8 @@ export class CompletionService extends RootStaticInjectOptions {
       // ChatMainConfig,
       // CategoryMainConfig,
       NodeMainObj.TextMainConfig,
-      ArticleMainConfig,
+      // ArticleMainConfig,
+      ChatVlMainConfig
     ] as SingleNodeConfig<any>[]) {
       vscode.lm.registerTool(item.type, {
         invoke: async (options) => {
@@ -162,7 +164,7 @@ export class CompletionService extends RootStaticInjectOptions {
             return `\n- 类型: ${item.type} 名称: ${item.name}`;
           });
 
-          result[0].content = `## 知识库\n${data.join('\n')}`;
+          result[0].content = `\n## 知识库\n${data.join('\n')}`;
           const model2 = ExtensionConfig.chatModelList()[0];
 
           const openai = new OpenAI({

@@ -2,6 +2,7 @@ import { toJsonSchema } from '@valibot/to-json-schema';
 import { SingleNodeConfig } from '@shenghuabi/workflow';
 import * as v from 'valibot';
 // import { ArticleMainConfig } from '../../src/service/worflow/define/article/main/index';
+import { ChatVlMainConfig } from '../../src/service/worflow/define/chat-vl/main';
 import { NodeMainObj } from '@shenghuabi/workflow';
 export interface LanguageModelToolSchema {
   name: string;
@@ -22,6 +23,7 @@ export async function getNodeDefineToolList(): Promise<
     // CategoryMainConfig,
     NodeMainObj.TextMainConfig,
     // ArticleMainConfig,
+    ChatVlMainConfig
   ];
 
   return toolConfigs.map((item) => {

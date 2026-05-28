@@ -69,36 +69,7 @@ export class KnowledgeRunner extends NodeRunnerBase<
         }
       };
 
-      return {
-        value: result.map((item) => formatContent(item)),
-        extra: result.map((item) => {
-          return {
-            metadata:
-              config.source === 'dict'
-                ? {
-                    type: ChatContextType.knowledge,
-                    description: `${item.word}`,
-                    tooltip: `内容: ${item.chunk}`,
-                    reference: {
-                      type: 'dict',
-                      word: item.word,
-                      content: item.chunk,
-                    },
-                  }
-                : {
-                    type: ChatContextType.knowledge,
-                    description: `${item.knowledge}:${item.fileName}`,
-                    tooltip: `位置(行): ${item.loc.lines.from}-${item.loc.lines.to}\n内容: ${item.chunk}`,
-                    reference: {
-                      type: 'knowledge',
-                      fileName: item.fileName,
-                      loc: item.loc,
-                      knowledgeName: item.knowledge,
-                    },
-                  },
-          } as WorkflowExtraMetadata;
-        }),
-      };
+      return result.map((item) => formatContent(item));
     };
   }
 }

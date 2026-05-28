@@ -10,3 +10,4 @@ export const NODE_COMMON: NodeComponentType = {
   disableHead: false,
   // (injector) => MindCardNodeConfig.form(injector),
 };
+/** 改成插入 */

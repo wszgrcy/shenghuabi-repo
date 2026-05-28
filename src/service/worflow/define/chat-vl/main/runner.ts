@@ -18,6 +18,7 @@ import { vlMarkdownParser } from '@shenghuabi/knowledge/file-parser';
 import { path } from '@cyia/vfs2';
 import * as fs from 'fs/promises';
 import sharp from 'sharp';
+import { WorkspaceDirToken } from '../../const';
 
 export class ChatVlRunner extends NodeRunnerBase<typeof CHAT_VL_NODE_DEFINE> {
   #chatService = inject(ChatServiceToken);
@@ -25,8 +26,16 @@ export class ChatVlRunner extends NodeRunnerBase<typeof CHAT_VL_NODE_DEFINE> {
   #abort = inject(AbortSignalToken);
   #channel = inject(LogService).getToken('chat');
   chatParse = useChat();
+  #dir = inject(WorkspaceDirToken);
   override async run() {
-    const imageBuffer = this.inputs.image;
+    let imageBuffer;
+    if (typeof this.inputs.image === 'string') {
+      imageBuffer = await fs.readFile(
+        path.resolve(this.#dir, this.inputs.image),
+      );
+    } else {
+      imageBuffer = this.inputs.image;
+    }
     // const inputJsonSchema = this.inputParams.get(DEFAULT_CHAT_SCHEMA_KEY);
     const nodeResult = this.inputs;
     const config = nodeResult;
@@ -110,18 +119,10 @@ export class ChatVlRunner extends NodeRunnerBase<typeof CHAT_VL_NODE_DEFINE> {
     }
     return async (id: string) => {
       if (id === 'default') {
-        return {
-          value: streamData.value,
-          dataId: streamData.dataId,
-          extra: streamData.extra,
-        };
+        return streamData.value;
       }
 
-      return {
-        value: resultContent,
-        dataId: streamData.dataId,
-        extra: streamData.extra,
-      };
+      return resultContent;
     };
   }
 }

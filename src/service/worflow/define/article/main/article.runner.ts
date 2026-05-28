@@ -101,56 +101,28 @@ export class ArticleRunner extends NodeRunnerBase<typeof ARTICLE_NODE_DEFINE> {
         return flatList.reduce(
           (obj, item) => {
             obj.value.push(item.content);
-            obj.extra.push({
-              metadata: {
-                type: ChatContextType.article,
-                description: item.metadata.filePath.join(','),
-              },
-            });
+
             return obj;
           },
           {
             value: [],
-            extra: [],
           } as {
             value: string[];
-            extra: WorkflowExtraMetadata[];
           },
         );
       } else if (id === 'first') {
         const item = fileChunkList.flat()[0];
         return {
           value: item.content,
-          extra: {
-            metadata: {
-              type: ChatContextType.article,
-              description: item.metadata.filePath.join(','),
-            },
-          },
         };
       }
-      const metadataMap = (item: ArticleChunk) =>
-        ({
-          metadata: {
-            type: item.metadata.type,
-            description: item.metadata.filePath.join(','),
-          },
-        }) as WorkflowExtraMetadata;
 
-      return {
-        value: fileChunkList.map((item) => {
-          if (Array.isArray(item)) {
-            return item.map((item) => item.content);
-          }
-          return item.content;
-        }),
-        extra: fileChunkList.map((item) => {
-          if (Array.isArray(item)) {
-            return item.map(metadataMap);
-          }
-          return metadataMap(item);
-        }),
-      };
+      return fileChunkList.map((item) => {
+        if (Array.isArray(item)) {
+          return item.map((item) => item.content);
+        }
+        return item.content;
+      });
     };
   }
 }

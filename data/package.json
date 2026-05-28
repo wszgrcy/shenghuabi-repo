@@ -9229,6 +9229,89 @@
           ],
           "$schema": "http://json-schema.org/draft-07/schema#"
         }
+      },
+      {
+        "name": "chat-vl",
+        "tags": [
+          "shenghuabi",
+          "chat-vl"
+        ],
+        "toolReferenceName": "chat-vl",
+        "displayName": "chat-vl",
+        "modelDescription": "识别理解图片\n生成文本/markdown",
+        "canBeReferencedInPrompt": true,
+        "icon": "$(files)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "llm": {
+              "allOf": [
+                {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "title": "预定义模型配置"
+                        },
+                        "model": {
+                          "type": "string",
+                          "title": "模型"
+                        },
+                        "baseURL": {
+                          "type": "string",
+                          "title": "地址"
+                        }
+                      },
+                      "required": []
+                    }
+                  ],
+                  "title": "对话模型"
+                }
+              ]
+            },
+            "format": {
+              "enum": [
+                "markdown",
+                "plaintext"
+              ],
+              "type": "string",
+              "default": "markdown",
+              "title": "生成格式"
+            },
+            "value": {
+              "type": "array",
+              "items": {},
+              "default": [
+                {
+                  "role": "user",
+                  "content": [
+                    {
+                      "type": "text",
+                      "content": [
+                        [
+                          {
+                            "type": "text",
+                            "text": "识别图中文件"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "title": "提示词"
+            },
+            "image": {
+              "title": "图片文件路径"
+            }
+          },
+          "required": [
+            "image"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        }
       }
     ]
   },

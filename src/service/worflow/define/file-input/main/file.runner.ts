@@ -65,27 +65,15 @@ export class FileRunner extends NodeRunnerBase<typeof FILE_NODE_DEFINE> {
     //文件没有切片?
     return async (outputName: string) => {
       if (outputName === 'first') {
-        return {
-          value: newList[0][0],
-          extra: extraList[0][0],
-        };
+        return newList[0][0];
       } else if (outputName === 'flat') {
-        return {
-          value: newList.flat(),
-          extra: extraList.flat(),
-        };
+        return newList.flat();
       }
 
       if (newList.length > 1) {
-        return {
-          value: newList,
-          extra: extraList,
-        };
+        return newList;
       } else {
-        return {
-          value: newList[0][0],
-          extra: extraList[0][0],
-        };
+        return newList[0][0];
       }
     };
   }

@@ -7,6 +7,6 @@ export const NODE_COMMON: NodeComponentType = {
   icon: { fontIcon: 'chat' },
   disableHead: false,
   color: 'accent',
-  help: [].join('\n'),
+  help: ['识别理解图片','生成文本/markdown'].join('\n'),
   // config: defineConfig,
 };
