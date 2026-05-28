@@ -12,9 +12,11 @@ import {
 import { WebViewMessageService } from './trpc';
 import { WebviewMapService } from './webview/webview.map';
 import {
-  DocumentVectorServiceTokenToken,
+  CustomKnowledgeManagerServiceToken,
+  DocumentVectorServiceToken,
   DynamicInjectToken,
   ExtensionContext,
+  Rag2ClassToken,
 } from './token';
 import { HanyuService } from './service/language';
 import { CommandService } from './service/command.service';
@@ -129,6 +131,7 @@ import { EditorWorkflowService } from './service/editor-workflow.service';
 import * as InlineDefine from './service/worflow/define/index.main';
 import { WorkspaceDirToken } from './service/worflow/define/const';
 import { DocumentVectorService } from './service/vector-query/document-vector.service';
+import { Rag2Class } from './service/ai/rag/rag2.service';
 
 // todo 需要判断环境使用
 v.setGlobalConfig({ lang: 'zh-CN' });
@@ -397,6 +400,10 @@ export async function activate(context: vscode.ExtensionContext) {
           return createInjector({
             providers: [
               CustomKnowledgeManagerService,
+              {
+                provide: CustomKnowledgeManagerServiceToken,
+                useExisting: CustomKnowledgeManagerService,
+              },
               FileParserService,
               {
                 provide: FileParserToken,
@@ -415,8 +422,12 @@ export async function activate(context: vscode.ExtensionContext) {
         }),
       },
       {
-        provide: DocumentVectorServiceTokenToken,
+        provide: DocumentVectorServiceToken,
         useExisting: DocumentVectorService,
+      },
+      {
+        provide: Rag2ClassToken,
+        useExisting: Rag2Class,
       },
     ],
   });

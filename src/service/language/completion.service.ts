@@ -152,9 +152,9 @@ export class CompletionService extends RootStaticInjectOptions {
           const result = convertVSCodeMessagesToOpenAI(message);
           const list = await this.#knowledgeConfig.getOriginConfigList();
           const data = list.map((item) => {
-            return `\n- 类型: ${item.type} 名称: ${item.name}`;
+            return `\n- 类型: ${item.graphIndex ? 'graph-' + item.type : item.type} 名称: ${item.name}`;
           });
-          result[0].content = `\n## 当前存在知识库\n${data.join('\n')}`;
+          result[0].content = `\n## 现有知识库\n${data.join('\n')}`;
           const model2 = ExtensionConfig.chatModelList()[0];
 
           const openai = new OpenAI({

@@ -4,14 +4,12 @@ import { NodeRunnerBase, serializeLexicalTextarea } from '@shenghuabi/workflow';
 
 import { AbortSignalToken } from '@shenghuabi/workflow';
 import { RAG_NODE_DEFINE } from '../rag.node.define';
-import { Rag2Class } from '../../../../ai/rag/rag2.service';
-import { CustomKnowledgeManagerService } from '../../../../knowledge/custom-knowledge.manager.service';
-import { dynamicInject } from '../../../../../token';
+import { CustomKnowledgeManagerServiceToken, dynamicInject, Rag2ClassToken } from '../../../../../token';
 
 export class RagRunner extends NodeRunnerBase<typeof RAG_NODE_DEFINE> {
   #abort = inject(AbortSignalToken);
-  #rag2 = inject(Rag2Class);
-  #manager$$ = dynamicInject(CustomKnowledgeManagerService);
+  #rag2 = inject(Rag2ClassToken);
+  #manager$$ = dynamicInject(CustomKnowledgeManagerServiceToken);
   override async run() {
     const config = this.inputs;
     const searchContent = serializeLexicalTextarea(this.inputs.searchContent, {

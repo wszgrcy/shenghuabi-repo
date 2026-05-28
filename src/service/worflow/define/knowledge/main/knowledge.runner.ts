@@ -3,12 +3,12 @@ import { serializeLexicalTextarea } from '@shenghuabi/workflow';
 import { NodeRunnerBase } from '@shenghuabi/workflow';
 
 import { KNOWLEDGE_NODE_DEFINE } from '../knowledge.node.define';
-import { DocumentVectorServiceTokenToken } from '../../../../../token';
+import { DocumentVectorServiceToken } from '../../../../../token';
 
 export class KnowledgeRunner extends NodeRunnerBase<
   typeof KNOWLEDGE_NODE_DEFINE
 > {
-  #docVector = inject(DocumentVectorServiceTokenToken);
+  #docVector = inject(DocumentVectorServiceToken);
   override async run() {
     const config = this.inputs;
 
