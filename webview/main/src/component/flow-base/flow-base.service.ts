@@ -263,17 +263,21 @@ export class FlowBseService<NODE extends Node> {
       replace: true,
     });
   }
-  /** 更新节点的data，增量更新  */
-  patchDataOne(id: string, data: NODE['data'] | Record<string, any>) {
-    this.instance()!.updateNodeData(id, (oldNode) => {
-      return { ...(oldNode.data as any), ...data };
-    });
+  /** 更新节点的data，增量更新 */
+  patchDataOne(
+    id: string,
+    updater: (oldData: NODE['data']) => NODE['data'] | Record<string, any>,
+  ) {
+    this.instance()!.updateNodeData(id, updater);
   }
-  patchDataConfigOne(id: string, data: NODE['data'] | Record<string, any>) {
+  patchDataConfigOne(
+    id: string,
+    updater: (oldConfig: Record<string, any>) => Record<string, any>,
+  ) {
     this.instance()!.updateNodeData(id, (oldNode) => {
       return {
         ...oldNode.data,
-        config: { ...(oldNode.data?.['config'] as any), ...data },
+        config: updater(oldNode.data?.['config'] as any),
       };
     });
   }

@@ -35,6 +35,9 @@ export class NodeHeadComponent {
   readonly obj = this.#service.fullNodeObject$$();
 
   valueChange(value: string) {
-    this.#service.patchDataOne(this.props().id, { title: value });
+    this.#service.patchDataOne(this.props().id, (old) => ({
+      ...old,
+      title: value,
+    }));
   }
 }

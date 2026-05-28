@@ -22,7 +22,7 @@ import {
   toObservable,
 } from '@piying/view-angular-core';
 
-import { InputInvalidItem, InputRefItem } from '@bridge/share';
+import { deepClone, InputInvalidItem, InputRefItem } from '@bridge/share';
 import { CreateSchemaHandle } from './schema-handle';
 import '@valibot/i18n/zh-CN';
 import { unset } from 'es-toolkit/compat';
@@ -82,10 +82,11 @@ export class FormlyCommonNodeComponent {
               } else {
                 this.errorList.set([]);
               }
-              this.#bridge.patchDataConfigOne(this.props().id, {
+              this.#bridge.patchDataConfigOne(this.props().id, (old) => ({
+                ...old,
                 value,
                 invalidList,
-              });
+              }));
             });
         },
       }),
@@ -115,12 +116,15 @@ export class FormlyCommonNodeComponent {
     context: {
       ...this.context,
       setOutputHandle: (index: number, list: any[]) => {
-        const data = this.props().data;
-        data.handle ??= { output: [] };
-        data.handle.output ??= [];
-        data.handle!.output[index] ??= [];
-        data.handle!.output[index] ??= list;
-        this.#bridge.patchDataOne(this.props().id, { handle: data.handle });
+        this.#bridge.patchDataOne(this.props().id, (old) => {
+          const data = old;
+          let handle = deepClone(data.handle ?? { output: [] });
+          handle!.output[index] = list;
+          return {
+            ...old,
+            handle: handle,
+          };
+        });
       },
       setContextList: (key: any[], value: any) => {
         const config = this.props().data.config ?? {};
@@ -152,7 +156,10 @@ export class FormlyCommonNodeComponent {
         });
       });
       untracked(() => {
-        this.#service.patchDataConfigOne(id$$(), { refList });
+        this.#service.patchDataConfigOne(id$$(), (old) => ({
+          ...old,
+          refList,
+        }));
       });
     });
   }

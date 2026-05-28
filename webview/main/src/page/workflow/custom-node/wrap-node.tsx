@@ -123,9 +123,10 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
   }, [displayOutput, outputList]);
   const selectedLength = useStore(selector);
   const excludeFn = useCallback(() => {
-    props.bridge.patchDataOne(props.props.id, {
+    props.bridge.patchDataOne(props.props.id, (old) => ({
+      ...old,
       excludeUsage: !excludeUsage,
-    });
+    }));
   }, [excludeUsage]);
 
   // 切换出口
@@ -152,9 +153,10 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
               options={options}
               value={props.props.data.outputHandleId}
               onChange={(value) => {
-                props.bridge.patchDataOne(props.props.id, {
+                props.bridge.patchDataOne(props.props.id, (old) => ({
+                  ...old,
                   outputName: value,
-                });
+                }));
               }}
             />
           ) : null}

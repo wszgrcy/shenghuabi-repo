@@ -18,6 +18,8 @@ export function defaultConfigMerge(
 
   if (outputs) {
     handle.output.push(...deepClone(outputs));
+  } else {
+    handle.output.push([RUNNER_ORIGIN_OUTPUT]);
   }
   return defaultsDeep(
     Object.keys(handle).length ? { data: { handle } } : {},

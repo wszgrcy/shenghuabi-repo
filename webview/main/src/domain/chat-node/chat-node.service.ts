@@ -10,6 +10,14 @@ import { deepEqual } from 'fast-equals';
 import { IterationNodeDefine } from '../../page/workflow/custom-node/iteration-node';
 import { IterationStartNodeDefine } from '../../page/workflow/custom-node/iteration-start-node';
 import { WebviewNodeMap } from '@shenghuabi/workflow/webview';
+
+const EntryObj = {
+  'workflow-parser': [
+    { label: '切片', name: 'chunk', id: 'chunk' },
+    { label: '文件名', name: 'fileName', id: 'fileName' },
+    { label: '实体类型列表', name: 'entityTypeList', id: 'entityTypeList' },
+  ],
+};
 @Injectable()
 export class ChatNodeService {
   #chatTemplate = inject(ChatTemplateService);
@@ -121,11 +129,14 @@ export class ChatNodeService {
     getUsageType: async () => {
       // todo 类型,应该是编辑器部分场景
       // tts,内联编辑器,文本就错
-      return [{ label: 'default', value: 'default' }];
+      return [
+        { label: 'default', value: 'default' },
+        { label: 'workflow-parser', value: 'workflow-parser' },
+      ];
     },
     getUsageOutputs: async (value: any) => {
-      console.log(value);
-      return [{ id: 'default2', label: 'default2' }];
+      console.log('getUsageOutputs',value);
+      return (EntryObj as any)[value]??[];
     },
     editorInputChange: async (value: boolean) => {
       console.log('xxxx', value);
