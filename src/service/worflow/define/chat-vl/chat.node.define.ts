@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 
-import { actions, setComponent } from '@piying/view-angular-core';
+import { actions, asControl, setComponent } from '@piying/view-angular-core';
 
 import { llmModelConfig } from '@shenghuabi/workflow/share';
 import { RefDefine } from '../../preset/ref-define';
@@ -23,11 +23,16 @@ export const CHAT_VL_NODE_DEFINE = v.pipe(
           ],
         },
       ]),
+      asControl(),
       setComponent('prompt-list'),
       v.title('提示词'),
     ),
     // todo 图片怎么获得?是buffer还是base64
-    image: v.pipe(RefDefine, v.title('图片文件路径')),
+    image: v.pipe(
+      RefDefine,
+      v.title('图片文件/路径'),
+      actions.wrappers.patch(['label', 'use-ref']),
+    ),
   }),
   actions.wrappers.patch([
     { type: 'div', attributes: { class: 'grid auto-rows-auto gap-2' } },

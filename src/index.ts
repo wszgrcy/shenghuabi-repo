@@ -203,8 +203,9 @@ export async function activate(context: vscode.ExtensionContext) {
               { showError: true },
             );
             return {
-              content: result.value,
-              parseTo: result.extra?.data.format,
+              content: result,
+              // todo 运行的时候,允许设置最后的outputId?
+              parseTo: 'markdown',
             };
           };
         },

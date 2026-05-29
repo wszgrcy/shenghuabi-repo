@@ -207,7 +207,9 @@
     "valibot": "1.4.0",
     "yaml": "2.8.1",
     "zod": "^3.24.1",
-    "zone.js": "~0.15.1"
+    "zone.js": "~0.15.1",
+    "@napi-rs/canvas": "^0.1.87",
+    "pdfjs-dist": "~5.4.449"
   },
   "overrides": {
     "electron": {

@@ -17,6 +17,11 @@ const EntryObj = {
     { label: '文件名', name: 'fileName', id: 'fileName' },
     { label: '实体类型列表', name: 'entityTypeList', id: 'entityTypeList' },
   ],
+  'image-parser': [
+    { label: '文件路径', name: 'filePath', id: 'filePath' },
+    { label: '前缀', name: 'prefix', id: 'prefix' },
+    { label: '图片(buffer)', name: 'image', id: 'image' },
+  ],
 };
 @Injectable()
 export class ChatNodeService {
@@ -131,6 +136,7 @@ export class ChatNodeService {
       return [
         { label: 'default', value: 'default' },
         { label: 'workflow-parser', value: 'workflow-parser' },
+        { label: 'image-parser', value: 'image-parser' },
       ];
     },
     getUsageOutputs: async (value: any) => {
