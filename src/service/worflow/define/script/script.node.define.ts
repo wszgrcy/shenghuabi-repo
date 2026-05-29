@@ -5,20 +5,14 @@ import {
   valueChange,
   setComponent,
 } from '@piying/view-angular-core';
+import { RefDefine } from '../../preset/ref-define';
 export const SCRIPT_NODE_DEFINE = v.pipe(
-  v.looseObject({
+  v.object({
     input: v.pipe(
-      v.optional(v.array(v.string()), []),
-      asControl(),
+      v.optional(RefDefine),
       v.title('输入变量'),
       v.description('指定脚本的输入变量'),
-      setComponent('chip-input-list'),
-      actions.inputs.set({
-        editable: true,
-        addOnBlur: true,
-        getCompletionList: undefined,
-      }),
-      actions.wrappers.set(['tooltip', 'label']),
+      actions.wrappers.set(['tooltip', 'label', 'use-ref']),
     ),
     output: v.pipe(
       v.optional(v.array(v.string()), []),
@@ -64,7 +58,5 @@ export const SCRIPT_NODE_DEFINE = v.pipe(
       }),
     ),
   }),
-  actions.wrappers.patch([
-    { type: 'div', attributes: { class: 'grid gap-2' } },
-  ]),
+  actions.class.top('grid gap-2'),
 );
