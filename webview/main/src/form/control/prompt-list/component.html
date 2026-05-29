@@ -2,7 +2,7 @@
   @for (item of value$(); track $index) {
     <div class="flex gap-2 items-center">
       <prompt-template
-        class="flex-1 overflow-hidden nodrag"
+        class="flex-1 overflow-auto nodrag max-h-80"
         [ngModel]="item"
         (ngModelChange)="promptChange($event, $index)"
         [isLast]="true"

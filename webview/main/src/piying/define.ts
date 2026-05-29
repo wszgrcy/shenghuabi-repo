@@ -46,7 +46,11 @@ export const safeDefine = typedComponent({
     },
     picklist: {
       type: PresetDefine.types.picklist.type,
-      actions: [...PresetDefine.types.picklist.actions, optionsMap],
+      actions: [
+        ...PresetDefine.types.picklist.actions,
+        optionsMap,
+        actions.class.bottom('appearance-none'),
+      ],
     },
     select: {
       ...PresetDefine.types.select,
