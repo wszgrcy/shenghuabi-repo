@@ -21,7 +21,7 @@ export class BaseHandleDirective {
   readonly props$$ = computed(() => {
     return {
       className:
-        'relative! w-full! h-auto! top-0! left-0! transform-none! rounded-none!  bg-transparent! pointer-events-auto!',
+        'h-full! top-0! left-0! right-0! bottom-0! transform-none! rounded-none!  bg-transparent!',
       type: 'target',
       position: Position.Left,
       id: this.#handleId$$(),

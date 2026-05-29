@@ -114,7 +114,7 @@ export class TextareaTemplateFCC extends BaseControl {
   onChange = (value: any) => {
     const list = simplifyEditorState(value);
     this.variableChange.emit(extractVariableItems(list));
-    this.valueAndTouchedChange(list);
+    this.valueAndTouchedChange(list, false);
   };
   override writeValue(obj: any) {
     super.writeValue(obj);

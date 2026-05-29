@@ -1,26 +1,26 @@
 <ng-template #templateRef let-attr="attributes" let-events="events">
-  <react-outlet
-    [component]="Handle"
-    [root]="false"
-    [props]="$any(props$$())"
-    #outlet
-    [addHandle]="outlet"
-  >
-    <div [attributes]="attr()" [events]="events()" #child class="relative">
-      @if (isUsed$$()) {
-        <div [class]="'badge badge-success'">
-          <div class="flex-1">使用引用</div>
-          <!-- todo 需要更详细提示 -->
-          <button
-            class="btn btn-xs btn-circle btn-ghost btn-error"
-            (click)="unLink()"
-          >
-            <span class="material-icons">close</span>
-          </button>
-        </div>
-      } @else {
-        <div class="badge badge-warning">等待连接</div>
-      }
-    </div>
-  </react-outlet>
+  <div [attributes]="attr()" [events]="events()" #child class="relative">
+    <react-outlet
+      [component]="Handle"
+      [root]="false"
+      [props]="$any(props$$())"
+      #outlet
+      [addHandle]="outlet"
+    >
+    </react-outlet>
+    @if (isUsed$$()) {
+      <div [class]="'badge badge-success'">
+        <div class="flex-1">使用引用</div>
+        <!-- todo 需要更详细提示 -->
+        <button
+          class="btn btn-xs btn-circle btn-ghost btn-error"
+          (click)="unLink()"
+        >
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+    } @else {
+      <div class="badge badge-warning">等待连接</div>
+    }
+  </div>
 </ng-template>
