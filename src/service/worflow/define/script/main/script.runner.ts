@@ -31,7 +31,7 @@ export class ScriptRunner extends NodeRunnerBase<typeof SCRIPT_NODE_DEFINE> {
     });
     // fs path 变量
     const result = await runInNewContext(code, {
-      parameters: params,
+      parameters: params.input,
       util: {
         /** 可以读取工作区 */
         fs: this.#workspace.vfs,

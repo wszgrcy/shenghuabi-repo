@@ -15,7 +15,7 @@ export const SCRIPT_NODE_DEFINE = v.pipe(
       actions.wrappers.set(['tooltip', 'label', 'use-ref']),
     ),
     output: v.pipe(
-      v.optional(v.array(v.string()), []),
+      v.optional(v.array(v.string()), ['default']),
       asControl(),
       v.title('输出变量'),
       v.description('指定脚本的出口'),

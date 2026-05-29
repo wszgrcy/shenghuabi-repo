@@ -157,7 +157,6 @@ export const WorkflowRouter = t.router({
       v.object({
         title: v.string(),
         content: v.string(),
-        input: v.optional(v.array(v.string())),
         output: v.optional(v.array(v.string())),
       }),
     )

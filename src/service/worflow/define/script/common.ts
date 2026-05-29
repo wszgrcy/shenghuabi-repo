@@ -16,4 +16,5 @@ export const NODE_COMMON: NodeComponentType = {
   help: helpList.join('\n'),
   // config: defineConfig,
   priority: -97,
+  outputs: [[{ id: 'default', label: 'default', name: 'default' }]],
 };

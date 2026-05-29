@@ -104,10 +104,9 @@ export class ChatNodeService {
       return new Promise((resolve) => {
         this.#client.workflow.openTsEditor.subscribe(
           {
-            content: form.data.value ?? '',
-            title: form.data.title!,
-            input: (form.data as any).input,
-            output: (form.data as any).output,
+            content: form.value ?? '',
+            title: '代码节点编辑',
+            output: (form as any).output,
           },
           {
             onData: (data) => {
@@ -135,8 +134,8 @@ export class ChatNodeService {
       ];
     },
     getUsageOutputs: async (value: any) => {
-      console.log('getUsageOutputs',value);
-      return (EntryObj as any)[value]??[];
+      console.log('getUsageOutputs', value);
+      return (EntryObj as any)[value] ?? [];
     },
     editorInputChange: async (value: boolean) => {
       console.log('xxxx', value);
