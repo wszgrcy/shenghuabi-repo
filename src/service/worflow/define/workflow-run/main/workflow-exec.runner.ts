@@ -25,7 +25,7 @@ export class WorkflowExecRunner extends NodeRunnerBase<
       this.emitter.getObserver(),
       this.#abort,
     );
-    return async (outputName) => {
+    return async (id) => {
       return result;
     };
   }

@@ -20,7 +20,7 @@ export interface Util {
 export type NodeJsRequire = NodeRequire;
 /** 节点返回类型 */
 export type NodeReturn = (
-  /** 根据不同的出口返回不同格式的数据 */ outputName: string,
+  /** 根据不同的出口返回不同格式的数据 */ id: string,
 ) => Promise<{
   /** 出口数据 */
   value: any;

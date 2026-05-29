@@ -1,7 +1,7 @@
 import { WebviewNodeConfig } from '@shenghuabi/workflow/share';
 import { NODE_COMMON } from '../common';
 import { SCRIPT_NODE_DEFINE } from '../script.node.define';
-const DEFAULT_CONTENT = `\n  return async (outputName) => {
+const DEFAULT_CONTENT = `\n  return async (id) => {
     return value
   }\n`;
 export const ScriptWebviewConfig: WebviewNodeConfig = {

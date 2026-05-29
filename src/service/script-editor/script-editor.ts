@@ -113,7 +113,7 @@ export class ScriptEditorFileSystem
     const data$ = new BehaviorSubject(
       Buffer.from(`import { Util, NodeJsRequire, ChatJsonSchema } from "${dtsDir}";
 type NodeReturn = (
-   outputName: ${output && output.length ? output.map((a) => "'" + a + "'").join('|') + '|undefined' : 'undefined'},
+   id: ${output && output.length ? output.map((a) => "'" + a + "'").join('|') + '|undefined' : 'undefined'},
 ) => Promise<any>
 async function main(
   parameters: any,

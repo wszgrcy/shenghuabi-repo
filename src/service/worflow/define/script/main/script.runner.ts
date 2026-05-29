@@ -43,8 +43,8 @@ export class ScriptRunner extends NodeRunnerBase<typeof SCRIPT_NODE_DEFINE> {
       require,
       console: this.#log,
     });
-    return async (outputName: string) => {
-      return result(outputName);
+    return async (id: string) => {
+      return result(id);
     };
   }
   #log = {

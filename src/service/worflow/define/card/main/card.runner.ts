@@ -59,7 +59,7 @@ export class CardRunner extends NodeRunnerBase<typeof CARD_NODE_DEFINE> {
       });
     }
 
-    return async (outputName: string) => {
+    return async (id: string) => {
       return {
         value: newList,
         extra: extraList,

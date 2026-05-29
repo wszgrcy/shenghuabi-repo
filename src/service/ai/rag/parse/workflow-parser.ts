@@ -52,7 +52,7 @@ export class RagWorkflowParser {
         }
       }
       try {
-        return v.parse(EntityExtraDefine, result!.value);
+        return v.parse(EntityExtraDefine, result);
       } catch (error) {
         if (times - index === 1) {
           captureException(error);

@@ -63,10 +63,10 @@ export class FileRunner extends NodeRunnerBase<typeof FILE_NODE_DEFINE> {
       }
     }
     //文件没有切片?
-    return async (outputName: string) => {
-      if (outputName === 'first') {
+    return async (id: string) => {
+      if (id === 'first') {
         return newList[0][0];
-      } else if (outputName === 'flat') {
+      } else if (id === 'flat') {
         return newList.flat();
       }
 

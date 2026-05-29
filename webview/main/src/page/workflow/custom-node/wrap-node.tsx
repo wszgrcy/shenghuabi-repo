@@ -112,7 +112,7 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
           <Tooltip title={'选择出口:' + item.label}>
             <div
               style={{ color: outputColorInterpolate(i / outputList.length) }}
-              className="material-icons toolbar-icon w-[24px] h-[24px]"
+              className="material-icons toolbar-icon  text-[16px]!"
             >
               output
             </div>
@@ -155,7 +155,7 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
               onChange={(value) => {
                 props.bridge.patchDataOne(props.props.id, (old) => ({
                   ...old.data,
-                  outputName: value,
+                  outputHandleId: value,
                 }));
               }}
             />

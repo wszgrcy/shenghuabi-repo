@@ -17,7 +17,7 @@ export class TextToAuduioRunner extends NodeRunnerBase<
 
   override async run() {
     const nodeResult = this.getParsedNode(TEXT_TO_AUDIO_DEFINE);
-    return async (outputName: string) => {
+    return async (id: string) => {
       const outputPath = path.join(
         this.#workspace.dir[FolderName.pythonAddon](),
         'chunk',
@@ -35,7 +35,7 @@ export class TextToAuduioRunner extends NodeRunnerBase<
       //   { backend: ExtensionConfig.tts.backend() as any },
       //   ExtensionConfig.indexTTS(),
       // );
-      switch (outputName) {
+      switch (id) {
         default:
           return {
             value: outputPath,

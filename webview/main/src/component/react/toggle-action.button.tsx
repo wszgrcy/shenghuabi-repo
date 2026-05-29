@@ -10,12 +10,12 @@ export function ToggleActionButton(props: {
     <Tooltip title={props.title}>
       <div className="relative flex">
         {props.disabledStatus ? (
-          <div className="material-icons cursor-pointer toolbar-icon  w-[24px] h-[24px] absolute top-0 right-0 bottom-0 left-0 z-[-1]">
+          <div className="material-icons cursor-pointer toolbar-icon text-[16px]! absolute top-0 right-0 bottom-0 left-0 z-[-1]">
             do_not_disturb
           </div>
         ) : null}
         <div
-          className="material-icons cursor-pointer toolbar-icon  w-[24px] h-[24px]"
+          className="material-icons cursor-pointer toolbar-icon text-[16px]!"
           onClick={props.onClick}
         >
           {props.icon}
