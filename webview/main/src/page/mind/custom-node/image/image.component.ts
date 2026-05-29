@@ -67,7 +67,7 @@ export class ImageNodeComponent extends NodeBase<DrawDataType> {
       this.dataChange.emit(data);
     } else {
       this.bridge.patchDataOne(this.props().id, (oldData) => ({
-        ...oldData,
+        ...oldData.data,
         ...data,
       }));
     }

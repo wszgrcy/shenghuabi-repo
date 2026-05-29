@@ -124,7 +124,7 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
   const selectedLength = useStore(selector);
   const excludeFn = useCallback(() => {
     props.bridge.patchDataOne(props.props.id, (old) => ({
-      ...old,
+      ...old.data,
       excludeUsage: !excludeUsage,
     }));
   }, [excludeUsage]);
@@ -154,7 +154,7 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
               value={props.props.data.outputHandleId}
               onChange={(value) => {
                 props.bridge.patchDataOne(props.props.id, (old) => ({
-                  ...old,
+                  ...old.data,
                   outputName: value,
                 }));
               }}

@@ -36,7 +36,7 @@ export class NodeHeadComponent {
 
   valueChange(value: string) {
     this.#service.patchDataOne(this.props().id, (old) => ({
-      ...old,
+      ...old.data,
       title: value,
     }));
   }

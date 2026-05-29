@@ -266,7 +266,7 @@ export class FlowBseService<NODE extends Node> {
   /** 更新节点的data，增量更新 */
   patchDataOne(
     id: string,
-    updater: (oldData: NODE['data']) => NODE['data'] | Record<string, any>,
+    updater: (oldData: NODE) => NODE['data'] | Record<string, any>,
   ) {
     this.instance()!.updateNodeData(id, updater);
   }

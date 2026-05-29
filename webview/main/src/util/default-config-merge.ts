@@ -3,6 +3,7 @@ import { defaultsDeep } from 'es-toolkit/compat';
 
 import {
   deepClone,
+  HandleNode,
   RUNNER_ORIGIN_OUTPUT,
   WebviewNodeConfig,
 } from '@bridge/share';
@@ -12,18 +13,17 @@ export function defaultConfigMerge(
   schema: v.BaseSchema<any, any, any> | undefined,
 ) {
   const { outputs, label, nodeMode, initData } = config;
-  const handle: { input?: any[]; output: any[] } = {
-    output: nodeMode === 'condition' ? [] : [RUNNER_ORIGIN_OUTPUT],
+  const handle: { output: HandleNode[][] } = {
+    output: [],
   };
-
   if (outputs) {
     handle.output.push(...deepClone(outputs));
   } else {
-    handle.output.push([RUNNER_ORIGIN_OUTPUT]);
+    handle.output.push(deepClone(RUNNER_ORIGIN_OUTPUT));
   }
   return defaultsDeep(
     Object.keys(handle).length ? { data: { handle } } : {},
-    schema ? getDefaults(schema) : {},
+    { data: { config: { value: schema ? getDefaults(schema) : {} } } },
     initData?.(),
     label ? { data: { title: label } } : {},
   );
