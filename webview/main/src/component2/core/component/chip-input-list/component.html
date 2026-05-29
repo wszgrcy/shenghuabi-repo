@@ -5,6 +5,7 @@
         [editable]="!!editable()"
         (edited)="changeItem(i, $event)"
         (removed)="prefixRemoveChange(i)"
+        class="my-0!"
       >
         {{ item }}
         @if (!disableDelete()) {

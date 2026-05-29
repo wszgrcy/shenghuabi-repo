@@ -29,6 +29,8 @@ import { unset } from 'es-toolkit/compat';
 import { forEachErrorSummary } from './error-handle';
 import { FieldGlobalConfig } from '../../define/field-global-config';
 import { skip } from 'rxjs';
+import { useEffect } from 'react';
+import { useUpdateNodeInternals } from '@xyflow/react';
 v.setGlobalConfig({ lang: 'zh-CN' });
 
 @Component({
@@ -41,6 +43,12 @@ v.setGlobalConfig({ lang: 'zh-CN' });
   providers: [NodeService],
 })
 export class FormlyCommonNodeComponent {
+  static runInReact(props: any, children: any, inited: any) {
+    const updateNode = useUpdateNodeInternals();
+    useEffect(() => {
+      updateNode(props.inputs.props.id);
+    }, [children, props.inputs.props.id]);
+  }
   define = input<v.BaseSchema<any, any, any>>();
   props = input.required<CustomNode>();
   #service = inject(BridgeService);

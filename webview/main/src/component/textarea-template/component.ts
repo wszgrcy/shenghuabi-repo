@@ -74,6 +74,9 @@ export class TextareaTemplateFCC extends BaseControl {
   #bridge = inject(BridgeToken, { optional: true });
   #nodeService = inject(NodeService, { optional: true });
   readonly #id$$ = computed(() => this.#nodeService?.props$().id);
+  invalidList$$ = computed(() => {
+    return this.#nodeService?.props$().data.config?.refList ?? [];
+  });
   #linkedEdge$$ = computed(() => {
     const id = this.#id$$();
     if (!id) {
@@ -87,8 +90,16 @@ export class TextareaTemplateFCC extends BaseControl {
     for (const edge of this.#linkedEdge$$() ?? []) {
       const node = this.#bridge?.nodesObj$()[edge.source];
       const list = flatFilterHandleList(node?.data.handle?.output);
+      let refList = this.invalidList$$();
       const sourceHandle = list.find((item) => item.id === edge.sourceHandle);
       if (!sourceHandle || sourceHandle?.type === 'connect') {
+        continue;
+      }
+      if (
+        refList.some(
+          (item) => item.value === node!.id && item.outlet === sourceHandle.id,
+        )
+      ) {
         continue;
       }
       const data = node!.data!;

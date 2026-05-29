@@ -46,7 +46,7 @@ export function wrapperToReact(
   },
 ) {
   /** ng componentRef signal */
-
+  let runInReact = (component as any).runInReact;
   const def = reflectComponentType(component)!;
   const fn = (
     props: { inputs: Record<string, any>; className?: string },
@@ -65,6 +65,7 @@ export function wrapperToReact(
       ComponentRef<ReactComponentWrapper> | undefined
     >(undefined);
     const [inited, setInited] = useState(false);
+    runInReact?.(props, children, inited);
     useEffect(() => {
       const componentRef = zone.run(() => {
         const componentRef = createComponent<ReactComponentWrapper>(component, {
@@ -122,7 +123,6 @@ export function wrapperToReact(
         componentRefV.current.injector.get<ElementRef<HTMLElement>>(ElementRef);
       elementRef.nativeElement.className = className;
     }, [componentRefV, className, inited]);
-
     return createElement(def.selector, { ref: elRef }, ...children);
   };
   const fnComponent = reactOptions?.forwardRef ? forwardRef(fn) : fn;

@@ -6,6 +6,7 @@ import {
   setComponent,
 } from '@piying/view-angular-core';
 import { RefDefine } from '../../preset/ref-define';
+import { HandleNode } from '@shenghuabi/workflow';
 export const SCRIPT_NODE_DEFINE = v.pipe(
   v.object({
     input: v.pipe(
@@ -31,7 +32,7 @@ export const SCRIPT_NODE_DEFINE = v.pipe(
           field.context.setOutputHandle(
             0,
             (value as any[]).map((item) => {
-              return { label: item, value: item };
+              return { label: item, name: item, id: item } as HandleNode;
             }),
           );
         });
