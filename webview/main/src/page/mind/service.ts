@@ -791,12 +791,6 @@ export class BridgeService extends FlowBseService<MindNode> {
           ),
         };
 
-      case 'chat':
-        return {
-          width: 350,
-          height: 400,
-          data: this.#parseDefaultNodeConfig(ChatDefaultDefine, defaultData),
-        };
       case 'image':
         return {
           data: this.#parseDefaultNodeConfig(ImageDefaultDefine, defaultData),
