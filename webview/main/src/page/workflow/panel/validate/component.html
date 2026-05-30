@@ -23,10 +23,9 @@
       </button>
     </div>
     <ai-chat
-      #chat
       class="flex-1 overflow-auto"
       [mode]="mode"
-      [config]="config$()"
+      [ngModel]="value$()"
       [stopSignal]="stopSignal()"
     ></ai-chat>
   </div>

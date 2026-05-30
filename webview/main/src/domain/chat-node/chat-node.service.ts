@@ -77,6 +77,7 @@ const EntryList = [
   // todo 补全
   {
     id: 'editor-completion',
+    label:'编辑器对话',
     list: [
       // 返回obj
       { label: '输入提示词', name: 'input', id: 'input' },

@@ -92,9 +92,9 @@ export type ChatValue = {
     list: any[];
     invalidValue?: any;
     contextValue?: WorkflowRunnerEnvironmentParams;
+    path: string;
   };
 };
-export type ChatConfig = { workflow?: { path: string } };
 const DefaultUserTemplate = [{ role: 'user', content: [] }];
 
 @Component({
@@ -125,7 +125,6 @@ export class ChatComponent extends BaseControl<ChatValue> {
   override value$ = signal<ChatValue>({});
   mode = input<ChatMode>(ChatMode.workflow);
   modelConfigName = input<string>();
-  config = input<ChatConfig>();
   stopSignal = input<{ clear: boolean }>();
   provider = inject(ChatService);
   readonly DefaultUserTemplate = DefaultUserTemplate;
@@ -167,6 +166,19 @@ export class ChatComponent extends BaseControl<ChatValue> {
   });
   override writeValue(obj: any) {
     super.writeValue(obj ?? {});
+    if (this.mode() === ChatMode.workflow && this.value$()?.workflow?.path) {
+      this.provider
+        .getWorkflowWithDefine(this.value$()!.workflow!)
+        .then((workflowData) => {
+          this.#workflowData.set(workflowData);
+          this.invalidConfigList$.set(
+            workflowData.resolved.invalidConfigList ?? [],
+          );
+          this.contextConfigList$.set(
+            workflowData.resolved.contextConfigList ?? [],
+          );
+        });
+    }
   }
   /** 使用普通对话历史,还是context/workflow返回的历史 */
   readonly #nextChatHistory$ = computed(() => {
@@ -191,23 +203,6 @@ export class ChatComponent extends BaseControl<ChatValue> {
         this.list$.set([]);
         this.chatResult$.set([]);
       }
-    }
-    if (
-      changes['config'] &&
-      this.mode() === ChatMode.workflow &&
-      this.config()?.workflow?.path
-    ) {
-      this.provider
-        .getWorkflowWithDefine(this.config()!.workflow!)
-        .then((workflowData) => {
-          this.#workflowData.set(workflowData);
-          this.invalidConfigList$.set(
-            workflowData.resolved.invalidConfigList ?? [],
-          );
-          this.contextConfigList$.set(
-            workflowData.resolved.contextConfigList ?? [],
-          );
-        });
     }
   }
 

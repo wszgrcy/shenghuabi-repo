@@ -16,11 +16,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   providers: [ChatService],
 })
 export default class AiChatPage {
-  comp = viewChild.required<ChatComponent>('aiChat');
   #client = inject(TrpcService).client;
   mode = signal<ChatMode>(ChatMode.default);
   modelConfigName = signal<string | undefined>(undefined);
-  config = signal<{ workflow?: { path?: string } }>({});
   title$ = signal('');
   value$ = signal<ChatValue>({});
   stopSignal = signal<{ clear: boolean } | undefined>(undefined);
@@ -47,8 +45,13 @@ export default class AiChatPage {
           .query(undefined)
           .then((value) => {
             if (value) {
-              this.config.update(() => {
-                return { workflow: { path: value } };
+              this.value$.update((data) => {
+                return {
+                  workflow: {
+                    ...data.workflow!,
+                    path: value,
+                  },
+                };
               });
               return true;
             }
@@ -59,7 +62,7 @@ export default class AiChatPage {
   ];
   menuTooltip$$ = computed(() => {
     return this.mode() === ChatMode.workflow
-      ? `\n工作流: ${this.config().workflow?.path || ''}`
+      ? `\n工作流: ${this.value$().workflow?.path || ''}`
       : '';
   });
   constructor() {
@@ -83,6 +86,9 @@ export default class AiChatPage {
         this.modelConfigName.set(result.item.modelConfigName);
         switch (this.mode()) {
           case ChatMode.workflow: {
+            this.value$.set({
+              workflow: result.item.workflow! as any,
+            });
             break;
           }
           case ChatMode.template: {
@@ -140,6 +146,10 @@ export default class AiChatPage {
             }),
           );
           obj['template'] = content;
+        } else if (this.mode() === ChatMode.workflow) {
+          obj['workflow'] = this.value$().workflow;
+        } else {
+          return;
         }
         this.#client.chat.savePromptTemplate.query({
           title: this.title$(),

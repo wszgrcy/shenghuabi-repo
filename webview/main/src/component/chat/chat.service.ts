@@ -55,7 +55,14 @@ export class ChatService {
       resolved: ResolvedWorkflowResult;
     }
   > {
-    return this.#client.workflow.getWithDefine.query(workflow!) as any;
+    let rawData = (await this.#client.workflow.getWithDefine.query(
+      workflow!,
+    )) as any;
+    let resolved = await this.#client.workflow.parseDefine.query(rawData);
+    return {
+      ...rawData,
+      resolved: resolved,
+    };
   }
   /** mind 中被重写了 */
   mergeInputParams(obj: any) {
