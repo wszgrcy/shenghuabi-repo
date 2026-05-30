@@ -34,12 +34,7 @@
             ></card-editor>
           }
           @case ('chat') {
-            <ai-chat-node
-              [props]="$any(item)"
-              (dataChange)="dataChanged($event!, $index)"
-              [inStore]="true"
-            >
-            </ai-chat-node>
+            <ai-chat-node> </ai-chat-node>
           }
 
           @case ('image') {
