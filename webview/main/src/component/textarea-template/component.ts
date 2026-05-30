@@ -90,7 +90,7 @@ export class TextareaTemplateFCC extends BaseControl {
     for (const edge of this.#linkedEdge$$() ?? []) {
       const node = this.#bridge?.nodesObj$()[edge.source];
       const list = flatFilterHandleList(node?.data.handle?.output);
-      let refList = this.invalidList$$();
+      const refList = this.invalidList$$();
       const sourceHandle = list.find((item) => item.id === edge.sourceHandle);
       if (!sourceHandle || sourceHandle?.type === 'connect') {
         continue;

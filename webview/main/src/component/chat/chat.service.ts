@@ -55,10 +55,10 @@ export class ChatService {
       resolved: ResolvedWorkflowResult;
     }
   > {
-    let rawData = (await this.#client.workflow.getWithDefine.query(
+    const rawData = (await this.#client.workflow.getWithDefine.query(
       workflow!,
     )) as any;
-    let resolved = await this.#client.workflow.parseDefine.query(rawData);
+    const resolved = await this.#client.workflow.parseDefine.query(rawData);
     return {
       ...rawData,
       resolved: resolved,

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ChatComponent, ChatValue } from '../../component/chat/component';
 import { TrpcService } from '@fe/trpc';
 import { ChatService } from '@fe/component/chat/chat.service';
@@ -92,7 +92,7 @@ export default class AiChatPage {
             break;
           }
           case ChatMode.template: {
-            let template = await this.#client.workflow.convertChat.query({
+            const template = await this.#client.workflow.convertChat.query({
               list: result.item.template ?? [],
             });
 
@@ -111,9 +111,9 @@ export default class AiChatPage {
     });
     this.#client.command.listen.subscribe('promptTemplateSave', {
       onData: async (listx) => {
-        let obj = {} as Record<string, any>;
+        const obj = {} as Record<string, any>;
         if (this.mode() === ChatMode.template) {
-          let content = await Promise.all(
+          const content = await Promise.all(
             this.value$().template!.template.map(async (item) => {
               return {
                 role: item.role,

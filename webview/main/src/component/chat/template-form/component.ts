@@ -184,7 +184,7 @@ export class PromptTemplateFCC implements ControlValueAccessor {
   }
   writeValue(obj: UserChatMessageType): void {
     if (obj) {
-      let image = obj.content.find((item) => item.type === 'image_url')
+      const image = obj.content.find((item) => item.type === 'image_url')
         ?.image_url.url[0][0] as any;
       const inputValue = {
         type: obj.role,

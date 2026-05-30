@@ -33,7 +33,8 @@
   .variable-label-missing {
     @apply badge-warning;
   }
-  .variable-label-default,.variable-label-editable  {
+  .variable-label-default,
+  .variable-label-editable {
     @apply badge-info;
   }
 }

@@ -7,10 +7,8 @@ import {
   inject,
   input,
   signal,
-  viewChild,
 } from '@angular/core';
 
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormGroup, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';

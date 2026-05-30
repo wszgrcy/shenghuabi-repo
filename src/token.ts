@@ -30,10 +30,11 @@ export const DynamicInjectToken = new InjectionToken<Signal<Injector>>(
 );
 export const DocumentVectorServiceToken =
   new InjectionToken<DocumentVectorService>('DocumentVectorServiceToken');
-export const Rag2ClassToken =
-  new InjectionToken<Rag2Class>('Rag2ClassToken');
+export const Rag2ClassToken = new InjectionToken<Rag2Class>('Rag2ClassToken');
 export const CustomKnowledgeManagerServiceToken =
-  new InjectionToken<CustomKnowledgeManagerService>('CustomKnowledgeManagerServiceToken');
+  new InjectionToken<CustomKnowledgeManagerService>(
+    'CustomKnowledgeManagerServiceToken',
+  );
 
 export function dynamicInject<T>(type: ProviderToken<T>) {
   const injector = inject(DynamicInjectToken);

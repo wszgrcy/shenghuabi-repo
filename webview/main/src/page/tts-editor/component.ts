@@ -37,7 +37,7 @@ export default class TTSEditor {
             }),
           )
           .subscribe((xxx) => {
-            let value = root.value;
+            const value = root.value;
             this.valueChange(value);
           });
       },

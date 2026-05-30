@@ -493,7 +493,7 @@ export class CompletionService extends RootStaticInjectOptions {
         resolvedWorkflow: result.data,
       };
     } else {
-      let result = this.#templateFormat.parseConversationTemplate(
+      const result = this.#templateFormat.parseConversationTemplate(
         actionItem.template,
       );
 

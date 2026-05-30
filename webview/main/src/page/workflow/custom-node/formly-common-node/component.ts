@@ -125,7 +125,7 @@ export class FormlyCommonNodeComponent {
       ...this.context,
       setOutputHandle: (index: number, list: any[]) => {
         this.#bridge.patchDataOne(this.props().id, (old) => {
-          let handle = deepClone(old.data?.handle ?? { output: [] });
+          const handle = deepClone(old.data?.handle ?? { output: [] });
           handle!.output[index] = list;
           return {
             ...old.data,

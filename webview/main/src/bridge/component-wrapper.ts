@@ -46,7 +46,7 @@ export function wrapperToReact(
   },
 ) {
   /** ng componentRef signal */
-  let runInReact = (component as any).runInReact;
+  const runInReact = (component as any).runInReact;
   const def = reflectComponentType(component)!;
   const fn = (
     props: { inputs: Record<string, any>; className?: string },

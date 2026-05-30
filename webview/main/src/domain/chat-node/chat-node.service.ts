@@ -77,7 +77,7 @@ const EntryList = [
   // todo 补全
   {
     id: 'editor-completion',
-    label:'编辑器对话',
+    label: '编辑器对话',
     list: [
       // 返回obj
       { label: '输入提示词(可选)', name: 'input', id: 'input' },
@@ -208,6 +208,5 @@ export class ChatNodeService {
       console.log('getUsageOutputs', value);
       return EntryList.find((item) => item.id === value)?.list ?? [];
     },
-
   };
 }

@@ -4,7 +4,11 @@ import { NodeRunnerBase, serializeLexicalTextarea } from '@shenghuabi/workflow';
 
 import { AbortSignalToken } from '@shenghuabi/workflow';
 import { RAG_NODE_DEFINE } from '../rag.node.define';
-import { CustomKnowledgeManagerServiceToken, dynamicInject, Rag2ClassToken } from '../../../../../token';
+import {
+  CustomKnowledgeManagerServiceToken,
+  dynamicInject,
+  Rag2ClassToken,
+} from '../../../../../token';
 
 export class RagRunner extends NodeRunnerBase<typeof RAG_NODE_DEFINE> {
   #abort = inject(AbortSignalToken);
