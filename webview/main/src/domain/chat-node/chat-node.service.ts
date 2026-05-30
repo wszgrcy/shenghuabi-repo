@@ -59,6 +59,13 @@ const EntryList = [
       { label: '上下文(对象)', name: 'context', id: 'context' },
     ],
   },
+  {
+    id: 'graph-key-extract',
+    list: [
+      // 返回obj
+      { label: '问题', name: 'question', id: 'question' },
+    ],
+  },
   // todo 补全
   // {
   //   id: 'completion',

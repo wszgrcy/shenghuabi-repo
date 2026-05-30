@@ -150,6 +150,6 @@ export class Rag2Class extends RootStaticInjectOptions {
       ob,
       signal,
     );
-    return result.value;
+    return result;
   }
 }

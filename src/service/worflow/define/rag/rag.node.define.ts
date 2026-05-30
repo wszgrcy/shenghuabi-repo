@@ -96,8 +96,8 @@ export const RAG_NODE_DEFINE = v.pipe(
               return field.context.selectWorkflow();
             },
           }),
+          actions.wrappers.patch(['label']),
           actions.class.top('flex-1'),
-
           v.title('提取关键字'),
         ),
         ragResponse: v.pipe(
@@ -115,6 +115,7 @@ export const RAG_NODE_DEFINE = v.pipe(
               return () => field.context.selectWorkflow();
             },
           }),
+          actions.wrappers.patch(['label']),
           actions.class.top('flex-1'),
 
           v.title('对话'),
@@ -125,7 +126,11 @@ export const RAG_NODE_DEFINE = v.pipe(
         { type: 'div', attributes: { class: 'flex gap-2' } },
       ]),
     ),
-    searchContent: v.pipe(TextareaTemplateDefine),
+    searchContent: v.pipe(
+      TextareaTemplateDefine,
+      v.title('搜索内容'),
+      actions.wrappers.patch(['label']),
+    ),
   }),
   actions.wrappers.patch([
     { type: 'div', attributes: { class: 'grid gap-2' } },
