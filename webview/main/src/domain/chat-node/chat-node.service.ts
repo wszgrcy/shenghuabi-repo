@@ -13,12 +13,13 @@ import { WebviewNodeMap } from '@shenghuabi/workflow/webview';
 
 const EntryList = [
   {
-    id: 'workflow-parser',
+    id: 'chunk-to-graph-parser',
     list: [
       { label: '切片', name: 'chunk', id: 'chunk' },
       { label: '文件名', name: 'fileName', id: 'fileName' },
       { label: '实体类型列表', name: 'entityTypeList', id: 'entityTypeList' },
     ],
+    label: '图谱解析',
   },
   {
     id: 'image-parser',
@@ -27,16 +28,19 @@ const EntryList = [
       { label: '前缀', name: 'prefix', id: 'prefix' },
       { label: '图片(buffer)', name: 'image', id: 'image' },
     ],
+    label: '图片解析识别',
   },
   {
     // 返回文本
     id: 'file-sentence',
     list: [{ label: '每行内容', name: 'line', id: 'line' }],
+    label: '文件行处理',
   },
   {
     // 返回文本
     id: 'file-content',
     list: [{ label: '文件内容', name: 'content', id: 'content' }],
+    label: '文件内容处理',
   },
   {
     id: 'file-tts',
@@ -47,6 +51,7 @@ const EntryList = [
       { label: '文件夹', name: 'dir', id: 'dir' },
       { label: '文件内容', name: 'content', id: 'content' },
     ],
+    label: '文件转换为tts',
   },
   {
     id: 'graph-rag',
@@ -58,13 +63,16 @@ const EntryList = [
       { label: '切片内容', name: 'chunkContent', id: 'chunkContent' },
       { label: '上下文(对象)', name: 'context', id: 'context' },
     ],
+    label: '图谱内容查询',
   },
   {
+    // 对象
     id: 'graph-key-extract',
     list: [
       // 返回obj
       { label: '问题', name: 'question', id: 'question' },
     ],
+    label: '图谱关键词提取',
   },
   // todo 补全
   // {
@@ -190,8 +198,7 @@ export class ChatNodeService {
       // todo 类型,应该是编辑器部分场景
       // tts,内联编辑器,文本就错
       return [
-        // { label: 'default', value: 'default' },
-        ...EntryList.map((item) => ({ label: item.id, value: item.id })),
+        ...EntryList.map((item) => ({ label: item.label, value: item.id })),
       ];
     },
     getUsageOutputs: async (value: any) => {
