@@ -26,6 +26,7 @@ export const PARSE_TO_TTS_DEFINE = v.pipe(
         });
       }),
       v.title('文件路径'),
+      actions.wrappers.set(['label']),
     ),
     content: v.pipe(
       v.optional(TextareaTemplateDefine, [
@@ -38,6 +39,7 @@ export const PARSE_TO_TTS_DEFINE = v.pipe(
       ]),
       actions.class.top('nodrag'),
       v.title('文件内容'),
+      actions.wrappers.set(['label']),
     ),
   }),
   asColumn(),

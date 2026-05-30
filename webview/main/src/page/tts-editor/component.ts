@@ -2,12 +2,20 @@ import { Component, inject, signal } from '@angular/core';
 import { DocumentEvent } from '@bridge/share';
 import { TrpcService } from '@fe/trpc';
 
-import { PiyingView } from '@piying/view-angular';
+import { actions, PiyingView } from '@piying/view-angular';
 import { FieldGlobalConfig } from '@fe/form/default-type-config';
 import { TTSFileConfigDefine } from '@shenghuabi/python-addon/define';
-import { BehaviorSubject, map, Observable, of, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  map,
+  merge,
+  Observable,
+  of,
+  switchMap,
+} from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
-
+import * as v from 'valibot';
 @Component({
   templateUrl: './component.html',
   standalone: true,
@@ -17,7 +25,24 @@ import { toObservable } from '@angular/core/rxjs-interop';
 export default class TTSEditor {
   #client = inject(TrpcService).client;
   #trpc = inject(TrpcService);
-  readonly Define = TTSFileConfigDefine;
+  readonly Define = v.pipe(
+    TTSFileConfigDefine,
+    actions.hooks.merge({
+      allFieldsResolved: (field) => {
+        const root = field.form.root;
+        merge(root.valueChanges, root.statusChanges)
+          .pipe(
+            filter(() => {
+              return root.touched || root.dirty;
+            }),
+          )
+          .subscribe((xxx) => {
+            let value = root.value;
+            this.valueChange(value);
+          });
+      },
+    }),
+  );
   options = {
     context: this,
     fieldGlobalConfig: FieldGlobalConfig,
