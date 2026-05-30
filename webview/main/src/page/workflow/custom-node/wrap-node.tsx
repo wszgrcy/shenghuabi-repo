@@ -107,7 +107,7 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
     }
     return uniqBy(outputList, (item) => item.name).map((item, i) => {
       return {
-        value: item.name ?? item.id,
+        value: item.id,
         icon: (
           <Tooltip title={'选择出口:' + item.label}>
             <div

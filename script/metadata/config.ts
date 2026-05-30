@@ -529,7 +529,7 @@ export const CONFIG = v.object({
     v.description('定义处理编辑器内分割后每行的工作流'),
   ),
   'sentence.displayMode': v.pipe(
-    v.optional(v.picklist(['diff', 'hover'])),
+    v.optional(v.picklist(['diff', 'hover']), 'diff'),
     v.description('行内操作后的显示模式'),
     v.metadata({
       enumOptions: [
@@ -618,7 +618,6 @@ export const CONFIG = v.object({
   }),
 
   'sentence.editor': editorChangeHoverMode,
-
 
   'llama.config': v.pipe(
     v.optional(LlamaConfigDefine, {

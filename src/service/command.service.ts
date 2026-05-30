@@ -73,7 +73,7 @@ import { DictKnowledgeService } from '@shenghuabi/knowledge/knowledge';
 import { KnowledgeItemType } from '../share/define/knowledge/working-knowledge';
 import { LogFactoryService, LogService } from './log.service';
 import { dynamicInject } from '../token';
-import { isUndefined } from 'lodash-es';
+import { isUndefined } from 'es-toolkit';
 import { ChatHistoryTreeItem } from '../webview/custom-sidebar/chat/chat.history.tree';
 import { ExtensionConfig } from './config.service';
 import { captureException } from '@sentry/node';
@@ -509,10 +509,7 @@ export class CommandService extends RootStaticInjectOptions {
           { showError: true },
           await channel.activeProgress,
         );
-        const resultContent = ((result.value ?? '') as string).replace(
-          LineReg,
-          `$2`,
-        );
+        const resultContent = ((result ?? '') as string).replace(LineReg, `$2`);
         if (sentenceItem.start !== sentenceItem.end) {
           ms.update(sentenceItem.start, sentenceItem.end, resultContent);
         } else if (resultContent) {
@@ -553,10 +550,7 @@ export class CommandService extends RootStaticInjectOptions {
         { showError: true },
         await channel.activeProgress,
       );
-      const resultContent = ((result.value ?? '') as string).replace(
-        LineReg,
-        `$2`,
-      );
+      const resultContent = ((result ?? '') as string).replace(LineReg, `$2`);
 
       ms.update(0, content.length, resultContent);
     }
@@ -1009,7 +1003,7 @@ export class CommandService extends RootStaticInjectOptions {
             )
         ).replace(/\.\w+$/, '') + '.tts';
       const rawFile = fileService.getFile(nFilePath);
-      await rawFile.save(result.value);
+      await rawFile.save(result);
       const openUri = vscode.Uri.file(nFilePath);
       vscode.commands.executeCommand('vscode.open', openUri);
     } finally {

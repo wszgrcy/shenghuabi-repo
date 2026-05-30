@@ -382,12 +382,12 @@ export class CompletionService extends RootStaticInjectOptions {
               throw rej;
             });
         }
-        if (typeof result?.value === 'string') {
+        if (typeof result === 'string') {
           stream.textEdit(location2.document.uri, [
-            new vscode.TextEdit(location2.selection, result.value),
+            new vscode.TextEdit(location2.selection, result),
           ]);
-        } else if (isStringArray(result?.value)) {
-          this.#createCompletionListSelect(result?.value, stream, location2);
+        } else if (isStringArray(result)) {
+          this.#createCompletionListSelect(result, stream, location2);
         }
         if (!lastMessage!) {
           return;

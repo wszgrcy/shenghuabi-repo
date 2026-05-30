@@ -128,7 +128,7 @@ export class ServerService extends RootStaticInjectOptions {
       .exec(
         result,
         {
-          input: body.inputs,
+          inputs: body.inputs,
           environmentParameters: body.environmentParameters,
         },
         { showError: true },

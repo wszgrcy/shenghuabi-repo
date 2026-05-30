@@ -11,18 +11,67 @@ import { IterationNodeDefine } from '../../page/workflow/custom-node/iteration-n
 import { IterationStartNodeDefine } from '../../page/workflow/custom-node/iteration-start-node';
 import { WebviewNodeMap } from '@shenghuabi/workflow/webview';
 
-const EntryObj = {
-  'workflow-parser': [
-    { label: '切片', name: 'chunk', id: 'chunk' },
-    { label: '文件名', name: 'fileName', id: 'fileName' },
-    { label: '实体类型列表', name: 'entityTypeList', id: 'entityTypeList' },
-  ],
-  'image-parser': [
-    { label: '文件路径', name: 'filePath', id: 'filePath' },
-    { label: '前缀', name: 'prefix', id: 'prefix' },
-    { label: '图片(buffer)', name: 'image', id: 'image' },
-  ],
-};
+const EntryList = [
+  {
+    id: 'workflow-parser',
+    list: [
+      { label: '切片', name: 'chunk', id: 'chunk' },
+      { label: '文件名', name: 'fileName', id: 'fileName' },
+      { label: '实体类型列表', name: 'entityTypeList', id: 'entityTypeList' },
+    ],
+  },
+  {
+    id: 'image-parser',
+    list: [
+      { label: '文件路径', name: 'filePath', id: 'filePath' },
+      { label: '前缀', name: 'prefix', id: 'prefix' },
+      { label: '图片(buffer)', name: 'image', id: 'image' },
+    ],
+  },
+  {
+    // 返回文本
+    id: 'file-sentence',
+    list: [{ label: '每行内容', name: 'line', id: 'line' }],
+  },
+  {
+    // 返回文本
+    id: 'file-content',
+    list: [{ label: '文件内容', name: 'content', id: 'content' }],
+  },
+  {
+    id: 'file-tts',
+    list: [
+      // 返回obj
+      { label: '文件路径', name: 'fullPath', id: 'fullPath' },
+      { label: '相对文件路径', name: 'relFilePath', id: 'relFilePath' },
+      { label: '文件夹', name: 'dir', id: 'dir' },
+      { label: '文件内容', name: 'content', id: 'content' },
+    ],
+  },
+  {
+    id: 'graph-rag',
+    list: [
+      // 返回obj
+      { label: '问题', name: 'question', id: 'question' },
+      { label: '节点表', name: 'nodeTable', id: 'nodeTable' },
+      { label: '边表', name: 'edgeTable', id: 'edgeTable' },
+      { label: '切片内容', name: 'chunkContent', id: 'chunkContent' },
+      { label: '上下文(对象)', name: 'context', id: 'context' },
+    ],
+  },
+  // todo 补全
+  // {
+  //   id: 'completion',
+  //   list: [
+  //     // 返回obj
+  //     { label: '问题', name: 'question', id: 'question' },
+  //     { label: '节点表', name: 'nodeTable', id: 'nodeTable' },
+  //     { label: '边表', name: 'edgeTable', id: 'edgeTable' },
+  //     { label: '切片内容', name: 'chunkContent', id: 'chunkContent' },
+  //     { label: '上下文(对象)', name: 'context', id: 'context' },
+  //   ],
+  // },
+];
 @Injectable()
 export class ChatNodeService {
   #chatTemplate = inject(ChatTemplateService);
@@ -134,14 +183,13 @@ export class ChatNodeService {
       // todo 类型,应该是编辑器部分场景
       // tts,内联编辑器,文本就错
       return [
-        { label: 'default', value: 'default' },
-        { label: 'workflow-parser', value: 'workflow-parser' },
-        { label: 'image-parser', value: 'image-parser' },
+        // { label: 'default', value: 'default' },
+        ...EntryList.map((item) => ({ label: item.id, value: item.id })),
       ];
     },
     getUsageOutputs: async (value: any) => {
       console.log('getUsageOutputs', value);
-      return (EntryObj as any)[value] ?? [];
+      return EntryList.find((item) => item.id === value)?.list ?? [];
     },
     editorInputChange: async (value: boolean) => {
       console.log('xxxx', value);
