@@ -356,149 +356,154 @@ export const CONFIG = v.object({
 
   'editor.text-indent': v.pipe(
     v.optional(v.number(), 2),
-    v.description('定义每行开头会缩进几个字(需重启)'),
+    v.description('编辑器中文本每行开头的缩进字数，使用全角空格实现(需重启)'),
   ),
 
-  'mind.editor.highlight': v.object({
-    enable: v.optional(v.boolean(), true),
-    sort: editorSortDefine,
-  }),
-  prompt: v.object({
-    selection: v.pipe(
-      v.optional(v.string()),
-      v.description('编辑器中选中相关提示词配置文件路径'),
-    ),
-    common: v.pipe(
-      v.optional(v.string()),
-      v.description('通用的对话模板配置文件路径'),
-    ),
-  }),
-  text2vec: EMBEDING,
-  reranker: ReRanker,
+  'mind.editor.highlight': v.pipe(
+    v.object({
+      enable: v.optional(v.boolean(), true),
+      sort: editorSortDefine,
+    }),
+    v.description('编辑器中脑图高亮词语的配置'),
+  ),
+  prompt: v.pipe(
+    v.object({
+      selection: v.pipe(
+        v.optional(v.string()),
+        v.description('编辑器中选中文字后使用的提示词模板配置文件路径'),
+      ),
+      common: v.pipe(
+        v.optional(v.string()),
+        v.description('通用对话模板配置文件路径'),
+      ),
+    }),
+    v.description('编辑器提示模板词路径配置'),
+  ),
+  text2vec: v.pipe(
+    EMBEDING,
+    v.description('文本嵌入向量(text2vec)配置，用于将文本转换为向量表示'),
+  ),
+  reranker: v.pipe(
+    ReRanker,
+    v.description('文本重排序(reranker)配置，用于知识库查询结果相关性排序'),
+  ),
   vector_database: v.pipe(
     v.optional(QdrantOptionsDefine, {}),
-    v.description('向量数据库相关配置'),
+    v.description('向量数据库(qdrant)配置'),
   ),
 
   knowledge_base: v.pipe(
     v.optional(
       v.object({
-        dir: v.pipe(v.optional(v.string()), v.description('知识库文件夹')),
+        dir: v.pipe(
+          v.optional(v.string()),
+          v.description('知识库文件存储目录路径'),
+        ),
       }),
     ),
-    v.description('知识库配置'),
+    v.description('知识库相关配置'),
   ),
 
-  ['ocr.dir']: v.pipe(v.optional(v.string()), v.description('OCR文件夹')),
+  ['ocr.dir']: v.pipe(
+    v.optional(v.string()),
+    v.description('OCR引擎模型文件夹路径(paddlepaddle v4)'),
+  ),
 
-  ['ocr.options']: v.object({
-    device: v.pipe(
-      v.optional(v.picklist(['dml', 'cuda', 'cpu']), 'cpu'),
-      v.description(
-        'windows下可以修改为dml,但是因为部分机器不支持导致错误,所以默认还是cpu',
+  ['ocr.options']: v.pipe(
+    v.object({
+      device: v.pipe(
+        v.optional(v.picklist(['dml', 'cuda', 'cpu']), 'cpu'),
+        v.description(
+          `OCR推理设备选择，windows下可选dml(DirectML加速)，linux仅支持cpu`,
+        ),
       ),
-    ),
-    threads: v.pipe(
-      v.optional(v.number(), 2),
-      v.description(`使用线程数量,需要根据显存/内存判断`),
-    ),
-    mode: v.pipe(
-      v.optional(v.picklist(ORC_LIST.map((item) => item.value)), 'ch_mobile'),
-      v.description(
-        `图像预处理，在图片外周添加白边，用于提升识别率，文字框没有正确框住所有文字时，增加此值`,
+      threads: v.pipe(
+        v.optional(v.number(), 2),
+        v.description(`OCR处理使用的线程数量,根据显存/内存大小调整`),
       ),
-      v.metadata({
-        enumOptions: ORC_LIST.map((item) => {
-          return { label: item.label, description: item.label };
+      mode: v.pipe(
+        v.optional(v.picklist(ORC_LIST.map((item) => item.value)), 'ch_mobile'),
+        v.description(`OCR识别语言模式选择`),
+        v.metadata({
+          enumOptions: ORC_LIST.map((item) => {
+            return { label: item.label, description: item.label };
+          }),
         }),
-      }),
-    ),
-    padding: v.pipe(
-      v.optional(v.number()),
-      v.description(
-        `图像预处理，在图片外周添加白边，用于提升识别率，文字框没有正确框住所有文字时，增加此值`,
       ),
-    ),
-    maxSideLen: v.pipe(
-      v.optional(v.number()),
-      v.description(
-        `按图片最长边的长度，此值为0代表不缩放，例：1920，如果图片长边大于1920则把图像整体缩小到1920再进行图像分割计算，如果图片长边小于1920则不缩放，如果图片长边小于32，则缩放到32`,
+      padding: v.pipe(
+        v.optional(v.number()),
+        v.description(`图像预处理白边大小，提升文字框边缘的识别率`),
       ),
-    ),
-    // boxScoreThresh: v.pipe(
-    //   v.optional(v.number()),
-    //   v.description(`文字框置信度门限，文字框没有正确框住所有文字时，减小此值`),
-    // ),
-    // boxThresh: v.pipe(v.optional(v.number()), v.description(``)),
-    // unClipRatio: v.pipe(
-    //   v.optional(v.number()),
-    //   v.description(
-    //     `单个文字框大小倍率，越大时单个文字框越大。此项与图片的大小相关，越大的图片此值应该越大`,
-    //   ),
-    // ),
-    // doAngle: v.pipe(
-    //   v.optional(v.number()),
-    //   v.description(
-    //     `启用(1)/禁用(0) 文字方向检测，只有图片倒置的情况下(旋转90~270度的图片)，才需要启用文字方向检测`,
-    //   ),
-    // ),
-    // mostAngle: v.pipe(
-    //   v.optional(v.number()),
-    //   v.description(
-    //     `启用(1)/禁用(0) 角度投票(整张图片以最大可能文字方向来识别)，当禁用文字方向检测时，此项也不起作用`,
-    //   ),
-    // ),
-  }),
+      maxSideLen: v.pipe(
+        v.optional(v.number()),
+        v.description(
+          `图片最长边最大像素值，超过则等比缩放后处理，0表示不限制`,
+        ),
+      ),
+    }),
+    v.description('OCR图像识别配置参数'),
+  ),
   ['defaultDir']: v.pipe(
     v.optional(v.string()),
     v.description(
-      '默认文件夹.当知识库/向量数据库/模型路径未设置时使用此文件夹保存',
+      '全局默认工作目录，知识库/向量数据库/模型等路径未指定时将使用此目录作为存储根目录',
     ),
   ),
-  chatHistory: v.object({
-    dir: v.pipe(v.optional(v.string()), v.description('对话历史保存的文件夹')),
-    enable: v.pipe(
-      v.optional(v.boolean(), true),
-      v.description('是否保存对话历史'),
-    ),
-  }),
+  chatHistory: v.pipe(
+    v.object({
+      dir: v.pipe(
+        v.optional(v.string()),
+        v.description('AI对话历史记录保存的目录路径'),
+      ),
+      enable: v.pipe(
+        v.optional(v.boolean(), true),
+        v.description('是否启用对话历史自动保存功能'),
+      ),
+    }),
+    v.description('AI对话历史管理配置，包括保存开关和存储位置'),
+  ),
   chatModelList: ChatParamsListDefine,
 
-  download: v.object({
-    direct: v.pipe(
-      v.optional(v.boolean(), false),
-      v.description(
-        '优先直接下载,如果您的网络可以直接访问github,huggingface,请设置为true,如果您不理解什么意思,请保持不变',
+  download: v.pipe(
+    v.object({
+      direct: v.pipe(
+        v.optional(v.boolean(), false),
+        v.description(
+          '是否优先通过直连方式下载资源（无法访问GitHub/HuggingFace时建议关闭）',
+        ),
       ),
-    ),
-    softwareMirror: v.pipe(
-      v.optional(v.string(), `github-release.tbontop.top`),
-      v.description(
-        [
-          `原始: github.com`,
-          '软件镜像(github加速)',
-          `- cloudflare镜像: github-release.tbontop.top`,
-          `- edgeone镜像: github-release2.tbontop.top`,
-        ].join('\n'),
+      softwareMirror: v.pipe(
+        v.optional(v.string(), `github-release.tbontop.top`),
+        v.description(
+          [
+            `原始: github.com`,
+            '软件镜像(github加速)',
+            `- cloudflare镜像: github-release.tbontop.top`,
+            `- edgeone镜像: github-release2.tbontop.top`,
+          ].join('\n'),
+        ),
       ),
-    ),
-    // 把原版也加上
-    huggingfaceModelMirror: v.pipe(
-      v.optional(v.string(), 'hg-model.tbontop.top'),
-      v.description(
-        [
-          `原始: huggingface.co`,
-          `huggingface模型下载镜像:`,
-          `- hf-mirror: hf-mirror.com`,
-          `- hf-mirror: alpha.hf-mirror.com`,
-          `- cloudflare镜像: hg-model.tbontop.top`,
-          `- edgeone镜像: hg-model2.tbontop.top`,
-        ].join('\n'),
+      // 把原版也加上
+      huggingfaceModelMirror: v.pipe(
+        v.optional(v.string(), 'hg-model.tbontop.top'),
+        v.description(
+          [
+            `原始: huggingface.co`,
+            `huggingface模型下载镜像:`,
+            `- hf-mirror: hf-mirror.com`,
+            `- hf-mirror: alpha.hf-mirror.com`,
+            `- cloudflare镜像: hg-model.tbontop.top`,
+            `- edgeone镜像: hg-model2.tbontop.top`,
+          ].join('\n'),
+        ),
       ),
-    ),
 
-    strategy: v.optional(DownloadConfigDefine),
-  }),
+      strategy: v.optional(DownloadConfigDefine),
+    }),
+    v.description(
+      '资源下载相关配置，包含直连开关、GitHub软件镜像、HF模型镜像等',
+    ),
+  ),
 
   workflow: v.pipe(
     v.object({
@@ -516,108 +521,107 @@ export const CONFIG = v.object({
       {},
     ),
     v.description(
-      '作为服务器,目前可用于远程执行工作流\n默认为:http://127.0.0.1:1127\n执行工作流:/workflow/exec\n执行工作流(流式返回):/workflow/stream',
+      '内置HTTP服务器配置，用于远程执行工作流API服务\n默认为:http://127.0.0.1:1127\n执行工作流:/workflow/exec\n执行工作流(流式返回):/workflow/stream',
     ),
   ),
 
   'fullText.workflowPath': v.pipe(
     v.string(),
-    v.description('定义处理编辑器内全文内容的工作流'),
+    v.description('编辑器中全文操作时关联执行的工作流'),
   ),
   'sentence.workflowPath': v.pipe(
     v.string(),
-    v.description('定义处理编辑器内分割后每行的工作流'),
+    v.description('编辑器中按行分割内容后关联执行的工作流'),
   ),
   'sentence.displayMode': v.pipe(
     v.optional(v.picklist(['diff', 'hover']), 'diff'),
-    v.description('行内操作后的显示模式'),
+    v.description('句子级别工作流处理后结果的展示方式'),
     v.metadata({
       enumOptions: [
-        { label: 'diff', description: '左右编辑器显示不同' },
-        { label: 'hover', description: '高亮显示,鼠标悬停修改' },
+        { label: 'diff', description: '左右编辑器并排显示不同' },
+        { label: 'hover', description: '行内高亮显示，鼠标悬停查看修改' },
       ],
     }),
   ),
-  'sentence.config': v.pipe(
-    v.object({
-      lineLength: v.pipe(
-        v.optional(v.number(), 100),
-        v.description('参考指定长度将文章分割为多段'),
-      ),
-    }),
-    v.description('定义处理编辑器内分割相关配置'),
-  ),
+
   ['word.threshold']: v.pipe(
     v.optional(
       v.tuple([v.number(), v.number(), v.number()]),
       [3000, 5000, 7000],
     ),
-    v.description('定义文章字数范围提示'),
+    v.description(
+      '文章字数阶梯阈值提示[tier1, tier2, tier3]，用于状态栏显示不同字数级别的提示',
+    ),
   ),
   'knowledge.query': v.pipe(
     v.object({
-      limit: v.pipe(v.optional(v.number(), 10), v.description(`查询限制数量`)),
+      limit: v.pipe(
+        v.optional(v.number(), 10),
+        v.description('侧边栏知识库每次查询返回的最大结果条数'),
+      ),
       list: v.pipe(
         v.optional(v.array(v.string())),
-        v.description(`指定知识库查询时的查询范围及返回顺序`),
+        v.description('指定知识库集合的查询范围和返回结果的排序顺序'),
       ),
     }),
-    v.description(`智能查询相关配置`),
+    v.description('知识库智能搜索查询配置'),
   ),
 
   mind: v.pipe(
     v.object({
       dir: v.pipe(
         v.optional(v.string()),
-        v.description('保存脑图相关配置的文件夹'),
+        v.description('脑图数据文件及配置的存储目录'),
       ),
     }),
     v.description('脑图相关配置'),
   ),
-  'knowledgeGraph.view': v.pipe(
-    v.optional(
-      v.object({
-        color: v.pipe(
-          v.optional(v.array(v.string()), [
-            '#808080',
-            '#008000',
-            '#0000ff',
-            '#800080',
-            '#ffa500',
-            '#ffd700',
-            '#ff0000',
-          ]),
-          v.description(
-            '节点着色用的颜色,使用时会根据传入颜色列表进行插值着色',
-          ),
+  'knowledgeGraph.view': v.optional(
+    v.object({
+      color: v.pipe(
+        v.optional(v.array(v.string()), [
+          '#808080',
+          '#008000',
+          '#0000ff',
+          '#800080',
+          '#ffa500',
+          '#ffd700',
+          '#ff0000',
+        ]),
+        v.description(
+          '图谱节点着色时使用的颜色列表，系统会根据分类数量进行插值计算',
         ),
-        coloringMethod: v.pipe(
-          v.optional(
-            v.picklist(KnowledgeGraphColoringMethod.map(({ value }) => value)),
-            'community',
-          ),
+      ),
+      coloringMethod: v.pipe(
+        v.optional(
+          v.picklist(KnowledgeGraphColoringMethod.map(({ value }) => value)),
+          'community',
+        ),
 
-          v.description(`图谱节点的着色方式`),
-          v.metadata({
-            enumOptions: KnowledgeGraphColoringMethod.map((item) => ({
-              label: item.label,
-              description: item.description,
-            })),
-          }),
-        ),
-      }),
-      {},
-    ),
+        v.description(`知识图谱节点着色策略`),
+        v.metadata({
+          enumOptions: KnowledgeGraphColoringMethod.map((item) => ({
+            label: item.label,
+            description: item.description,
+          })),
+        }),
+      ),
+    }),
+    {},
   ),
+  // todo 已废弃?
   'search.article': v.object({
     embeding: v.optional(EMBEDING, {}),
     chunkSize: v.pipe(
       v.optional(v.number(), 200),
-      v.description('文本切片长度'),
+      v.description('文章搜索中文本分片的字符长度'),
     ),
   }),
 
-  'sentence.editor': editorChangeHoverMode,
+  'sentence.editor': v.pipe(
+    editorChangeHoverMode,
+    v.description('句子级别编辑/纠错时在编辑器中的悬停高亮样式配置'),
+  ),
 
   'llama.config': v.pipe(
     v.optional(LlamaConfigDefine, {
@@ -625,18 +629,19 @@ export const CONFIG = v.object({
         list: [],
       },
     }),
+    v.description('本地LLM模型(llama.cpp)服务器连接配置'),
   ),
   'llama.startup': v.pipe(
     v.optional(v.boolean(), false),
-    v.description('是否打开软件时自动启动'),
+    v.description('是否自动启动本地LLM服务器进程'),
   ),
   'llama.dir': v.pipe(
     v.optional(v.string()),
-    v.description('保存llama.cpp相关的文件夹'),
+    v.description('llama.cpp运行时的存储目录'),
   ),
   'llama.listen': v.pipe(
     v.optional(v.string(), '127.0.0.1:12345'),
-    v.description('目前为llama-swap监听地址,相当于llama.cpp的反向代理'),
+    v.description('llama-swap反向代理服务监听地址(包含端口)'),
   ),
 
   'llama-swap.install': v.pipe(
@@ -657,21 +662,42 @@ export const CONFIG = v.object({
       }),
       {},
     ),
-  ),
-  pythonAddon: v.object({
-    ...v.omit(PythonAddonDefine, ['dir']).entries,
-    dir: v.optional(v.string()),
-  }),
-  indexTTS: v.optional(IndexTTSOptionsDefine),
-  tts: v.optional(TTSConfigDefine),
-  hfToken: v.pipe(v.optional(v.string())),
-  pdfAsImage: v.object({
-    enable: v.optional(v.boolean()),
-    viewPortOptions: v.optional(
-      v.object({
-        scale: v.optional(v.number()),
-      }),
+    v.description(
+      'llama-swap服务配置',
     ),
-  }),
-  'image.workflowPath': v.pipe(v.optional(v.string())),
+  ),
+  pythonAddon: v.pipe(
+    v.object({
+      ...v.omit(PythonAddonDefine, ['dir']).entries,
+      dir: v.optional(v.string()),
+    }),
+    v.description('Python插件/扩展配置，包含TTS等Python功能的运行环境'),
+  ),
+  indexTTS: v.pipe(
+    v.optional(IndexTTSOptionsDefine),
+    v.description('语音索引工具(IndexTTS)配置，用于文本转语音的预处理和索引'),
+  ),
+  tts: v.pipe(
+    v.optional(TTSConfigDefine),
+    v.description('文本转语音(TTS)工作流配置'),
+  ),
+  hfToken: v.pipe(
+    v.optional(v.string()),
+    v.description('HuggingFace API访问令牌，用于下载受权限保护的模型'),
+  ),
+  pdfAsImage: v.pipe(
+    v.object({
+      enable: v.optional(v.boolean()),
+      viewPortOptions: v.optional(
+        v.object({
+          scale: v.optional(v.number()),
+        }),
+      ),
+    }),
+    v.description('将PDF页面渲染为图像的配置，包含缩放比例参数'),
+  ),
+  'image.workflowPath': v.pipe(
+    v.optional(v.string()),
+    v.description('pdf视为图片处理操作时关联执行的工作流路径'),
+  ),
 });
