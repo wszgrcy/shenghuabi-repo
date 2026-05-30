@@ -80,7 +80,7 @@ const EntryList = [
     label:'编辑器对话',
     list: [
       // 返回obj
-      { label: '输入提示词', name: 'input', id: 'input' },
+      { label: '输入提示词(可选)', name: 'input', id: 'input' },
       { label: '当前文件内容', name: 'currentFile', id: 'currentFile' },
       { label: '选中内容', name: 'selection', id: 'selection' },
       { label: '选中行内容', name: 'selectionLine', id: 'selectionLine' },
@@ -208,8 +208,6 @@ export class ChatNodeService {
       console.log('getUsageOutputs', value);
       return EntryList.find((item) => item.id === value)?.list ?? [];
     },
-    editorInputChange: async (value: boolean) => {
-      console.log('xxxx', value);
-    },
+
   };
 }

@@ -115,9 +115,7 @@ export class BridgeService extends FlowBseService<CustomNode> {
       })
       .filter(isTruthy);
   });
-  constructor() {
-    super();
-  }
+  options$ = signal<Record<string, any> | undefined>(undefined);
   appendNode(position: { x: number; y: number }, config: Partial<CustomNode>) {
     const position2 = this.instance()!.screenToFlowPosition(position);
     const maybeParent = this.selectedNodeList$()[0];

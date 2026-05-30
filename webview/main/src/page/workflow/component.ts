@@ -297,6 +297,7 @@ export default class WorkflowEditor
             },
           },
         );
+        this.service.options$.set(value.options)
       },
     });
 
@@ -390,6 +391,9 @@ export default class WorkflowEditor
       toObservable(this.service.instance, { injector: this.injector }).pipe(
         filter(Boolean),
       ),
+      toObservable(this.service.options$, { injector: this.injector }).pipe(
+        filter(Boolean),
+      ),
     ])
       .pipe(
         map(([_, instance]) => {
@@ -427,6 +431,7 @@ export default class WorkflowEditor
     return {
       flow: result,
       version: WORKFLOW_VERSION,
+      options: this.service.options$(),
       update: Date.now(),
     };
   }
