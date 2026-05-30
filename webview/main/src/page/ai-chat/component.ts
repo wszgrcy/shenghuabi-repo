@@ -24,7 +24,6 @@ export default class AiChatPage {
   title$ = signal('');
   value$ = signal<ChatValue>({});
   stopSignal = signal<{ clear: boolean } | undefined>(undefined);
-
   readonly CHAT_TYPE_LIST = [
     {
       value: ChatMode.default,
@@ -76,79 +75,78 @@ export default class AiChatPage {
         if (!result) {
           return;
         }
-        switch (result.from) {
-          case 'commonChat': {
-            if (!result.item) {
-              return;
-            }
-            this.title$.set(result.item?.title ?? '');
-            this.mode.set(result.item.mode);
-            this.modelConfigName.set(result.item.modelConfigName);
-            switch (this.mode()) {
-              case ChatMode.workflow: {
-                break;
-              }
-              case ChatMode.template: {
-                const template = await Promise.all(
-                  result.item.template?.map(async (item) => {
-                    return {
-                      role: item.role,
-                      content: await Promise.all(
-                        item.content.map(async (data) => {
-                          if (data.type === 'text') {
-                            return {
-                              type: data.type,
-                              text: (
-                                await this.#client.workflow.parseTemplate.query(
-                                  {
-                                    content: data.text,
-                                  },
-                                )
-                              ).list,
-                            };
-                          } else {
-                            return {
-                              type: data.type,
-                              image_url: {
-                                url: (
-                                  await this.#client.workflow.parseTemplate.query(
-                                    {
-                                      content: data.image_url.url,
-                                    },
-                                  )
-                                ).list,
-                              },
-                            };
-                          }
-                        }),
-                      ),
-                    };
-                  }) ?? [],
-                );
-                if (!template) {
-                  return;
-                }
-                console.log('xxxx', template);
-                this.value$.set({ template: { template: template as any } });
-
-                break;
-              }
-              case ChatMode.default: {
-                break;
-              }
-            }
-            this.value$;
+        if (!result.item) {
+          return;
+        }
+        this.title$.set(result.item?.title ?? '');
+        this.mode.set(result.item.mode);
+        this.modelConfigName.set(result.item.modelConfigName);
+        switch (this.mode()) {
+          case ChatMode.workflow: {
             break;
           }
+          case ChatMode.template: {
+            let template = await this.#client.workflow.convertChat.query({
+              list: result.item.template ?? [],
+            });
 
-          default:
+            if (!template) {
+              return;
+            }
+            this.value$.set({ template: { template: template as any } });
+
             break;
+          }
+          case ChatMode.default: {
+            break;
+          }
         }
       },
     });
     this.#client.command.listen.subscribe('promptTemplateSave', {
-      onData: (result) => {
-        console.log('cc', result);
+      onData: async (listx) => {
+        let obj = {} as Record<string, any>;
+        if (this.mode() === ChatMode.template) {
+          let content = await Promise.all(
+            this.value$().template!.template.map(async (item) => {
+              return {
+                role: item.role,
+                content: await Promise.all(
+                  item.content.map(async (data) => {
+                    if (data.type === 'text') {
+                      return {
+                        type: data.type,
+                        text: await this.#client.workflow.unParseTemplate.query(
+                          {
+                            content: data.text,
+                          },
+                        ),
+                      };
+                    } else {
+                      return {
+                        type: data.type,
+                        image_url: {
+                          url: await this.#client.workflow.unParseTemplate.query(
+                            {
+                              content: data.image_url.url,
+                            },
+                          ),
+                        },
+                      };
+                    }
+                  }),
+                ),
+              };
+            }),
+          );
+          obj['template'] = content;
+        }
+        this.#client.chat.savePromptTemplate.query({
+          title: this.title$(),
+          mode: this.mode(),
+          modelConfigName: this.modelConfigName(),
+          ...obj,
+        });
       },
     });
   }
@@ -166,6 +164,6 @@ export default class AiChatPage {
     this.stopSignal.set({ clear });
   }
   chatValueChange(value: ChatValue) {
-    console.log(value);
+    this.value$.set(value);
   }
 }

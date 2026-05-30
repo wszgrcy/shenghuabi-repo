@@ -493,19 +493,13 @@ export class CompletionService extends RootStaticInjectOptions {
         resolvedWorkflow: result.data,
       };
     } else {
-      // todo 重构未验证
-      // const { error, list } = this.#templateFormat.parse(
-      //   actionItem.template!.map((item) => item.content).join('\n'),
-      // );
-      // if (error) {
-      //   throw new Error('模板解析失败');
-      // }
-      // editorInput = list.some((item) => item.value === 'input');
+      let result = this.#templateFormat.parseConversationTemplate(
+        actionItem.template,
+      );
 
-      // data = {
-      //   template: actionItem.template!,
-      // };
-      throw new Error('未实现');
+      data = {
+        template: result as any,
+      };
     }
     this.#selectedEditorTemplate.set(options.filePath, {
       ...data,
@@ -524,17 +518,7 @@ export class CompletionService extends RootStaticInjectOptions {
       message: '/default ',
     });
   }
-  // #workspace = inject(WorkspaceService);
-  #getOffset(name: string, prefix: string) {
-    if (name.startsWith(prefix)) {
-      const str = name.slice(prefix.length);
-      const result = str.match(/^\d+$/);
-      if (result) {
-        return +result[0];
-      }
-    }
-    return;
-  }
+
   #getLastLinePosition(
     document: vscode.TextDocument,
     endPosition: vscode.Position,
@@ -550,133 +534,92 @@ export class CompletionService extends RootStaticInjectOptions {
     );
   }
   #getDynamic(
-    key: string,
     document: vscode.TextDocument,
     selection: vscode.Selection,
     dirName: string,
     baseName: string,
     dirFileList: string[],
-  ) {
-    // 当前文件
-    if (key === 'currentFile') {
-      return document.getText();
-    } else if (key === 'selectionLine') {
-      return document.getText(
-        new vscode.Range(
-          new vscode.Position(selection.start.line, 0),
-          this.#getLastLinePosition(
-            document,
-            new vscode.Position(selection.end.line + 1, 0),
-          ),
+  ): {
+    currentFile: string;
+    selectionLine: string;
+    lineOffsetTop: string;
+    lineOffset: string;
+    fileOffsetTop: string;
+  } {
+    const selectionLine = document.getText(
+      new vscode.Range(
+        new vscode.Position(selection.start.line, 0),
+        this.#getLastLinePosition(
+          document,
+          new vscode.Position(selection.end.line + 1, 0),
         ),
-      );
-    }
+      ),
+    );
 
-    // 前x行
-    const linesOffset = this.#getOffset(key, 'topLines');
-    if (linesOffset) {
-      return document.getText(
-        new vscode.Range(
+    const offsetCount = 20;
+    const lineOffsetTop = document.getText(
+      new vscode.Range(
+        new vscode.Position(Math.max(0, selection.start.line - offsetCount), 0),
+        this.#getLastLinePosition(
+          document,
+          new vscode.Position(selection.start.line + 1, 0),
+        ),
+      ),
+    );
+
+    const lineOffset = document.getText(
+      new vscode.Range(
+        new vscode.Position(Math.max(0, selection.start.line - offsetCount), 0),
+        this.#getLastLinePosition(
+          document,
           new vscode.Position(
-            Math.max(0, selection.start.line - linesOffset),
+            Math.min(document.lineCount - 1, selection.end.line + offsetCount),
             0,
           ),
-          this.#getLastLinePosition(
-            document,
-            new vscode.Position(selection.start.line, 0),
-          ),
         ),
-      );
-    }
-    // 第x行
-    const lineOffset = this.#getOffset(key, 'topLine');
-    if (lineOffset) {
-      if (selection.start.line - lineOffset < 0) {
-        return '';
-      }
-      return document.getText(
-        new vscode.Range(
-          new vscode.Position(selection.start.line - lineOffset, 0),
-          this.#getLastLinePosition(
-            document,
-            new vscode.Position(selection.start.line - lineOffset + 1, 0),
-          ),
-        ),
-      );
-    }
-    // 前x章的文件
-    let filesOffset = this.#getOffset(key, 'topFiles');
-    if (filesOffset) {
-      const numberFileList = [] as string[];
-      do {
-        let useNumber = false;
-        const lastFileName = han2numberReChange(baseName, (a) => {
-          if (!useNumber && typeof a === 'number') {
-            useNumber = true;
-            return `${a - filesOffset!}`;
-          }
-          return useNumber ? '' : `${a}`;
-        });
-        if (!useNumber) {
-          break;
-        }
-        numberFileList.push(lastFileName);
-        filesOffset--;
-      } while (filesOffset);
-      return dirFileList
-        .map((item) => {
-          return {
-            compare: getNumberText(item),
-            origin: item,
-          };
-        })
-        .filter((item) => {
-          return numberFileList.some(
-            (numberItem) => numberItem === item.compare,
-          );
-        })
-        .map(({ origin }) => origin)
-        .sort(NumberCompare)
-        .map((origin) =>
-          this.#workspace.readFileByVSC(path.join(dirName, origin)),
-        )
-        .join('\n');
-    }
-    // 第x章的文件
-    const fileOffset = this.#getOffset(key, 'topFile');
-    if (fileOffset) {
-      const numberFileList = [] as string[];
+      ),
+    );
+
+    const numberFileList = [] as string[];
+    let filesOffsetCount = 5;
+    do {
       let useNumber = false;
       const lastFileName = han2numberReChange(baseName, (a) => {
         if (!useNumber && typeof a === 'number') {
           useNumber = true;
-          return `${a - fileOffset!}`;
+          return `${a - filesOffsetCount!}`;
         }
         return useNumber ? '' : `${a}`;
       });
       if (!useNumber) {
-        return '';
+        break;
       }
       numberFileList.push(lastFileName);
+      filesOffsetCount--;
+    } while (filesOffsetCount > 0);
 
-      return dirFileList
-        .map((item) => ({
-          compare: getNumberText(item),
-          origin: item,
-        }))
-        .filter((item) => {
-          return numberFileList.some(
-            (numberItem) => numberItem === item.compare,
-          );
-        })
-        .map(({ origin }) => origin)
-        .sort(NumberCompare)
-        .map((origin) =>
-          this.#workspace.readFileByVSC(path.join(dirName, origin)),
-        )
-        .join('\n');
-    }
-    throw new Error('动态获取参数异常');
+    const fileOffsetTop = dirFileList
+      .map((item) => ({
+        compare: getNumberText(item),
+        origin: item,
+      }))
+      .filter((item) => {
+        return numberFileList.some((numberItem) => numberItem === item.compare);
+      })
+      .map(({ origin }) => origin)
+      .sort(NumberCompare)
+      .map((origin) =>
+        this.#workspace.readFileByVSC(path.join(dirName, origin)),
+      )
+      .join('\n');
+
+    return {
+      currentFile: document.getText(),
+      selectionLine,
+      lineOffsetTop,
+      lineOffset,
+      fileOffsetTop,
+    };
   }
   #createDefaultInput(
     input: Record<string, any>,
@@ -686,24 +629,16 @@ export class CompletionService extends RootStaticInjectOptions {
     baseName: string,
     dirFileList: string[],
   ) {
-    const proxy = new Proxy(input, {
-      get: (target, p, receiver) => {
-        if (typeof p !== 'string') {
-          return;
-        }
-
-        return (
-          this.#getDynamic(
-            p,
-            document,
-            selection,
-            dirName,
-            baseName,
-            dirFileList,
-          ) ?? (target as any)[p]
-        );
-      },
-    });
-    return proxy;
+    const dynamic = this.#getDynamic(
+      document,
+      selection,
+      dirName,
+      baseName,
+      dirFileList,
+    );
+    return {
+      ...input,
+      ...dynamic,
+    };
   }
 }

@@ -31,6 +31,18 @@ import {
 } from '@shenghuabi/workflow/share';
 
 export const WorkflowRouter = t.router({
+  convertChat: t.procedure
+    .input(
+      v.object({
+        list: v.array(v.any()),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const service = ctx.injector.get(TemplateFormatService);
+      const content = input.list;
+
+      return service.parseConversationTemplate(content);
+    }),
   parseTemplate: t.procedure
     .input(
       v.object({
@@ -47,6 +59,18 @@ export const WorkflowRouter = t.router({
         case 'plaintext':
           return service.parse(content);
       }
+    }),
+  unParseTemplate: t.procedure
+    .input(
+      v.object({
+        content: v.any(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const service = ctx.injector.get(TemplateFormatService);
+      const content = input.content;
+
+      return service.unparse(content);
     }),
   getWorkflowInputList: t.procedure
     .input(v.string())

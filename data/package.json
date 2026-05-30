@@ -42,6 +42,7 @@
         "name": "chat",
         "fullName": "chat",
         "description": "对话",
+        "isDefault": true,
         "locations": [
           "editor"
         ],

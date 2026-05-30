@@ -344,6 +344,7 @@ export class ChatComponent extends BaseControl<ChatValue> {
     this.value$.update((v) => {
       return { template: { ...v.template!, template: list } };
     });
+    this.valueChange(this.value$());
   }
   variableChanged(list: ChatVariable[]) {
     this.contextConfigList$.set(

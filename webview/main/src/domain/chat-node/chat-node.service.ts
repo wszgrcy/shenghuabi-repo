@@ -75,17 +75,19 @@ const EntryList = [
     label: '图谱关键词提取',
   },
   // todo 补全
-  // {
-  //   id: 'completion',
-  //   list: [
-  //     // 返回obj
-  //     { label: '问题', name: 'question', id: 'question' },
-  //     { label: '节点表', name: 'nodeTable', id: 'nodeTable' },
-  //     { label: '边表', name: 'edgeTable', id: 'edgeTable' },
-  //     { label: '切片内容', name: 'chunkContent', id: 'chunkContent' },
-  //     { label: '上下文(对象)', name: 'context', id: 'context' },
-  //   ],
-  // },
+  {
+    id: 'editor-completion',
+    list: [
+      // 返回obj
+      { label: '输入提示词', name: 'input', id: 'input' },
+      { label: '当前文件内容', name: 'currentFile', id: 'currentFile' },
+      { label: '选中内容', name: 'selection', id: 'selection' },
+      { label: '选中行内容', name: 'selectionLine', id: 'selectionLine' },
+      { label: '前x行', name: 'lineOffsetTop', id: 'lineOffsetTop' },
+      { label: '上下x行', name: 'lineOffset', id: 'lineOffset' },
+      { label: '前x章', name: 'fileOffsetTop', id: 'fileOffsetTop' },
+    ],
+  },
 ];
 @Injectable()
 export class ChatNodeService {

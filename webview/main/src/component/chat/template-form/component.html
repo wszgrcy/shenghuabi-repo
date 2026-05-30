@@ -22,6 +22,7 @@
       @if (!disableImage()) {
         <button
           class="btn btn-circle btn-soft btn-ghost btn-sm"
+          [class.btn-primary]="forms.value.assets"
           (click)="opened = !opened"
           cdkOverlayOrigin
           #trigger="cdkOverlayOrigin"

@@ -184,11 +184,12 @@ export class PromptTemplateFCC implements ControlValueAccessor {
   }
   writeValue(obj: UserChatMessageType): void {
     if (obj) {
+      let image = obj.content.find((item) => item.type === 'image_url')
+        ?.image_url.url[0][0] as any;
       const inputValue = {
         type: obj.role,
         content: obj.content.find((item) => item.type === 'text')?.text,
-        assets: obj.content.find((item) => item.type === 'image_url')?.image_url
-          .url,
+        assets: image?.item.value[0],
       };
       if (!deepEqual(inputValue, this.forms.value)) {
         this.forms.patchValue(inputValue as any, { emitEvent: false });
