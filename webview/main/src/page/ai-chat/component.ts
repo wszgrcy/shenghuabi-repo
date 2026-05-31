@@ -44,18 +44,19 @@ export default class AiChatPage {
         return await this.#client.workflow.selectWorkflow
           .query(undefined)
           .then((value) => {
-            if (value) {
-              this.value$.update((data) => {
-                return {
-                  workflow: {
-                    ...data.workflow!,
-                    path: value,
-                  },
-                };
-              });
-              return true;
+            if (!value) {
+              return false;
             }
-            return false;
+            this.value$.update((data) => {
+              return {
+                workflow: {
+                  ...data.workflow!,
+                  path: value,
+                },
+              };
+            });
+
+            return true;
           });
       },
     },

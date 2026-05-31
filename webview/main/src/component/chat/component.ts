@@ -192,12 +192,30 @@ export class ChatComponent extends BaseControl<ChatValue> {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['mode'] && !changes['mode'].firstChange) {
-      this.valueAndTouchedChange({});
+      switch (this.mode()) {
+        case ChatMode.template: {
+          this.value$.update((a) => {
+            return {
+              template: { ...a.template! },
+            };
+          });
+          this.valueAndTouchedChange(this.value$());
+          break;
+        }
+        case ChatMode.default: {
+          this.value$.update((a) => {
+            return {
+              default: { ...a.default! },
+            };
+          });
+          this.valueAndTouchedChange(this.value$());
+          break;
+        }
+      }
     }
     if (changes['stopSignal'] && this.stopSignal()) {
       const stopSignal = this.stopSignal()!;
       this.#chatRef?.unsubscribe();
-
       if (stopSignal.clear) {
         this.valueAndTouchedChange({});
         this.list$.set([]);
