@@ -30,6 +30,11 @@ export const RAG_NODE_DEFINE = v.pipe(
       actions.inputs.patchAsync({
         options: (field) => field.context.selectRagKnowledgeList(),
       }),
+      v.metadata({
+        toolJsonSchema: {
+          needKnowledgeGraph: true,
+        },
+      }),
     ),
     // todo 划分组
     disableKeywordExtract: v.pipe(

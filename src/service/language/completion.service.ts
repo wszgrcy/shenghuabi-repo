@@ -125,6 +125,26 @@ export class CompletionService extends RootStaticInjectOptions {
                       title: context.jsonSchema.title,
                     };
                   } else if (
+                    (currentAction as any).metadata.toolJsonSchema
+                      .needKnowledgeGraph
+                  ) {
+                    let newDefine = v.pipe(
+                      v.picklist(
+                        list
+                          .filter(
+                            (item) =>
+                              item.graphIndex && item.type === 'knowledge',
+                          )
+                          .map((item) => item.name),
+                      ),
+                    );
+                    let newJsonSchema = toJsonSchema(newDefine);
+                    delete newJsonSchema.$schema;
+                    return {
+                      ...newJsonSchema,
+                      title: context.jsonSchema.title,
+                    };
+                  } else if (
                     (currentAction as any).metadata.toolJsonSchema.replaceSchema
                   ) {
                     let newJsonSchema = toJsonSchema(

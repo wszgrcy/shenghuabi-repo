@@ -31,7 +31,7 @@ export class RagRunner extends NodeRunnerBase<typeof RAG_NODE_DEFINE> {
       this.#abort,
     );
 
-    return async () => {
+    return async (id: string) => {
       return {
         value: result?.response,
       };
