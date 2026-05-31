@@ -169,7 +169,6 @@ export const EnvironmentConfigurationRouter = t.router({
     });
     await ExtensionConfig['llama.startup'].set(input.llm.startup);
     if (input.llm.startup) {
-      await ExtensionConfig['llama.dir'].set(input.llm.llamaConfig.dir);
       const HOST = ExtensionConfig['llama.listen']();
       ExtensionConfig.chatModelList.update((list) => {
         list = list.slice() ?? [];
@@ -181,17 +180,17 @@ export const EnvironmentConfigurationRouter = t.router({
         };
         return list;
       });
-      await ExtensionConfig['llama.config'].update((config) => {
-        return {
-          ...config,
-          server: {
-            ...config.server,
-            list: input.llm.llamaConfig.modelList,
-          },
-        };
-      });
     }
-
+    await ExtensionConfig['llama.dir'].set(input.llm.llamaConfig.dir);
+    await ExtensionConfig['llama.config'].update((config) => {
+      return {
+        ...config,
+        server: {
+          ...config.server,
+          list: input.llm.llamaConfig.modelList,
+        },
+      };
+    });
     // 对话
     ExtensionConfig.chatModelList.set(input.chatModelList);
   }),
@@ -248,7 +247,6 @@ export const EnvironmentConfigurationRouter = t.router({
           fileName: v.optional(v.string()),
           url: v.optional(v.string()),
           token: v.optional(v.string()),
-          vendor: v.optional(v.string()),
         }),
       )
       .subscription(async ({ input, ctx }) => {
@@ -267,7 +265,7 @@ export const EnvironmentConfigurationRouter = t.router({
                 repo: input.repo,
                 url: input.url,
                 fileName: input.fileName,
-                token: token,
+                token: token ?? ExtensionConfig.hfToken(),
               },
               {
                 progressMessage: (message) => {

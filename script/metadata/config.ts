@@ -654,7 +654,7 @@ export const CONFIG = v.object({
           ),
         ),
         llamaVersion: v.pipe(
-          v.optional(v.string(), 'b6174'),
+          v.optional(v.string(), 'b9442'),
           v.description(
             'llama.cpp的版本号,可以从 https://github.com/ggerganov/llama.cpp/releases 获得',
           ),

@@ -353,7 +353,7 @@ export class LlamaModelConfigDialogNFCC {
     const data = this.downloadModelObj$$()!;
 
     this.#client.environment.llamaSwap.downloadModel.subscribe(
-      { ...data, vendor: undefined },
+      { ...data, },
       {
         onData: (result) => {
           if (result.type === 'end') {
