@@ -33,7 +33,7 @@ export const DictImportDefine = v.intersect([
                   return field.context.selectFile();
                 },
               }),
-              actions.class.top('w-full'),
+              // actions.class.top('w-full'),
             ),
             type: v.pipe(
               v.picklist(['mdict', 'yaml', 'stardict', 'dsl']),
@@ -132,6 +132,11 @@ export const DictImportDefine = v.intersect([
         v.description('从字典中获取名称'),
         setComponent('button'),
         actions.wrappers.set(['tooltip']),
+        actions.inputs.patch({
+          content: { icon: { fontIcon: 'auto_fix_high' } },
+          shape: 'circle',
+          style: 'ghost',
+        }),
         actions.inputs.patchAsync({
           clicked: (field: PiResolvedViewFieldConfig) => () => {
             const nameField = field.get(['..', '..', 'data'])!;
