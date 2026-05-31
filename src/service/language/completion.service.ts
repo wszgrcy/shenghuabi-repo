@@ -106,8 +106,7 @@ export class CompletionService extends RootStaticInjectOptions {
                 ) {
                   // 知识库改为枚举
                   if (
-                    (currentAction as any).metadata.toolJsonSchema
-                      .needKnowledge
+                    (currentAction as any).metadata.toolJsonSchema.needKnowledge
                   ) {
                     let newDefine = v.pipe(
                       v.picklist(list.map((item) => item.name)),
@@ -124,6 +123,19 @@ export class CompletionService extends RootStaticInjectOptions {
                     return {
                       ...newJsonSchema,
                       title: context.jsonSchema.title,
+                    };
+                  } else if (
+                    (currentAction as any).metadata.toolJsonSchema.replaceSchema
+                  ) {
+                    let newJsonSchema = toJsonSchema(
+                      (currentAction as any).metadata.toolJsonSchema
+                        .replaceSchema,
+                    );
+                    delete newJsonSchema.$schema;
+                    return {
+                      ...newJsonSchema,
+                      title: context.jsonSchema.title,
+                      description: context.jsonSchema.description,
                     };
                   }
                 }

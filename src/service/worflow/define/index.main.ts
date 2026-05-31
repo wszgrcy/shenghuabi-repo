@@ -3,7 +3,6 @@ export * from './article/main';
 export * from './card/main';
 export * from './category/main';
 export * from './file-input/main';
-export * from './graph-query/main';
 export * from './image/main';
 export * from './knowledge/main';
 export * from './rag/main';

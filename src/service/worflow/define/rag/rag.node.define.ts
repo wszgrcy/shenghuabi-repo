@@ -99,6 +99,11 @@ export const RAG_NODE_DEFINE = v.pipe(
           actions.wrappers.patch(['label']),
           actions.class.top('flex-1'),
           v.title('提取关键字'),
+          v.metadata({
+            toolJsonSchema: {
+              replaceSchema: v.literal('default/[图谱知识库]提取关键字'),
+            },
+          }),
         ),
         ragResponse: v.pipe(
           v.optional(v.string(), 'default/[图谱知识库]增强生成'), // asControl(),
@@ -117,8 +122,12 @@ export const RAG_NODE_DEFINE = v.pipe(
           }),
           actions.wrappers.patch(['label']),
           actions.class.top('flex-1'),
-
           v.title('对话'),
+          v.metadata({
+            toolJsonSchema: {
+              replaceSchema: v.literal('default/[图谱知识库]增强生成'),
+            },
+          }),
         ),
       }),
 
@@ -130,6 +139,11 @@ export const RAG_NODE_DEFINE = v.pipe(
       TextareaTemplateDefine,
       v.title('搜索内容'),
       actions.wrappers.patch(['label']),
+      v.metadata({
+        toolJsonSchema: {
+          replaceSchema: v.string(),
+        },
+      }),
     ),
   }),
   actions.wrappers.patch([

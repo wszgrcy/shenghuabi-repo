@@ -12,8 +12,6 @@ export const RagWebviewConfig: WebviewNodeConfig = {
         transform: {
           resizable: true,
         },
-
-        value: [getSystemTemplate()],
       },
       width: 300,
     };
