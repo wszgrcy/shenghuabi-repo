@@ -297,7 +297,7 @@ export default class WorkflowEditor
             },
           },
         );
-        this.service.options$.set(value.options);
+        this.service.options$.set(value.options ?? {});
       },
     });
 

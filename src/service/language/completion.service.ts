@@ -234,6 +234,7 @@ export class CompletionService extends RootStaticInjectOptions {
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor',
       async (req, context, stream, token) => {
+        // todo 似乎只有编辑可以工作
         // token只能监听到取消,不能监听到关闭
         const modelOptions =
           req.model.family === 'custom' ? modelObject[req.model.id] : undefined;

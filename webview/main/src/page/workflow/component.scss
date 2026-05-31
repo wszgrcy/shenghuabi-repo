@@ -86,10 +86,10 @@
   }
 
   .label-hint {
-    width: 1.5rem;
-    height: 1rem;
-    transform: translate(-50%, -50%);
-    position: absolute;
+    // width: 1.5rem;
+    // height: 1rem;
+    // transform: translate(-50%, -50%);
+    // position: absolute;
   }
   .handle-wrapper-left {
     top: 50%;
@@ -97,19 +97,19 @@
   }
   .handle-wrapper-right {
     top: 50%;
-    right: -6px;
+    right: 0px;
   }
-  .react-flow__handle-left {
-    left: unset;
-    top: unset;
-    right: 3px;
-    transform: translate(0, 50%);
-  }
+  // .react-flow__handle-left {
+    // left: unset;
+    // top: unset;
+    // right: 3px;
+    // transform: translate(0, 50%);
+  // }
   .react-flow__handle-right {
-    left: unset;
-    top: unset;
-    left: 3px;
-    transform: translate(0, 50%);
+    // left: unset;
+    // top: unset;
+    // left: 3px;
+    // transform: translate(0, 50%);
   }
 
   .json-formatter-row .json-formatter-string,
