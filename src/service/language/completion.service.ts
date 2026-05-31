@@ -5,6 +5,7 @@ import {
   RootStaticInjectOptions,
   Injector,
   createInjector,
+  effect,
 } from 'static-injector';
 import { InlineChatService } from './inline-chat.service';
 import { PromptService } from '../ai/prompt.service';
@@ -43,6 +44,7 @@ import { SingleNodeRunnerService } from '@shenghuabi/workflow';
 import { KnowledgeConfigService } from '../knowledge/knowledge-config.service';
 import { TOOL_CONFIG_LIST } from '../../share/tool-config';
 import { toJsonSchema } from '@valibot/to-json-schema';
+import * as v from 'valibot';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -77,7 +79,104 @@ export class CompletionService extends RootStaticInjectOptions {
   #selectSubscriptionMap = new Map<string, Subscription>();
   #injector = inject(Injector);
   #knowledgeConfig = inject(KnowledgeConfigService);
-
+  constructor() {
+    super();
+    let disposeList: vscode.Disposable[] = [];
+    effect(() => {
+      disposeList.forEach((item) => {
+        item.dispose();
+      });
+      disposeList = [];
+      let list = this.#knowledgeConfig.originConfigList$();
+      for (const item of TOOL_CONFIG_LIST) {
+        const inputSchema = item.configDefine
+          ? toJsonSchema(item.configDefine, {
+              ignoreActions: [
+                'asControl',
+                'trim',
+                'viewRawConfig',
+                'asVirtualGroup',
+                'defineType',
+              ],
+              overrideAction: (context) => {
+                let currentAction = context.valibotAction;
+                if (
+                  currentAction.type === 'metadata' &&
+                  'toolJsonSchema' in (currentAction as any).metadata
+                ) {
+                  // 知识库改为枚举
+                  if (
+                    (currentAction as any).metadata.toolJsonSchema
+                      .needKnowledge
+                  ) {
+                    let newDefine = v.pipe(
+                      v.picklist(list.map((item) => item.name)),
+                      v.description(
+                        list
+                          .map((item) => {
+                            return `\n- 类型: ${item.graphIndex ? 'graph-' + item.type : item.type} 名称: ${item.name}`;
+                          })
+                          .join('\n'),
+                      ),
+                    );
+                    let newJsonSchema = toJsonSchema(newDefine);
+                    delete newJsonSchema.$schema;
+                    return {
+                      ...newJsonSchema,
+                      title: context.jsonSchema.title,
+                    };
+                  }
+                }
+                if (!context.valibotAction.type) {
+                  console.log(context.valibotAction);
+                }
+                return context.jsonSchema;
+              },
+            })
+          : { type: 'object', properties: {} };
+        let dispose = vscode.lm.registerToolDefinition(
+          {
+            name: item.type,
+            source: undefined,
+            tags: ['shenghuabi', item.type, 'extension_installed_by_tool'],
+            toolReferenceName: item.type,
+            displayName: item.type,
+            description: item.help || '',
+            icon: new vscode.ThemeIcon('files'),
+            inputSchema,
+          },
+          {
+            invoke: async (options) => {
+              const injector = createInjector({
+                providers: [SingleNodeRunnerService],
+                parent: this.#injector,
+              });
+              const result = await injector
+                .get(SingleNodeRunnerService)
+                .run(item, options.input as any, {
+                  outputId: 'tool',
+                });
+              if (typeof result === 'string') {
+                return new vscode.LanguageModelToolResult([
+                  new vscode.LanguageModelTextPart(result),
+                ]);
+              } else if (typeof result === 'object') {
+                return new vscode.LanguageModelToolResult([
+                  new vscode.LanguageModelTextPart(JSON.stringify(result)),
+                ]);
+                // todo 有问题,不支持传入
+                // return new vscode.LanguageModelToolResult([
+                //   vscode.LanguageModelDataPart.json(result),
+                // ]);
+              }
+              return;
+            },
+          },
+        );
+        disposeList.push(dispose);
+      }
+    });
+  }
   init() {
     vscode.languages.registerInlineCompletionItemProvider(Hanyu, {
       provideInlineCompletionItems: async (doc, pos, context, token) => {
@@ -89,64 +188,6 @@ export class CompletionService extends RootStaticInjectOptions {
     const modelObject = {} as Record<string, NonNullable<typeof list>[number]>;
     const event = new EventEmitter<void>();
 
-    for (const item of TOOL_CONFIG_LIST) {
-      const inputSchema = item.configDefine
-        ? toJsonSchema(item.configDefine, {
-            ignoreActions: [
-              'asControl',
-              'trim',
-              'viewRawConfig',
-              'asVirtualGroup',
-              'defineType',
-            ],
-            overrideAction: (context) => {
-              if (!context.valibotAction.type) {
-                console.log(context.valibotAction);
-              }
-              return context.jsonSchema;
-            },
-          })
-        : { type: 'object', properties: {} };
-      vscode.lm.registerToolDefinition(
-        {
-          name: item.type,
-          source: undefined,
-          tags: ['shenghuabi', item.type, 'extension_installed_by_tool'],
-          toolReferenceName: item.type,
-          displayName: item.type,
-          description: item.help || '',
-          icon: new vscode.ThemeIcon('files'),
-          inputSchema,
-        },
-        {
-          invoke: async (options) => {
-            const injector = createInjector({
-              providers: [SingleNodeRunnerService],
-              parent: this.#injector,
-            });
-            const result = await injector
-              .get(SingleNodeRunnerService)
-              .run(item, options.input as any, {
-                outputId: 'tool',
-              });
-            if (typeof result === 'string') {
-              return new vscode.LanguageModelToolResult([
-                new vscode.LanguageModelTextPart(result),
-              ]);
-            } else if (typeof result === 'object') {
-              return new vscode.LanguageModelToolResult([
-                new vscode.LanguageModelTextPart(JSON.stringify(result)),
-              ]);
-              // todo 有问题,不支持传入
-              // return new vscode.LanguageModelToolResult([
-              //   vscode.LanguageModelDataPart.json(result),
-              // ]);
-            }
-            return;
-          },
-        },
-      );
-    }
     vscode.lm.registerLanguageModelChatProvider(
       'shenghuabi',
       this.#inlineChat.createProvider({
@@ -180,11 +221,6 @@ export class CompletionService extends RootStaticInjectOptions {
           token,
         ) => {
           const result = convertVSCodeMessagesToOpenAI(message);
-          const list = await this.#knowledgeConfig.getOriginConfigList();
-          const data = list.map((item) => {
-            return `\n- 类型: ${item.graphIndex ? 'graph-' + item.type : item.type} 名称: ${item.name}`;
-          });
-          result[0].content = `\n## 现有知识库\n${data.join('\n')}`;
           const model2 = ExtensionConfig.chatModelList()[0];
 
           const openai = new OpenAI({

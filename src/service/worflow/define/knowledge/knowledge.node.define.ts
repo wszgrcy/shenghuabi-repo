@@ -26,5 +26,10 @@ export const KNOWLEDGE_NODE_DEFINE = v.object({
         return field.context.getContextTree();
       },
     }),
+    v.metadata({
+      toolJsonSchema: {
+        needKnowledge: true,
+      },
+    }),
   ),
 });
