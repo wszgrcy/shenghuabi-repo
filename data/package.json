@@ -5324,6 +5324,13 @@
                     "proxy": {
                       "type": "string",
                       "markdownDescription": "正常情况下无需配置会自动生成"
+                    },
+                    "customArgs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "markdownDescription": "自定义命令行参数,会在最后拼接到命令中"
                     }
                   },
                   "required": []
@@ -8708,6 +8715,13 @@
                       "proxy": {
                         "type": "string",
                         "markdownDescription": "正常情况下无需配置会自动生成"
+                      },
+                      "customArgs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "markdownDescription": "自定义命令行参数,会在最后拼接到命令中"
                       }
                     },
                     "required": []

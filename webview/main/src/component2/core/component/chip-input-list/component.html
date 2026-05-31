@@ -17,7 +17,7 @@
     }
     @if (autocompletion()) {
       <input
-        class="input input-sm"
+        class="input! input-sm!"
         #input
         type="text"
         [matChipInputFor]="chipGrid"
@@ -35,7 +35,7 @@
       </mat-autocomplete>
     } @else if (!inputRow()) {
       <input
-        class="input input-sm"
+        class="input! input-sm!"
         #input
         [matChipInputFor]="chipGrid"
         [matChipInputSeparatorKeyCodes]="list"
@@ -47,7 +47,7 @@
   </mat-chip-grid>
   @if (inputRow()) {
     <input
-      class="input input-sm"
+      class="input! input-sm!"
       #input
       [matChipInputFor]="chipGrid"
       [matChipInputSeparatorKeyCodes]="list"
