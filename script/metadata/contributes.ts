@@ -1,7 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { CommandPrefix } from './const';
-import { getNodeDefineToolList } from './get-tool-list';
 
 type MenuType = Record<
   | 'editor/title'
@@ -620,17 +619,18 @@ async function main() {
   }
 
   data['contributes']['configuration'] = await getConfig();
-  
-  // 工具注册
-  const toolList = await getNodeDefineToolList();
-  data['contributes']['languageModelTools'] = toolList;
-  
+
   writeFileSync(filePath, JSON.stringify(data, undefined, 2));
 }
 
 async function getConfig() {
   let { CONFIG } = await import('./config');
-  let { valibotToVscodeConfig } = await import('@cyia/vscode-valibot-config/valibot-to-vscode-config');
-  return valibotToVscodeConfig(CONFIG, { title: '软件配置', prefix: 'shenghuabi' });
+  let { valibotToVscodeConfig } = await import(
+    '@cyia/vscode-valibot-config/valibot-to-vscode-config'
+  );
+  return valibotToVscodeConfig(CONFIG, {
+    title: '软件配置',
+    prefix: 'shenghuabi',
+  });
 }
 main();

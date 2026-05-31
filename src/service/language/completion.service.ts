@@ -42,6 +42,7 @@ import { OpenAI } from 'openai';
 import { SingleNodeRunnerService } from '@shenghuabi/workflow';
 import { KnowledgeConfigService } from '../knowledge/knowledge-config.service';
 import { TOOL_CONFIG_LIST } from '../../share/tool-config';
+import { toJsonSchema } from '@valibot/to-json-schema';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -89,33 +90,62 @@ export class CompletionService extends RootStaticInjectOptions {
     const event = new EventEmitter<void>();
 
     for (const item of TOOL_CONFIG_LIST) {
-      vscode.lm.registerTool(item.type, {
-        invoke: async (options) => {
-          const injector = createInjector({
-            providers: [SingleNodeRunnerService],
-            parent: this.#injector,
-          });
-          const result = await injector
-            .get(SingleNodeRunnerService)
-            .run(item, options.input as any, {
-              outputId: 'tool',
-            });
-          if (typeof result === 'string') {
-            return new vscode.LanguageModelToolResult([
-              new vscode.LanguageModelTextPart(result),
-            ]);
-          } else if (typeof result === 'object') {
-            return new vscode.LanguageModelToolResult([
-              new vscode.LanguageModelTextPart(JSON.stringify(result)),
-            ]);
-            // todo 有问题,不支持传入
-            // return new vscode.LanguageModelToolResult([
-            //   vscode.LanguageModelDataPart.json(result),
-            // ]);
-          }
-          return;
+      const inputSchema = item.configDefine
+        ? toJsonSchema(item.configDefine, {
+            ignoreActions: [
+              'asControl',
+              'trim',
+              'viewRawConfig',
+              'asVirtualGroup',
+              'defineType',
+            ],
+            overrideAction: (context) => {
+              if (!context.valibotAction.type) {
+                console.log(context.valibotAction);
+              }
+              return context.jsonSchema;
+            },
+          })
+        : { type: 'object', properties: {} };
+      vscode.lm.registerToolDefinition(
+        {
+          name: item.type,
+          source: undefined,
+          tags: ['shenghuabi', item.type,'extension_installed_by_tool'],
+          toolReferenceName: item.type,
+          displayName: item.type,
+          description: item.help || '',
+          icon: new vscode.ThemeIcon('files'),
+          inputSchema,
         },
-      });
+        {
+          invoke: async (options) => {
+            const injector = createInjector({
+              providers: [SingleNodeRunnerService],
+              parent: this.#injector,
+            });
+            const result = await injector
+              .get(SingleNodeRunnerService)
+              .run(item, options.input as any, {
+                outputId: 'tool',
+              });
+            if (typeof result === 'string') {
+              return new vscode.LanguageModelToolResult([
+                new vscode.LanguageModelTextPart(result),
+              ]);
+            } else if (typeof result === 'object') {
+              return new vscode.LanguageModelToolResult([
+                new vscode.LanguageModelTextPart(JSON.stringify(result)),
+              ]);
+              // todo 有问题,不支持传入
+              // return new vscode.LanguageModelToolResult([
+              //   vscode.LanguageModelDataPart.json(result),
+              // ]);
+            }
+            return;
+          },
+        },
+      );
     }
     vscode.lm.registerLanguageModelChatProvider(
       'shenghuabi',

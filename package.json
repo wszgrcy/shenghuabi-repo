@@ -26,7 +26,8 @@
     "textSearchProvider2",
     "fileSearchProvider2",
     "aiTextSearchProvider",
-    "languageModelSystem"
+    "languageModelSystem",
+    "languageModelToolSupportsModel"
   ],
   "workspaces": [
     "./webview/main"
