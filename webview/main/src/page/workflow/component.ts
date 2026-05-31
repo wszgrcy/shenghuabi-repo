@@ -274,9 +274,9 @@ export default class WorkflowEditor
     // 初始化请求
     this.#trpc.client.workflow.dataChange.subscribe(undefined, {
       onData: (value) => {
-        if (isNumber(value?.version) && value.version < 7) {
+        if (isNumber(value?.version) && value.version < 8) {
           this.#trpc.client.common.warn.query(
-            '工作流版本过低,请使用迁移版本升级',
+            '工作流版本过低,v8版本不兼容之前的版本',
           );
           return;
         }
