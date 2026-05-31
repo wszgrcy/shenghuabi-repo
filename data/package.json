@@ -8820,7 +8820,7 @@
             },
             "llamaVersion": {
               "type": "string",
-              "default": "b6174",
+              "default": "b9442",
               "markdownDescription": "llama.cpp的版本号,可以从 https://github.com/ggerganov/llama.cpp/releases 获得"
             }
           },

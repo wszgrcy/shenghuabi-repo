@@ -275,7 +275,6 @@ export async function activate(context: vscode.ExtensionContext) {
                         },
                       ],
                     };
-
                     await ExtensionConfig['llama.config'].server.set(oldServer);
                     await new Promise<void>((resovle) => {
                       // 因为下载完后还会触发第二次写入,暂时性修复
