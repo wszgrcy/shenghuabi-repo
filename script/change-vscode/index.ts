@@ -648,6 +648,7 @@ async function getDefaultZhLanguage(userDataPath = '',) {
         },
       ],
     },
+
     {
       path: 'extensions/configuration-editing/package.json',
       list: [
@@ -785,7 +786,7 @@ async function getDefaultZhLanguage(userDataPath = '',) {
           query: `VariableDeclaration:has(>[value=packageTasks]) ArrayLiteralExpression CallExpression[value^=packageTask]`,
           delete: true,
           description: `普通构建时去掉,手动调用`,
-          offset:[0,1]
+          offset: [0, 1],
         },
         {
           query: `VariableDeclaration:has(>[value=packageTasks]) ArrayLiteralExpression CallExpression[value^=prepareCopilotRipgrepShimTask]`,
@@ -803,6 +804,16 @@ async function getDefaultZhLanguage(userDataPath = '',) {
 			task.series(...outputList)
 		);`,
           description: `普通构建时去掉,手动调用`,
+        },
+      ],
+    },
+    {
+      path: 'src/vs/workbench/api/common/extHostLanguageModelTools.ts',
+      list: [
+        {
+          query: `VariableDeclaration:has(>Identifier[value=dto])>ObjectLiteralExpression>SyntaxList::children(-1)`,
+          replace: `,tags: definition.tags,`,
+          description: '增加tag',
         },
       ],
     },

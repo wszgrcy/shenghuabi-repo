@@ -111,7 +111,7 @@ export class CompletionService extends RootStaticInjectOptions {
         {
           name: item.type,
           source: undefined,
-          tags: ['shenghuabi', item.type,'extension_installed_by_tool'],
+          tags: ['shenghuabi', item.type, 'extension_installed_by_tool'],
           toolReferenceName: item.type,
           displayName: item.type,
           description: item.help || '',
