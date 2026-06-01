@@ -355,6 +355,11 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
           replace: `'Chen'`,
           description: '版权',
         },
+        {
+          query: `StringLiteral[value="'extensions/node_modules/@parcel/watcher/**'"]`,
+          replace: `['extensions/node_modules/@parcel/watcher/**','**/*{darwin,linux}*/**/*.node','**/*{darwin,linux}*.node',]`,
+          description: '忽略',
+        },
       ],
     },
     {
