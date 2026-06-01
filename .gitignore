@@ -22,3 +22,4 @@ coverage
 /skills-lock.json
 /lib/vscode
 /.contributes-dist
+/lib/VSCode-win32-x64
