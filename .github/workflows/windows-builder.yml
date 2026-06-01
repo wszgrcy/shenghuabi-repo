@@ -39,6 +39,7 @@ jobs:
     needs: check-version-branch
     env:
       PUBLISH_VERSION: ${{ needs.check-version-branch.outputs.version }}
+      BUILD_SOURCEVERSION: ${{ needs.check-version-branch.outputs.version }}
     if: ${{ needs.check-version-branch.outputs.should-build == 'true' }}
     runs-on: windows-latest
     steps:
@@ -96,12 +97,7 @@ jobs:
           git init
           git add .
           git commit -m '1'
-      - name: 添加提交
-        if: ${{ steps.commonPackage.outputs.exist=='false' }}
-        working-directory: ./lib/vscode
-        run: |
-          git add .
-          git commit -m '1'
+
 
       - name: vscode仓库(如果不存在)
         if: ${{ steps.commonPackage.outputs.exist=='false' }}
