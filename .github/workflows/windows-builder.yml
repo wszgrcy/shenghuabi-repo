@@ -25,7 +25,7 @@ jobs:
       - name: install-pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: "10"
+          version: "11.5.0"
       - run: pnpm i
         env:
           ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
@@ -55,7 +55,7 @@ jobs:
       - name: install-pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: "10"
+          version: "11.5.0"
 
       - run: pnpm i
         env:
