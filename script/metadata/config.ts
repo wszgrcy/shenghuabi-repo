@@ -525,11 +525,11 @@ export const CONFIG = v.object({
     ),
   ),
 
-  'fullText.workflowPath': v.pipe(
+  'file-content.workflowPath': v.pipe(
     v.string(),
     v.description('编辑器中全文操作时关联执行的工作流'),
   ),
-  'sentence.workflowPath': v.pipe(
+  'file-sentence.workflowPath': v.pipe(
     v.string(),
     v.description('编辑器中按行分割内容后关联执行的工作流'),
   ),
@@ -696,7 +696,7 @@ export const CONFIG = v.object({
     }),
     v.description('将PDF页面渲染为图像的配置，包含缩放比例参数'),
   ),
-  'image.workflowPath': v.pipe(
+  'image-parser.workflowPath': v.pipe(
     v.optional(v.string()),
     v.description('pdf视为图片处理操作时关联执行的工作流路径'),
   ),

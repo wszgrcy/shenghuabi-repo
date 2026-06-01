@@ -166,8 +166,8 @@ export class ChatNodeService {
       });
     },
 
-    selectWorkflow: () => {
-      return this.#client.workflow.selectWorkflow.query(undefined);
+    selectWorkflow: (input: any) => {
+      return this.#client.workflow.selectWorkflow.query(input ?? {});
     },
     getWorkflowInputList: (fileName: string) => {
       return this.#client.workflow.getWorkflowInputList.query(fileName);

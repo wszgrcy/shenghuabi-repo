@@ -19,7 +19,7 @@ export const WORKFLOW_EXEC_DEFINE = v.pipe(
       actions.inputs.patchAsync({
         clicked: (field) => {
           return async () => {
-            const result = await field.context.selectWorkflow();
+            const result = await field.context.selectWorkflow({});
             if (!result) {
               return;
             }

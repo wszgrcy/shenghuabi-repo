@@ -42,7 +42,7 @@ export default class AiChatPage {
       description: '工作流',
       beforeChange: async () => {
         return await this.#client.workflow.selectWorkflow
-          .query(undefined)
+          .query({})
           .then((value) => {
             if (!value) {
               return false;

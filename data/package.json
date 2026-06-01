@@ -1682,11 +1682,11 @@
           "default": {},
           "markdownDescription": "内置HTTP服务器配置，用于远程执行工作流API服务\n默认为:http://127.0.0.1:1127\n执行工作流:/workflow/exec\n执行工作流(流式返回):/workflow/stream"
         },
-        "shenghuabi.fullText.workflowPath": {
+        "shenghuabi.file-content.workflowPath": {
           "type": "string",
           "markdownDescription": "编辑器中全文操作时关联执行的工作流"
         },
-        "shenghuabi.sentence.workflowPath": {
+        "shenghuabi.file-sentence.workflowPath": {
           "type": "string",
           "markdownDescription": "编辑器中按行分割内容后关联执行的工作流"
         },
@@ -9115,7 +9115,7 @@
           "required": [],
           "markdownDescription": "将PDF页面渲染为图像的配置，包含缩放比例参数"
         },
-        "shenghuabi.image.workflowPath": {
+        "shenghuabi.image-parser.workflowPath": {
           "type": "string",
           "markdownDescription": "pdf视为图片处理操作时关联执行的工作流路径"
         }

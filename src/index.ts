@@ -184,13 +184,13 @@ export async function activate(context: vscode.ExtensionContext) {
           const editorWorkflowService = inject(EditorWorkflowService);
           return async (filePath: string, prefix: string, image: Buffer) => {
             const setResult = await editorWorkflowService.workflowConfigSet(
-              'image',
+              'image-parser',
               false,
             );
             if (!setResult) {
               return { content: '[[工作流未选择]]' };
             }
-            const workflow = await editorWorkflowService.getWorkflow('image');
+            const workflow = await editorWorkflowService.getWorkflow('image-parser');
             const result = await workflowExec.exec(
               workflow,
               {

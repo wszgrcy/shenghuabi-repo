@@ -491,7 +491,7 @@ export class CommandService extends RootStaticInjectOptions {
     const ms = new MS(content);
     const editor = vscode.window.activeTextEditor;
 
-    if (type === 'sentence') {
+    if (type === 'file-sentence') {
       const list = splitStrLine(content!);
       const newList = [];
       for (let index = 0; index < list.length; index++) {
@@ -562,7 +562,7 @@ export class CommandService extends RootStaticInjectOptions {
     const channel = this.#injector.get(LogFactoryService).getLog('workflow');
     channel.createProgress('逐行处理中');
     try {
-      await this.#editorWorkflowChange(uri, 'sentence', false, channel);
+      await this.#editorWorkflowChange(uri, 'file-sentence', false, channel);
     } finally {
       channel.endProgress();
     }
@@ -572,7 +572,7 @@ export class CommandService extends RootStaticInjectOptions {
     const channel = this.#injector.get(LogFactoryService).getLog('workflow');
     channel.createProgress('逐行处理中');
     try {
-      await this.#editorWorkflowChange(uri, 'sentence', true, channel);
+      await this.#editorWorkflowChange(uri, 'file-sentence', true, channel);
     } finally {
       channel.endProgress();
     }
@@ -582,7 +582,7 @@ export class CommandService extends RootStaticInjectOptions {
     const channel = this.#injector.get(LogFactoryService).getLog('workflow');
     channel.createProgress('全文处理中');
     try {
-      await this.#editorWorkflowChange(uri, 'fullText', false, channel);
+      await this.#editorWorkflowChange(uri, 'file-content', false, channel);
     } finally {
       channel.endProgress();
     }
@@ -592,7 +592,7 @@ export class CommandService extends RootStaticInjectOptions {
     const channel = this.#injector.get(LogFactoryService).getLog('workflow');
     channel.createProgress('全文处理中');
     try {
-      await this.#editorWorkflowChange(uri, 'fullText', true, channel);
+      await this.#editorWorkflowChange(uri, 'file-content', true, channel);
     } finally {
       channel.endProgress();
     }
@@ -973,13 +973,13 @@ export class CommandService extends RootStaticInjectOptions {
         content,
       };
       const setResult = await this.#editorWorkflowService.workflowConfigSet(
-        'tts',
+        'file-tts',
         force,
       );
       if (!setResult) {
         return;
       }
-      const workflow = await this.#editorWorkflowService.getWorkflow('tts');
+      const workflow = await this.#editorWorkflowService.getWorkflow('file-tts');
       if (!workflow) {
         return;
       }

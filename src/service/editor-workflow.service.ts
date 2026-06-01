@@ -4,7 +4,11 @@ import { WorkspaceService, FolderName } from './workspace.service';
 import * as vscode from 'vscode';
 import { WorkflowSelectService } from '@shenghuabi/workflow';
 import { WorkflowNativeSelectService } from '../native/workflow-select.service';
-export type EditorWorkflowType = 'fullText' | 'sentence' | 'tts' | 'image';
+export type EditorWorkflowType =
+  | 'file-content'
+  | 'file-sentence'
+  | 'file-tts'
+  | 'image-parser';
 
 export class EditorWorkflowService extends RootStaticInjectOptions {
   #workspace = inject(WorkspaceService);
@@ -12,13 +16,13 @@ export class EditorWorkflowService extends RootStaticInjectOptions {
   #workflow = inject(WorkflowSelectService);
   #workflowNativeSelect = inject(WorkflowNativeSelectService);
   getWorkflowPath(type: EditorWorkflowType) {
-    if (type === 'tts') {
+    if (type === 'file-tts') {
       return ExtensionConfig.tts.workflowPath();
     }
     return ExtensionConfig[`${type}.workflowPath`]();
   }
   setWorkflowPath(type: EditorWorkflowType, value: string) {
-    if (type === 'tts') {
+    if (type === 'file-tts') {
       return ExtensionConfig.tts.workflowPath.set(value);
     }
     return ExtensionConfig[`${type}.workflowPath`].set(value);
@@ -35,7 +39,7 @@ export class EditorWorkflowService extends RootStaticInjectOptions {
         vscode.window.showWarningMessage(`未设置工作流文件夹,请先设置`);
         return false;
       }
-      const result = await this.#workflowNativeSelect.selectWorkflow();
+      const result = await this.#workflowNativeSelect.selectWorkflow(type);
       if (result) {
         await this.setWorkflowPath(type, result);
       } else {

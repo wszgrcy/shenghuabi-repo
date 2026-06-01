@@ -36,8 +36,8 @@ export default class KnowledgeCreate {
   extraPanelSet = new Set<string>();
 
   context = {
-    selectWorkflow: () => {
-      return this.#trpc.workflow.selectWorkflow.query(undefined);
+    selectWorkflow: (input: any) => {
+      return this.#trpc.workflow.selectWorkflow.query(input ?? {});
     },
   };
   options = {

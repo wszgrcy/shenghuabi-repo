@@ -98,7 +98,9 @@ export const RAG_NODE_DEFINE = v.pipe(
           }),
           actions.inputs.patchAsync({
             clicked: (field) => () => {
-              return field.context.selectWorkflow();
+              return field.context.selectWorkflow({
+                type: 'graph-key-extract',
+              });
             },
           }),
           actions.wrappers.patch(['label']),
@@ -122,7 +124,7 @@ export const RAG_NODE_DEFINE = v.pipe(
           }),
           actions.inputs.patchAsync({
             clicked: (field) => {
-              return () => field.context.selectWorkflow();
+              return () => field.context.selectWorkflow({type:'graph-rag'});
             },
           }),
           actions.wrappers.patch(['label']),

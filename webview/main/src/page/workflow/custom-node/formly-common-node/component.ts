@@ -138,11 +138,11 @@ export class FormlyCommonNodeComponent {
         config.contextGroup ??= {};
         config.contextGroup[key.join('-')] = value;
       },
-      editorInputChange: async (value: boolean) => {
+      inputParamsChange: async (value: any) => {
         this.#bridge.options$.update((data) => {
           return {
             ...data,
-            editorInput: value,
+            ...value,
           };
         });
       },

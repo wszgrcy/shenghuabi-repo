@@ -199,9 +199,13 @@ export const WorkflowRouter = t.router({
         })();
       });
     }),
-  selectWorkflow: t.procedure.input(v.any()).query(async ({ input, ctx }) => {
-    return ctx.injector.get(WorkflowNativeSelectService).selectWorkflow();
-  }),
+  selectWorkflow: t.procedure
+    .input(v.object({ type: v.optional(v.string()) }))
+    .query(async ({ input, ctx }) => {
+      return ctx.injector
+        .get(WorkflowNativeSelectService)
+        .selectWorkflow(input.type);
+    }),
   selectCard: t.procedure.input(v.any()).query(async ({ input, ctx }) => {
     return ctx.injector.get(MindService).getCardList();
   }),

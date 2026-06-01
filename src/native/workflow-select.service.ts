@@ -1,20 +1,22 @@
-import { inject } from 'static-injector';
-import { WorkflowSelectService } from '@shenghuabi/workflow';
+import { inject, computed } from 'static-injector';
 import * as vscode from 'vscode';
-import { formatTime } from '@cyia/util';
+import { WatchService } from '../service/fs/watch.service';
 
 export class WorkflowNativeSelectService {
-  #service = inject(WorkflowSelectService);
-  async selectWorkflow() {
-    const list = await this.#service.getList();
+  #watch = inject(WatchService);
+
+  async selectWorkflow(type?: string) {
+    let list =
+      (type
+        ? this.#watch
+            .workflowList$()
+            ?.filter((item) => type === item.data.options?.type)
+        : this.#watch.workflowList$()) ?? [];
     const result = await vscode.window.showQuickPick(
-      list
-        .sort((a, b) => b.stat.mtime.getTime() - a.stat.mtime.getTime())
-        .map((item) => ({
-          label: item.relPath,
-          value: item.relPath,
-          description: `修改于 ${formatTime(item.stat.mtime)}`,
-        })),
+      list.map((item) => ({
+        label: item.relPath,
+        value: item.relPath,
+      })),
       {
         title: `选择运行的工作流`,
       },
