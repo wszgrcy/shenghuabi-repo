@@ -4,7 +4,9 @@ import { TEMPLATE_NODE_DEFINE } from '../template.node.define';
 
 const engine = new Liquid({ jsTruthy: true });
 
-export class TemplateRunner extends NodeRunnerBase {
+export class TemplateRunner extends NodeRunnerBase<
+  typeof TEMPLATE_NODE_DEFINE
+> {
   override async run() {
     const nodeResult = this.getParsedNode(TEMPLATE_NODE_DEFINE);
 

@@ -2,12 +2,13 @@
   @for (item of value$(); track $index) {
     <div class="flex gap-2 items-center">
       <prompt-template
-        class="flex-1 overflow-hidden nodrag"
+        class="flex-1 overflow-auto nodrag max-h-80"
         [ngModel]="item"
         (ngModelChange)="promptChange($event, $index)"
         [isLast]="true"
-        (addTemplateChange)="addChange($index)"
+        (addTemplateChange)="addChange($event, $index)"
         [list]="value$()"
+        (variableChange)="varChanged($event, $index)"
       ></prompt-template>
       <div class="flex items-center overflow-hidden">
         <button
@@ -19,5 +20,9 @@
         </button>
       </div>
     </div>
+  } @empty {
+    <button class="btn btn-circle btn-soft btn-primary">
+      <span class="material-icons" (click)="addChange('user', -1)">add</span>
+    </button>
   }
 </div>

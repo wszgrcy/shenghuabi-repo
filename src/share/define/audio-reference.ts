@@ -1,10 +1,5 @@
 import * as v from 'valibot';
-import {
-  condition,
-  mergeHooks,
-  setComponent,
-  actions,
-} from '@piying/view-angular-core';
+import { mergeHooks, setComponent, actions } from '@piying/view-angular-core';
 import { deepEqual } from 'fast-equals';
 import { BehaviorSubject } from 'rxjs';
 
@@ -25,20 +20,15 @@ export const Reference = v.pipe(
       return subject;
     },
   }),
-  condition({
-    environments: ['display'],
-    actions: [
-      mergeHooks({
-        allFieldsResolved: (field) => {
-          setTimeout(() => {
-            field.context['getActionList']().then((list: any[]) => {
-              if (!field.form.control?.value) {
-                field.form.control?.updateValue(list[0]);
-              }
-            });
-          }, 0);
-        },
-      }),
-    ],
+  mergeHooks({
+    allFieldsResolved: (field) => {
+      setTimeout(() => {
+        field.context['getActionList']().then((list: any[]) => {
+          if (!field.form.control?.value) {
+            field.form.control?.updateValue(list[0]);
+          }
+        });
+      }, 0);
+    },
   }),
 );

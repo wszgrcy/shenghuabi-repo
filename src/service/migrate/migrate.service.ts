@@ -9,7 +9,7 @@ export class MigrateService {
     const version = this.#context.globalState.get('version');
     if (!version) {
       //   await this.updateLLamaConifg();
-      this.#context.globalState.update('version', '1.103.42');
+      this.#context.globalState.update('version', '1.122.4');
     }
   }
   // 不用迁移,因为默认是auto

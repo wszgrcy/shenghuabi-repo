@@ -4,13 +4,11 @@ import { NODE_COMMON } from '../common';
 
 export const FileInputWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  templateConfig: FILE_NODE_DEFINE,
-  displayConfig: FILE_NODE_DEFINE,
-  config: FILE_NODE_DEFINE,
+  configDefine: FILE_NODE_DEFINE,
   initData: () => {
     return {
       data: {
-        outputName: 'first',
+        outputHandleId: 'first',
         transform: {
           resizable: true,
         },

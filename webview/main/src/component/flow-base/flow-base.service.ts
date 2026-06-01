@@ -72,6 +72,25 @@ export class FlowBseService<NODE extends Node> {
     return this.selectedNodeList$().length > 1;
   });
   edges = signal<Edge<any>[]>([]);
+  /** target 索引 */
+  edgeTargetList$$ = computed(() => {
+    const obj: Record<string, Edge<any>[]> = {};
+    for (const item of this.edges()) {
+      obj[item.target] ??= [];
+      obj[item.target].push(item);
+    }
+    return obj;
+  });
+  edgeTargetObj$$ = computed(() => {
+    const obj: Record<string, Record<string, Edge<any>>> = {};
+    for (const item of this.edges()) {
+      obj[item.target] ??= {};
+      if (item.targetHandle) {
+        obj[item.target][item.targetHandle] = item;
+      }
+    }
+    return obj;
+  });
   setNodes = signal<React.Dispatch<React.SetStateAction<NODE[]>> | undefined>(
     undefined,
   );
@@ -244,10 +263,22 @@ export class FlowBseService<NODE extends Node> {
       replace: true,
     });
   }
-  /** 更新节点的data，增量更新  */
-  patchDataOne(id: string, data: NODE['data'] | Record<string, any>) {
+  /** 更新节点的data，增量更新 */
+  patchDataOne(
+    id: string,
+    updater: (oldData: NODE) => NODE['data'] | Record<string, any>,
+  ) {
+    this.instance()!.updateNodeData(id, updater);
+  }
+  patchDataConfigOne(
+    id: string,
+    updater: (oldConfig: Record<string, any>) => Record<string, any>,
+  ) {
     this.instance()!.updateNodeData(id, (oldNode) => {
-      return { ...(oldNode.data as any), ...data };
+      return {
+        ...oldNode.data,
+        config: updater(oldNode.data?.['config'] as any),
+      };
     });
   }
   /** 获得布局级别的后代 */

@@ -6,5 +6,5 @@ export interface MenuCheckboxOption {
   value: any;
   disabled?: Signal<boolean>;
   description?: string;
-  beforeChange?: () => Promise<boolean>;
+  beforeChange?: (option: MenuCheckboxOption) => Promise<boolean>;
 }

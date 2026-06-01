@@ -22,83 +22,59 @@ import { ToggleActionButton } from '@fe/component/react/toggle-action.button';
 import { Segmented } from 'antd';
 import { deepEqual } from 'fast-equals';
 import { NgOutletReact } from '../../../bridge/component-wrapper';
-import * as v from 'valibot';
-import {
-  getSchemaByIssuePath,
-  getSchemaMetadata,
-} from '@piying/view-angular-core';
-import { WarningTwoTone } from '@ant-design/icons';
+
 import '@valibot/i18n/zh-CN';
 import { createDiffHandle } from '@fe/util/react';
+import { WebviewNodeConfig } from '@shenghuabi/workflow/share';
 
 const colorInterpolate = interpolateRgbBasisClosed(['red', 'yellow']);
 const outputColorInterpolate = interpolateRgbBasisClosed(['lime', 'teal']);
 function getPosition(position: number, count: number) {
   return ((position + 1) / (count + 1)) * 100 + '%';
 }
-function NodeTooltip(props: { bridge: BridgeService; props: CustomNode }) {
-  if (props.props.type === 'input-params') {
-    const manualInput = !!props.props.data.config?.['manualInput'];
-    return (
-      <ToggleActionButton
-        disabledStatus={manualInput}
-        title={!manualInput ? '需要输入提示词' : '直接调用'}
-        onClick={useCallback(() => {
-          props.bridge.patchDataOne(props.props.id, {
-            config: {
-              ...props.props.data.config,
-              manualInput: !props.props.data.config?.['manualInput'],
-            },
-          });
-        }, [props.props.data.config])}
-        icon={'send'}
-      ></ToggleActionButton>
-    );
-  }
-  return null;
-}
-function useWarnToolbar({
-  props,
-  bridge,
-}: {
-  bridge: BridgeService;
-  props: CustomNode;
+
+const LEFT_HANDLES = [
+  // { id: '[connect]', title: '连接点' },
+  { id: '[context]', title: '上下文' },
+];
+
+function LeftHandles(props: {
+  // disableConnect?: boolean;
+  disableContext?: boolean;
 }) {
-  const message = useMemo(() => {
-    const type = props.type;
-    const nodeMeta = bridge.fullNodeObject$$()[type!];
-    if (!nodeMeta) {
-      return;
-    }
-    const config = nodeMeta.config;
-    if (!config) {
-      return;
-    }
-    const result = v.safeParse(config, props, { lang: 'zh-CN' });
-    if (!result.success) {
-      const list: string[] = [];
-      result.issues.forEach((issue) => {
-        if (!issue.path) {
-          return;
-        }
-        const schema = getSchemaByIssuePath(config as any, issue.path);
-        if (!schema) {
-          return;
-        }
-        const metadata = getSchemaMetadata(schema);
-        // console.log(metadata, issue);
-        list.push(`${metadata.title}: ${issue.message}`);
-      });
-      return list;
-    }
-    return;
-  }, [props.data]);
-  return message;
+  const hideMap: Record<string, boolean> = {
+    // '[connect]': !!props.disableConnect,
+    '[context]': !!props.disableContext,
+  };
+  const list = LEFT_HANDLES.filter((h) => !hideMap[h.id]);
+  return list.map((h, index) => (
+    <div
+      className={'absolute handle-wrapper-left'}
+      key={h.id}
+      style={{ top: getPosition(index, list.length) }}
+    >
+      <Tooltip
+        title={`[${h.title}]`}
+        mouseEnterDelay={0}
+        placement={Position.Left}
+      >
+        <div className="label-hint">
+          <Handle
+            type="target"
+            id={h.id}
+            position={Position.Left}
+            style={{ background: colorInterpolate(index) }}
+            isValidConnection={isValidConnection}
+          ></Handle>
+        </div>
+      </Tooltip>
+    </div>
+  ));
 }
+
 const selector = (a: ReactFlowState) =>
   a.nodes.filter((node) => node.selected).length;
 function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
-  const disableOpenConfig = props.props.data.options?.disableOpenConfig;
   const excludeUsage = props.props.data.excludeUsage;
   const outputList = useMemo(
     () => flatFilterHandleList(props.props.data.handle?.output),
@@ -129,14 +105,14 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
     if (!displayOutput) {
       return [];
     }
-    return uniqBy(outputList, (item) => item.value).map((item, i) => {
+    return uniqBy(outputList, (item) => item.name).map((item, i) => {
       return {
-        value: item.value,
+        value: item.id,
         icon: (
           <Tooltip title={'选择出口:' + item.label}>
             <div
               style={{ color: outputColorInterpolate(i / outputList.length) }}
-              className="material-icons toolbar-icon w-[24px] h-[24px]"
+              className="material-icons toolbar-icon  text-[16px]!"
             >
               output
             </div>
@@ -146,57 +122,26 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
     });
   }, [displayOutput, outputList]);
   const selectedLength = useStore(selector);
-  const valueWarn = useWarnToolbar(props);
   const excludeFn = useCallback(() => {
-    props.bridge.patchDataOne(props.props.id, {
+    props.bridge.patchDataOne(props.props.id, (old) => ({
+      ...old.data,
       excludeUsage: !excludeUsage,
-    });
+    }));
   }, [excludeUsage]);
-  const hiddenFn = useCallback(() => {
-    props.bridge.patchDataOne(props.props.id, {
-      options: {
-        ...props.props.data.options,
-        disableOpenConfig: !props.props.data.options?.disableOpenConfig,
-      },
-    });
-  }, [props.props.data.options]);
+
   // 切换出口
   return (
     <NodeToolbar
-      isVisible={valueWarn ? true : undefined}
+      isVisible={true}
       position={Position.Top}
       className="flex border-[1px] rounded-[4px] mat-elevation-z2  node-toolbar items-center select-none"
       onDoubleClickCapture={(e) => {
         e.stopPropagation();
       }}
     >
-      {valueWarn ? (
-        <>
-          <Tooltip
-            placement="top"
-            title={
-              <>
-                {valueWarn.map((a, i) => (
-                  <div key={i}>{a}</div>
-                ))}
-              </>
-            }
-            mouseEnterDelay={0}
-            className="toolbar-icon select-none"
-          >
-            <WarningTwoTone twoToneColor={'#faad14'} />
-          </Tooltip>
-        </>
-      ) : null}
       {/* 如果没有配置,那么这个参数应该被隐藏,比如纯节点 */}
       {selectedLength === 1 && props.props.selected ? (
         <>
-          <ToggleActionButton
-            disabledStatus={!disableOpenConfig}
-            title={!disableOpenConfig ? '隐藏配置' : '显示配置'}
-            onClick={hiddenFn}
-            icon={'settings'}
-          ></ToggleActionButton>
           <ToggleActionButton
             disabledStatus={!excludeUsage}
             title={!excludeUsage ? '排除此节点' : '包含此节点'}
@@ -206,37 +151,34 @@ function TopToolbar(props: { bridge: BridgeService; props: CustomNode }) {
           {displayOutput ? (
             <Segmented<string>
               options={options}
-              value={props.props.data.outputName}
+              value={props.props.data.outputHandleId}
               onChange={(value) => {
-                props.bridge.patchDataOne(props.props.id, {
-                  outputName: value,
-                });
+                props.bridge.patchDataOne(props.props.id, (old) => ({
+                  ...old.data,
+                  outputHandleId: value,
+                }));
               }}
             />
           ) : null}
-          <NodeTooltip props={props.props} bridge={props.bridge}></NodeTooltip>
         </>
       ) : null}
     </NodeToolbar>
   );
 }
-export function handleItemFactory(
-  position: Position,
-  type: 'target' | 'source',
-) {
+function handleItemFactory(position: Position, type: 'target' | 'source') {
   return (props: {
-    list: any[];
+    length: number;
     index: number;
 
     handleNode: HandleNode;
   }) => {
-    const percent = props.index / props.list.length;
+    const percent = props.index / props.length;
     const { id, label } = props.handleNode;
     return (
       <div
         className={'absolute handle-wrapper-' + position}
         key={props.index}
-        style={{ top: getPosition(props.index, props.list.length) }}
+        style={{ top: getPosition(props.index, props.length) }}
       >
         <Tooltip title={label} mouseEnterDelay={0} placement={position}>
           <div className="label-hint">
@@ -263,48 +205,16 @@ export function wrapControlNode(
   componentConfig: {
     component: Type<any>;
     otherInputs?: Record<string, any>;
+    nodeDefine?: WebviewNodeConfig;
   },
   bridge: BridgeService,
 ) {
   // todo 迁到上方
-
   return (props: CustomNode) => {
     const instance = useReactFlow();
     props = instance.getNode(props.id)!;
     const updateNode = useUpdateNodeInternals();
-    const LeftDiffHandle = useMemo(
-      () =>
-        createDiffHandle<HandleNode>({
-          diffCompareFn: (item) => item.id,
-          diffWhen(preValue, currentValue, diffValue) {
-            return bridge.instance()!.deleteElements({
-              edges: bridge
-                .edges()
-                .filter((edge) =>
-                  diffValue.some(
-                    (handle) =>
-                      handle.id === edge.targetHandle &&
-                      props.id === edge.target,
-                  ),
-                ),
-            });
-          },
-          afterBuild() {
-            updateNode(props.id);
-          },
-          creatChild: (list, item, index) => {
-            return (
-              <LeftHandleItem
-                list={list}
-                index={index}
-                handleNode={item}
-                key={index}
-              ></LeftHandleItem>
-            );
-          },
-        }),
-      [],
-    );
+
     const RightDiffHandle = useMemo(
       () =>
         createDiffHandle<HandleNode>({
@@ -328,7 +238,7 @@ export function wrapControlNode(
           creatChild: (list, item, index) => {
             return (
               <RightHandleItem
-                list={list}
+                length={list.length}
                 index={index}
                 handleNode={item}
                 key={index}
@@ -385,11 +295,12 @@ export function wrapControlNode(
               otherInputs={componentConfig.otherInputs}
             ></NgOutletReact>
           </div>
-          <LeftDiffHandle
-            list={flatFilterHandleList(props.data.handle?.input)}
-          />
           <RightDiffHandle
             list={flatFilterHandleList(props.data.handle?.output)}
+          />
+          <LeftHandles
+            // disableConnect={componentConfig.nodeDefine?.disableConnect}
+            disableContext={componentConfig.nodeDefine?.disableContext}
           />
         </div>
       </>

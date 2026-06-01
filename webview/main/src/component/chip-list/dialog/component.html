@@ -9,7 +9,7 @@
   >
   </piying-view>
 </mat-dialog-content>
-<mat-dialog-actions class="flex">
+<mat-dialog-actions class="flex gap-2">
   <div class="flex-1">
     @if (downloading$()) {
       <mat-progress-bar
@@ -26,6 +26,6 @@
   >
     <span class="material-icons">download</span>
   </button>
-  <button class="btn btn-error" mat-dialog-close>关闭</button>
-  <button class="btn btn-soft btn-primary" (click)="close()">提交</button>
+  <button [disabled]="downloading$()" class="btn btn-error" mat-dialog-close>关闭</button>
+  <button [disabled]="downloading$()" class="btn btn-soft btn-primary" (click)="close()">提交</button>
 </mat-dialog-actions>

@@ -13,7 +13,7 @@ export async function main() {
   let content = JSON.parse(
     await fs.promises.readFile(packageJson, { encoding: 'utf-8' }),
   );
-  content.version = isCI ? process.env['PUBLISH_VERSION'] : '1.103.999';
+  content.version = isCI ? process.env['PUBLISH_VERSION'] : '1.122.999';
   await fs.promises.writeFile(packageJson, JSON.stringify(content));
   await $({
     stdio: 'inherit',

@@ -4,17 +4,12 @@ import { ARRAY_MERGE_NODE_DEFINE } from '../array-merge.define';
 
 export const ArrayMergeWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  displayConfig: ARRAY_MERGE_NODE_DEFINE,
-  config: ARRAY_MERGE_NODE_DEFINE,
+  configDefine: ARRAY_MERGE_NODE_DEFINE,
   initData: () => {
-    return {
-      data: {
-        transform: {
-          resizable: true,
-        },
+    console.log('被调用');
 
-        value: [],
-      },
+    return {
+      data: {},
       width: 300,
     };
   },

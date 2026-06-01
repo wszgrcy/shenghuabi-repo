@@ -5,6 +5,7 @@ import {
   linkedSignal,
   resource,
   RootStaticInjectOptions,
+  effect,
 } from 'static-injector';
 import * as v from 'valibot';
 import { FolderName, WorkspaceService } from '../workspace.service';
@@ -56,6 +57,20 @@ export class KnowledgeConfigService extends RootStaticInjectOptions {
   });
   originConfigList$ = linkedSignal(() => this.configList$.value() ?? []);
 
+  getOriginConfigList() {
+    return new Promise<KnowledgeFileType['list']>((res, rej) => {
+      const ref = effect(
+        () => {
+          if (this.configList$.isLoading()) {
+            return;
+          }
+          res(this.originConfigList$() as any);
+          ref.destroy();
+        },
+        { injector: this.#injector },
+      );
+    });
+  }
   /** 自动接受文件更新,但是也可以手动更新 */
   originConfig$$ = computed(() => {
     return (this.originConfigList$() ?? []).reduce(

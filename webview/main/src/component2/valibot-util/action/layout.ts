@@ -8,7 +8,7 @@ export function asRow<TInput>(count?: number) {
         class:
           typeof count === 'number'
             ? `grid gap-2 grid-cols-${count}`
-            : 'flex gap-2 *:flex-1 items-center',
+            : 'flex gap-2 *:flex-1 items-end',
       },
     },
   ]);

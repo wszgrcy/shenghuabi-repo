@@ -3,7 +3,6 @@ import {
   EnvironmentInjector,
   OnInit,
   ViewContainerRef,
-  computed,
   effect,
   inject,
   signal,
@@ -52,7 +51,6 @@ import { BridgeService } from './service';
 import { TrpcService } from '../../service/trpc.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
-import { deepClone } from '../../util/clone';
 import { DocumentEvent } from '../../../../../src/share/mind.const';
 import { toObservable } from '@angular/core/rxjs-interop';
 
@@ -60,12 +58,10 @@ import { effectOnce } from '../../util/effect-once';
 import { wrapEdge } from './custom-node/wrap-edge';
 import { DefaultEdgeComponent } from './custom-edge/default/component';
 import { PurePipe } from '@cyia/ngx-common/pipe';
-import { NodePanelComponent } from './panel/node/component';
-import { deepEqual } from 'fast-equals';
 import { IterationNodeDefine } from './custom-node/iteration-node';
 import { ChatService } from '@fe/component/chat/chat.service';
 import { ValidatePanelComponent } from './panel/validate/component';
-import { CustomNode } from './type';
+import { BridgeToken, CustomNode } from './type';
 import {
   FlowBseService,
   FlowDefaultConfig,
@@ -95,7 +91,6 @@ import { isNumber } from 'lodash-es';
     ReactiveFormsModule,
     MatIconModule,
     PurePipe,
-    NodePanelComponent,
     ValidatePanelComponent,
     MatDialogModule,
   ],
@@ -103,6 +98,7 @@ import { isNumber } from 'lodash-es';
     BridgeService,
     ChatService,
     { provide: FlowBseService, useExisting: BridgeService },
+    { provide: BridgeToken, useExisting: BridgeService },
     ChatNodeService,
   ],
   styleUrl: './component.scss',
@@ -112,7 +108,7 @@ export default class WorkflowEditor
   implements OnInit
 {
   drawer = viewChild.required<MatDrawer>('drawer');
-
+  // reactFlowReactOutlet = viewChild.required<ReactOutlet>('reactflow');
   ReactFlow = ReactFlow;
   Background = Background;
   BackgroundVariant = BackgroundVariant;
@@ -268,23 +264,7 @@ export default class WorkflowEditor
   #trpc = inject(TrpcService);
   nodeConfigPanelStatus = signal(false);
   validatePanelStatus = signal(false);
-  configProps = computed(
-    () => {
-      let data = this.service.clickedNode();
-      if (!data) {
-        return;
-      }
-      data = this.service.nodes$().find((item) => item.id === data!.id);
-      if (!data || !this.service.fullNodeObject$$()[data.type!]) {
-        return;
-      }
-      if (data.data.options?.disableOpenConfig) {
-        return;
-      }
-      return deepClone({ id: data.id, type: data.type, data: data.data });
-    },
-    { equal: deepEqual },
-  );
+
   dataInited$ = signal(false);
   override nodeClipBoardKind: ClipboardKind = 'workflow-node';
   #chatNode = inject(ChatNodeService);
@@ -294,9 +274,9 @@ export default class WorkflowEditor
     // 初始化请求
     this.#trpc.client.workflow.dataChange.subscribe(undefined, {
       onData: (value) => {
-        if (isNumber(value?.version) && value.version < 7) {
+        if (isNumber(value?.version) && value.version < 8) {
           this.#trpc.client.common.warn.query(
-            '工作流版本过低,请使用迁移版本升级',
+            '工作流版本过低,v8版本不兼容之前的版本',
           );
           return;
         }
@@ -317,6 +297,7 @@ export default class WorkflowEditor
             },
           },
         );
+        this.service.options$.set(value.options ?? {});
       },
     });
 
@@ -373,6 +354,7 @@ export default class WorkflowEditor
 
   override ngOnInit(): void {
     super.ngOnInit();
+
     this.#trpc.client.mind.listenEvent.subscribe(undefined, {
       onData: async (request) => {
         const response = { id: request.id, data: undefined as any };
@@ -407,6 +389,9 @@ export default class WorkflowEditor
     return combineLatest([
       this.#dataChange,
       toObservable(this.service.instance, { injector: this.injector }).pipe(
+        filter(Boolean),
+      ),
+      toObservable(this.service.options$, { injector: this.injector }).pipe(
         filter(Boolean),
       ),
     ])
@@ -446,6 +431,7 @@ export default class WorkflowEditor
     return {
       flow: result,
       version: WORKFLOW_VERSION,
+      options: this.service.options$(),
       update: Date.now(),
     };
   }
@@ -453,7 +439,7 @@ export default class WorkflowEditor
   addNode(type: string) {
     const config = this.service.fullNodeObject$$()[type];
     const node = this.service.appendNode(this.service.contextMenuPoint(), {
-      ...defaultConfigMerge(config, config.config ?? config.displayConfig),
+      ...defaultConfigMerge(config, config.configDefine),
       type: type,
     });
     config.afterAdd?.(node as any, this.injector as any);

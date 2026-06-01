@@ -5,11 +5,9 @@ export const NODE_COMMON: NodeComponentType = {
   label: `工作流执行`,
   icon: { fontIcon: 'polyline' },
   disableHead: false,
-  disableConnect: false,
   color: 'accent',
   help: [`- 在工作流内执行其他工作流`].join('\n'),
   // config: defineConfig,
 
-  inputs: [],
   outputs: [],
 };

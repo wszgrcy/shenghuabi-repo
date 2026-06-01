@@ -5,7 +5,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -17,7 +17,7 @@ import {
   EndDownloadMessage,
   ErrorDownloadMessage,
 } from '../../page/environment-configuration/const';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'download-button',
   templateUrl: './component.html',

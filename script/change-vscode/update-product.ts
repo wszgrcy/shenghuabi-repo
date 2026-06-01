@@ -30,7 +30,7 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
   data1['quality'] = 'exploration';
   delete data1['serverLicenseUrl'];
   delete data1['licenseUrl'];
-  delete data1['licenseName'];
+  // data1['licenseName']="";
   delete data1['reportIssueUrl'];
   let data = JSON.stringify(data1, undefined, 4);
   await completePromise(util.host.write(filePath, stringToFileBuffer(data)));
@@ -42,11 +42,11 @@ export default fn;
 let buildInExtensionList = [
   // https://marketplace.visualstudio.com/items?itemName=MS-CEINTL.vscode-language-pack-zh-hans
   // https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-ceintl/vsextensions/vscode-language-pack-zh-hans/1.98.2025022817/vspackage?targetPlatform=win32-x64
-  // 下载后查找sha256 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/MS-CEINTL/vsextensions/vscode-language-pack-zh-hans/1.103.2025081309/vspackage
+  // 下载后查找sha256 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/MS-CEINTL/vsextensions/vscode-language-pack-zh-hans/1.121.2026052214/vspackage
   {
     name: 'MS-CEINTL.vscode-language-pack-zh-hans',
-    version: '1.103.2025081309',
-    sha256: '105e44749e08005fcf286725f6e7289fbbf128d22d48eabce26792bc1d3dc08e',
+    version: '1.121.2026052214',
+    sha256: '890bcaea3b25f16feedcd2c5155e48e990dc4df1689193ed712f5342eb34abf6',
     repo: 'https://github.com/microsoft/vscode-loc',
     metadata: {
       id: 'e4ee7751-6514-4731-9cdb-7580ffa9e70b',
@@ -59,12 +59,14 @@ let buildInExtensionList = [
       publisherDisplayName: 'Microsoft',
     },
   },
+  // 下载后查找sha256 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/smcpeak/vsextensions/default-keys-windows/1.0.0/vspackage
+
   platform() === 'linux'
     ? {
         name: 'smcpeak.default-keys-windows',
-        version: '0.0.10',
+        version: '1.0.0',
         sha256:
-          'bf5258e5919639f175e07db7e58f422e53f022f98dc0279184891d99c8020855',
+          '6d2ec79ced9abd7912c179ae674a1ed928ffab76182ce57895d6806a4f70f516',
         repo: 'https://github.com/microsoft/vscode-loc',
         metadata: {
           id: '93f9de62-940d-4f24-aebd-5f3e532fec09',
@@ -78,11 +80,11 @@ let buildInExtensionList = [
         },
       }
     : undefined,
-  // 下载后查找sha256 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/redhat/vsextensions/vscode-yaml/1.18.0/vspackage
+  // 下载后查找sha256 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/redhat/vsextensions/vscode-yaml/1.23.0/vspackage
   {
     name: 'redhat.vscode-yaml',
-    version: '1.18.0',
-    sha256: '52dc43a65391516aa6896e88f27e1984aec70107520c6e1dc3b33f71b8e49996',
+    version: '1.23.0',
+    sha256: '182ec0210214c3e179ac1b1c4defae94ab7ff7bb3ba7adfa4cb46f99c4fd6fd7',
     metadata: {
       id: '2061917f-f76a-458a-8da9-f162de22b97e',
       publisherId: {
@@ -112,8 +114,8 @@ let buildInExtensionList = [
   },
   {
     name: 'ms-vscode.js-debug',
-    version: '1.102.0',
-    sha256: '0e8ed27ba2d707bcfb008e89e490c2d287d9537d84893b0792a4ee418274fa0b',
+    version: '1.117.0',
+    sha256: '854eeb8a785b1f41ba2bd02d7ccd4fdbe10021b61473293973c7e96d036c7fb8',
     repo: 'https://github.com/microsoft/vscode-js-debug',
     metadata: {
       id: '25629058-ddac-4e17-abba-74678e126c5d',

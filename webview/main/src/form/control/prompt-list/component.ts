@@ -1,13 +1,17 @@
-import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  output,
+} from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ChatMessageListOutputType } from '@bridge/share';
 import { ChatMessageItemType } from '@shenghuabi/openai/define';
-import { getHumanTemplate } from '@fe/component/chat/const';
 import { PromptTemplateFCC } from '@fe/component/chat/template-form/component';
 import { BaseControl } from '@piying/view-angular';
-
+import { ChatVariable } from '../../../type/chat-variable';
 @Component({
   selector: 'prompt-list',
   templateUrl: './component.html',
@@ -23,6 +27,7 @@ import { BaseControl } from '@piying/view-angular';
   ],
 })
 export class PromptListFCC extends BaseControl<ChatMessageListOutputType> {
+  variableChange = output<ChatVariable[]>();
   promptChange(item: ChatMessageItemType, index: number) {
     this.value$.update((value) => {
       value = [...value!];
@@ -39,12 +44,17 @@ export class PromptListFCC extends BaseControl<ChatMessageListOutputType> {
     });
     this.valueChange(this.value$());
   }
-  addChange(index: number) {
+  addChange(role: string, index: number) {
     this.value$.update((list) => {
-      list = [...list!];
-      list.splice(index + 1, 0, getHumanTemplate());
+      list = [...(list ?? [])!];
+      list.splice(index + 1, 0, { role: role as any, content: [] });
       return list;
     });
     this.valueChange(this.value$());
+  }
+  #list: ChatVariable[][] = [];
+  varChanged(list: ChatVariable[], index: number) {
+    this.#list[index] = list;
+    this.variableChange.emit(this.#list.filter(Boolean).flat());
   }
 }

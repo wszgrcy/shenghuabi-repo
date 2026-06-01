@@ -1,17 +1,12 @@
 import { Injectable, Injector, computed, inject, signal } from '@angular/core';
 import { Node } from '@xyflow/react';
 import { CustomNode } from './type';
-import { v4, v5 } from 'uuid';
+import { v4 } from 'uuid';
 import { wrapControlNode } from './custom-node/wrap-node';
 import { IterationStartNodeDefine } from './custom-node/iteration-start-node';
 import { IterationNodeDefine } from './custom-node/iteration-node';
 import { FlowBseService } from '../../component/flow-base/flow-base.service';
-import {
-  deepClone,
-  HandleNode,
-  UUID_NS,
-  WebviewNodeConfig,
-} from '@bridge/share';
+
 import { deepEqual } from 'fast-equals';
 import { FormlyCommonNodeComponent } from './custom-node/formly-common-node/component';
 import { isTruthy } from '@share/util/is-truthy';
@@ -22,38 +17,19 @@ export class BridgeService extends FlowBseService<CustomNode> {
   #injector = inject(Injector);
   #chatNode = inject(ChatNodeService);
 
-  #nodeObject$$ = computed(() => {
-    return this.#chatNode.nodeList$().reduce(
-      (obj, item) => {
-        obj[item.type] = item;
-        return obj;
-      },
-      {} as Record<string, WebviewNodeConfig>,
-    );
-  });
-  #pluginNodeObject$$ = computed(() => {
-    return this.#chatNode.pluginNodeList$().reduce(
-      (obj, item) => {
-        obj[item.type] = item;
-        return obj;
-      },
-      {} as Record<string, WebviewNodeConfig>,
-    );
-  });
-  fullNodeObject$$ = computed(() => {
-    return { ...this.#nodeObject$$(), ...this.#pluginNodeObject$$() };
-  });
+  fullNodeObject$$ = this.#chatNode.fullNodeObject$$;
   #nodeTypes$$ = computed(() => {
     return this.#chatNode.nodeList$().reduce(
       (obj, item) => {
         obj[item.type] = wrapControlNode(
           {
             component: item.component ?? FormlyCommonNodeComponent,
-            otherInputs: item.displayConfig
+            otherInputs: item.configDefine
               ? {
-                  define: item.displayConfig,
+                  define: item.configDefine,
                 }
               : {},
+            nodeDefine: item,
           },
           this,
         );
@@ -68,11 +44,12 @@ export class BridgeService extends FlowBseService<CustomNode> {
         obj[item.type] = wrapControlNode(
           {
             component: item.component ?? FormlyCommonNodeComponent,
-            otherInputs: item.displayConfig
+            otherInputs: item.configDefine
               ? {
-                  define: item.displayConfig,
+                  define: item.configDefine,
                 }
               : {},
+            nodeDefine: item,
           },
           this,
         );
@@ -138,10 +115,7 @@ export class BridgeService extends FlowBseService<CustomNode> {
       })
       .filter(isTruthy);
   });
-  constructor() {
-    super();
-  }
-
+  options$ = signal<Record<string, any> | undefined>(undefined);
   appendNode(position: { x: number; y: number }, config: Partial<CustomNode>) {
     const position2 = this.instance()!.screenToFlowPosition(position);
     const maybeParent = this.selectedNodeList$()[0];
@@ -365,30 +339,6 @@ export class BridgeService extends FlowBseService<CustomNode> {
         return item;
       });
     });
-  }
-  async handleChange(
-    id: string,
-    direction: 'input' | 'output',
-    index: number,
-    changeFn: () => Promise<Omit<HandleNode, 'id'>[] | undefined>,
-    autoUpdate = false,
-  ) {
-    const node = this.getNode(id)!;
-    const result = await changeFn();
-    if (result) {
-      const handle = deepClone(node.data.handle || { input: [], output: [] });
-      handle[direction][index] = result.map((item, j) => {
-        return {
-          ...item,
-          id: v5(item.value, UUID_NS),
-        };
-      });
-      if (autoUpdate && !deepEqual(handle, node.data.handle)) {
-        this.patchDataOne(id, { handle: handle });
-      }
-      return handle[direction];
-    }
-    return;
   }
 
   context = inject(ChatNodeService).context;

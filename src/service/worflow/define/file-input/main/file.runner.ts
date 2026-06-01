@@ -5,7 +5,6 @@ import { WorkspaceService } from '../../../../workspace.service';
 
 import { ChatContextType } from '../../../../../share';
 import { WorkflowExtraMetadata } from '@shenghuabi/workflow';
-import * as v from 'valibot';
 import { FILE_NODE_DEFINE } from '../file.node.define';
 import { FileParserService } from '@shenghuabi/knowledge/file-parser';
 import { dynamicInject } from '../../../../../token';
@@ -14,14 +13,13 @@ export type WorkflowFileExtraMetadata = WorkflowExtraMetadata & {
   filePath: string;
 };
 /** 读文件 */
-export class FileRunner extends NodeRunnerBase {
+export class FileRunner extends NodeRunnerBase<typeof FILE_NODE_DEFINE> {
   #workspace = inject(WorkspaceService);
   #vfs = this.#workspace.rootVfs;
   #fileParser$$ = dynamicInject(FileParserService);
   override async run() {
-    const nodeResult = v.parse(FILE_NODE_DEFINE, this.node);
-    const list = nodeResult.data.value;
-    const config = nodeResult.data.config!;
+    const list = this.inputs.value;
+    const config = this.inputs!;
 
     const newList: string[][] = [];
     const extraList: WorkflowFileExtraMetadata[][] = [];
@@ -65,29 +63,17 @@ export class FileRunner extends NodeRunnerBase {
       }
     }
     //文件没有切片?
-    return async (outputName: string) => {
-      if (outputName === 'first') {
-        return {
-          value: newList[0][0],
-          extra: extraList[0][0],
-        };
-      } else if (outputName === 'flat') {
-        return {
-          value: newList.flat(),
-          extra: extraList.flat(),
-        };
+    return async (id: string) => {
+      if (id === 'first') {
+        return newList[0][0];
+      } else if (id === 'flat') {
+        return newList.flat();
       }
 
-      if (newList.length > 1 || config.alwaysArray) {
-        return {
-          value: newList,
-          extra: extraList,
-        };
+      if (newList.length > 1) {
+        return newList;
       } else {
-        return {
-          value: newList[0][0],
-          extra: extraList[0][0],
-        };
+        return newList[0][0];
       }
     };
   }

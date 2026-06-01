@@ -29,7 +29,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { FieldGlobalConfig } from '@fe/form/default-type-config';
 import clsx from 'clsx';
-import { setAlias, setComponent } from '@piying/view-angular-core';
+import { asControl, setAlias, setComponent } from '@piying/view-angular-core';
 const keyTypeList = ['string', 'number', 'picklist'];
 const priorityList = [
   'hf-repo',
@@ -215,6 +215,19 @@ export class LlamaModelConfigDialogNFCC {
     v.object({
       model: v.pipe(v.string(), v.title('模型名'), v.trim()),
       exec: v.pipe(ExecDefine, v.metadata({ name: 'llamaExec' })),
+      customArgs: v.pipe(
+        v.optional(v.array(v.string())),
+        v.description('自定义命令行参数,会在最后拼接到命令中'),
+        setComponent('chip-input-list'),
+        asControl(),
+        actions.inputs.set({
+          editable: true,
+          addOnBlur: true,
+          getCompletionList: undefined,
+        }),
+        v.title('自定义参数'),
+        actions.wrappers.patch(['label'])
+      ),
       config: v.pipe(
         v.intersect([
           v.pipe(
@@ -340,7 +353,7 @@ export class LlamaModelConfigDialogNFCC {
     const data = this.downloadModelObj$$()!;
 
     this.#client.environment.llamaSwap.downloadModel.subscribe(
-      { ...data, vendor: undefined },
+      { ...data, },
       {
         onData: (result) => {
           if (result.type === 'end') {

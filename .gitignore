@@ -18,3 +18,7 @@ coverage
 .env.sentry-build-plugin
 .tmp-build
 .traceDist
+/.agents
+/skills-lock.json
+/lib/vscode
+/.contributes-dist

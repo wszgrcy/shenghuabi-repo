@@ -1,8 +1,8 @@
 import { createEditor, SerializedEditorState } from 'lexical';
 import { LexicalPlugin } from './lexical-plugin';
-import { CodeHighlightNode, CodeNode } from '@lexical/code';
+import { CodeHighlightNode, CodeNode } from '@lexical/code-core';
 import { ListNode, ListItemNode } from '@lexical/list';
-import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
+import { HorizontalRuleNode } from '@lexical/extension';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { PLAYGROUND_TRANSFORMERS } from './plugin/MarkdownTransformers';

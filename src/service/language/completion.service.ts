@@ -1,6 +1,12 @@
 import * as vscode from 'vscode';
 import { Hanyu } from './const';
-import { inject, RootStaticInjectOptions } from 'static-injector';
+import {
+  inject,
+  RootStaticInjectOptions,
+  Injector,
+  createInjector,
+  effect,
+} from 'static-injector';
 import { InlineChatService } from './inline-chat.service';
 import { PromptService } from '../ai/prompt.service';
 import { ChatService } from '../ai/chat.service';
@@ -10,14 +16,14 @@ import {
   ChatMode,
   deepClone,
 } from '../../share';
-import { WorkflowExecService, ResolvedWorkflow } from '@shenghuabi/workflow';
+import {
+  WorkflowExecService,
+  ResolvedWorkflow,
+  ModelOptionsToken,
+} from '@shenghuabi/workflow';
 import { WorkflowSelectService } from '@shenghuabi/workflow';
 import { filter, Subject, Subscription, take } from 'rxjs';
-import {
-  isChatStream,
-  LLMWorkflowData,
-  WorkflowStreamData,
-} from '@shenghuabi/workflow';
+import { LLMWorkflowData, WorkflowStreamData } from '@shenghuabi/workflow';
 import { KnowledgeFileSystem } from '../../webview/common-webview/knowledge.fs';
 import { FolderName, WorkspaceService } from '../workspace.service';
 import { path } from '@cyia/vfs2';
@@ -30,6 +36,23 @@ import { getNumberText } from '@share/util/format/get-number-text';
 import { isStringArray } from '@share/util/assert/is-string-array';
 import { CommandPrefix } from '@global';
 import { captureException } from '@sentry/node';
+import { FunctionParameters } from 'openai/resources';
+import { convertVSCodeMessagesToOpenAI } from './vscodeToOpenAIConverter';
+import { EventEmitter } from 'vscode';
+import { OpenAI } from 'openai';
+import { SingleNodeRunnerService } from '@shenghuabi/workflow';
+import { KnowledgeConfigService } from '../knowledge/knowledge-config.service';
+import { TOOL_CONFIG_LIST } from '../../share/tool-config';
+import { toJsonSchema } from '@valibot/to-json-schema';
+import * as v from 'valibot';
+export function isChatStream(
+  data: WorkflowStreamData,
+): data is LLMWorkflowData {
+  return (
+    !!data.extra && 'content' in data.extra && 'thinkContent' in data.extra
+  );
+}
+
 function isEditorData(
   location: vscode.ChatRequest['location2'],
 ): location is vscode.ChatRequestEditorData {
@@ -37,7 +60,7 @@ function isEditorData(
 }
 interface InlineEditorData {
   mode: ChatMode;
-  manualInput: boolean;
+  editorInput: boolean;
   input: {
     selection: string;
   };
@@ -54,6 +77,138 @@ export class CompletionService extends RootStaticInjectOptions {
   #selectedEditorTemplate = new Map<string, InlineEditorData>();
   listSelect = new Subject<{ filePath: string; value: string }>();
   #selectSubscriptionMap = new Map<string, Subscription>();
+  #injector = inject(Injector);
+  #knowledgeConfig = inject(KnowledgeConfigService);
+  constructor() {
+    super();
+    let disposeList: vscode.Disposable[] = [];
+    effect(() => {
+      disposeList.forEach((item) => {
+        item.dispose();
+      });
+      disposeList = [];
+      let list = this.#knowledgeConfig.originConfigList$();
+      for (const item of TOOL_CONFIG_LIST) {
+        const inputSchema = item.configDefine
+          ? toJsonSchema(item.configDefine, {
+              ignoreActions: [
+                'asControl',
+                'trim',
+                'viewRawConfig',
+                'asVirtualGroup',
+                'defineType',
+              ],
+              overrideAction: (context) => {
+                let currentAction = context.valibotAction;
+                if (
+                  currentAction.type === 'metadata' &&
+                  'toolJsonSchema' in (currentAction as any).metadata
+                ) {
+                  // 知识库改为枚举
+                  if (
+                    (currentAction as any).metadata.toolJsonSchema.needKnowledge
+                  ) {
+                    let newDefine = v.pipe(
+                      v.picklist(list.map((item) => item.name)),
+                      v.description(
+                        list
+                          .map((item) => {
+                            return `\n- 类型: ${item.graphIndex ? 'graph-' + item.type : item.type} 名称: ${item.name}`;
+                          })
+                          .join('\n'),
+                      ),
+                    );
+                    let newJsonSchema = toJsonSchema(newDefine);
+                    delete newJsonSchema.$schema;
+                    return {
+                      ...newJsonSchema,
+                      title: context.jsonSchema.title,
+                    };
+                  } else if (
+                    (currentAction as any).metadata.toolJsonSchema
+                      .needKnowledgeGraph
+                  ) {
+                    let newDefine = v.pipe(
+                      v.picklist(
+                        list
+                          .filter(
+                            (item) =>
+                              item.graphIndex && item.type === 'knowledge',
+                          )
+                          .map((item) => item.name),
+                      ),
+                    );
+                    let newJsonSchema = toJsonSchema(newDefine);
+                    delete newJsonSchema.$schema;
+                    return {
+                      ...newJsonSchema,
+                      title: context.jsonSchema.title,
+                    };
+                  } else if (
+                    (currentAction as any).metadata.toolJsonSchema.replaceSchema
+                  ) {
+                    let newJsonSchema = toJsonSchema(
+                      (currentAction as any).metadata.toolJsonSchema
+                        .replaceSchema,
+                    );
+                    delete newJsonSchema.$schema;
+                    return {
+                      ...newJsonSchema,
+                      title: context.jsonSchema.title,
+                      description: context.jsonSchema.description,
+                    };
+                  }
+                }
+                if (!context.valibotAction.type) {
+                  console.log(context.valibotAction);
+                }
+                return context.jsonSchema;
+              },
+            })
+          : { type: 'object', properties: {} };
+        let dispose = vscode.lm.registerToolDefinition(
+          {
+            name: item.type,
+            source: undefined,
+            tags: ['shenghuabi', item.type, 'extension_installed_by_tool'],
+            toolReferenceName: item.type,
+            displayName: item.type,
+            description: item.help || '',
+            icon: new vscode.ThemeIcon('files'),
+            inputSchema,
+          },
+          {
+            invoke: async (options) => {
+              const injector = createInjector({
+                providers: [SingleNodeRunnerService],
+                parent: this.#injector,
+              });
+              const result = await injector
+                .get(SingleNodeRunnerService)
+                .run(item, options.input as any, {
+                  outputId: 'tool',
+                });
+              if (typeof result === 'string') {
+                return new vscode.LanguageModelToolResult([
+                  new vscode.LanguageModelTextPart(result),
+                ]);
+              } else if (typeof result === 'object') {
+                return new vscode.LanguageModelToolResult([
+                  new vscode.LanguageModelTextPart(JSON.stringify(result)),
+                ]);
+                // todo 有问题,不支持传入
+                // return new vscode.LanguageModelToolResult([
+                //   vscode.LanguageModelDataPart.json(result),
+                // ]);
+              }
+              return;
+            },
+          },
+        );
+        disposeList.push(dispose);
+      }
+    });
+  }
   init() {
     vscode.languages.registerInlineCompletionItemProvider(Hanyu, {
       provideInlineCompletionItems: async (doc, pos, context, token) => {
@@ -63,49 +218,121 @@ export class CompletionService extends RootStaticInjectOptions {
     });
     const list = ExtensionConfig.chatModelList();
     const modelObject = {} as Record<string, NonNullable<typeof list>[number]>;
+    const event = new EventEmitter<void>();
 
-    const providerList: vscode.LanguageModelChatInformation[] = [];
-    if (list?.length) {
-      for (let index = 0; index < list.length; index++) {
-        const item = list[index];
-        modelObject[item.name] = item;
-        providerList.push({
-          id: 'shenghuabi',
-          name: item.name,
-          family: 'custom',
-          version: '1.0',
-          maxInputTokens: 99999999,
-          maxOutputTokens: 99999999,
-          isDefault: index === 0,
-          isUserSelectable: true,
-        });
-      }
-    } else {
-      providerList.push({
-        id: 'shenghuabi',
-        name: 'shenghuabi',
-        family: 'inline',
-        version: '1.0',
-        maxInputTokens: 99999999,
-        maxOutputTokens: 99999999,
-        isDefault: true,
-        isUserSelectable: true,
-      });
-    }
-    this.#inlineChat.modelList = providerList;
-    if (list?.length) {
-      for (let index = 0; index < list.length; index++) {
-        const item = list[index];
-        modelObject[item.name] = item;
-        vscode.lm.registerChatModelProvider(item.name, this.#inlineChat);
-      }
-    } else {
-      vscode.lm.registerChatModelProvider('shenghuabi', this.#inlineChat);
-    }
+    vscode.lm.registerLanguageModelChatProvider(
+      'shenghuabi',
+      this.#inlineChat.createProvider({
+        onDidChangeLanguageModelChatInformation: event.event,
+        provideTokenCount: async (model, text, token) => {
+          // 不准确
+          return typeof text === 'string' ? text.length : 0;
+        },
+        provideLanguageModelChatInformation: (a) => {
+          return list.map((item) => {
+            return {
+              id: item.name,
+              name: item.name,
+              tooltip: '',
+              family: 'shenghuabi',
+              maxInputTokens: 9999999,
+              maxOutputTokens: 9999999,
+              version: '1.0.0',
+              capabilities: {
+                toolCalling: true,
+                imageInput: true,
+              },
+            };
+          });
+        },
+        provideLanguageModelChatResponse: async (
+          model,
+          message,
+          options,
+          progress,
+          token,
+        ) => {
+          const result = convertVSCodeMessagesToOpenAI(message);
+          const model2 = ExtensionConfig.chatModelList()[0];
+
+          const openai = new OpenAI({
+            baseURL: model2.baseURL,
+            apiKey: model2.apiKey,
+          });
+          const resultxx = await openai.chat.completions.create({
+            model: model2.model,
+            messages: result,
+            stream: true,
+            tool_choice: options.toolMode === 1 ? 'auto' : 'required',
+            tools: options.tools?.map((item) => {
+              return {
+                type: 'function',
+                function: {
+                  description: item.description,
+                  name: item.name,
+                  parameters: item.inputSchema as
+                    | FunctionParameters
+                    | undefined,
+                },
+              };
+            }),
+          });
+          let toolList:
+            | OpenAI.ChatCompletionChunk.Choice.Delta.ToolCall[]
+            | undefined;
+          const sendTool = () => {
+            if (toolList) {
+              for (const item of toolList) {
+                progress.report(
+                  new vscode.LanguageModelToolCallPart(
+                    item.id!,
+                    item.function!.name!,
+                    item.function!.arguments
+                      ? JSON.parse(item.function!.arguments)
+                      : {},
+                  ),
+                );
+              }
+              toolList = undefined;
+            }
+          };
+          for await (const item of resultxx) {
+            if (item.choices[0].finish_reason === 'stop') {
+              break;
+            }
+
+            const tool_calls = item.choices[0].delta.tool_calls;
+            if (tool_calls) {
+              if (!toolList) {
+                toolList = tool_calls;
+              } else {
+                tool_calls.forEach((item, index) => {
+                  const argStr = item.function?.arguments;
+                  if (argStr) {
+                    toolList![index].function!.arguments += argStr;
+                  }
+                });
+              }
+            }
+            const deltaContent = item.choices[0].delta.content;
+
+            if (typeof deltaContent === 'string') {
+              if (deltaContent) {
+                sendTool();
+              }
+              progress.report(new vscode.LanguageModelTextPart(deltaContent));
+            }
+          }
+          sendTool();
+        },
+      }),
+    );
+    event.fire();
     const chatHistory = new Map<string, ChatMessageListInputType>();
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor',
       async (req, context, stream, token) => {
+        // todo 似乎只有编辑可以工作
         // token只能监听到取消,不能监听到关闭
         const modelOptions =
           req.model.family === 'custom' ? modelObject[req.model.id] : undefined;
@@ -201,7 +428,7 @@ export class CompletionService extends RootStaticInjectOptions {
           }
         };
         const input = deepClone(inlineEditorData.input) as Record<string, any>;
-        if (inlineEditorData.manualInput) {
+        if (inlineEditorData.editorInput) {
           input['input'] = req.prompt;
         }
         const defaultInput = this.#createDefaultInput(
@@ -222,12 +449,12 @@ export class CompletionService extends RootStaticInjectOptions {
             .runParse(
               inlineEditorData.resolvedWorkflow!,
               {
-                input: {},
-                modelOptions: modelOptions,
+                inputs: {},
                 environmentParameters: defaultInput,
               },
               subject,
               abort.signal,
+              [{ provide: ModelOptionsToken, useValue: modelOptions }],
             )
             .catch((rej) => {
               captureException(rej);
@@ -238,27 +465,28 @@ export class CompletionService extends RootStaticInjectOptions {
             .agentChat(
               {
                 template: inlineEditorData.template!,
-                input: {},
-                context: {},
-                modelOptions: modelOptions,
+                // inputs: {},
+                // context: {},
+                // modelOptions: modelOptions,
                 environmentParameters: defaultInput,
-                inlineMode: true,
+                // inlineMode: true,
               },
 
               streamFn,
               abort.signal,
+              [{ provide: ModelOptionsToken, useValue: modelOptions }],
             )
             .catch((rej) => {
               captureException(rej);
               throw rej;
             });
         }
-        if (typeof result?.value === 'string') {
+        if (typeof result === 'string') {
           stream.textEdit(location2.document.uri, [
-            new vscode.TextEdit(location2.selection, result.value),
+            new vscode.TextEdit(location2.selection, result),
           ]);
-        } else if (isStringArray(result?.value)) {
-          this.#createCompletionListSelect(result?.value, stream, location2);
+        } else if (isStringArray(result)) {
+          this.#createCompletionListSelect(result, stream, location2);
         }
         if (!lastMessage!) {
           return;
@@ -348,7 +576,7 @@ export class CompletionService extends RootStaticInjectOptions {
   async codeActionResolve(options: CodeChatActionOptions) {
     const list = await this.#promptService.actionConfig.getList();
     const actionItem = list.find((item) => item.title === options.title)!;
-    let manualInput = false;
+    let editorInput = false;
     let data: Partial<InlineEditorData>;
     const selection = options.document.getText(options.range);
     if (actionItem.mode === ChatMode.workflow) {
@@ -359,27 +587,23 @@ export class CompletionService extends RootStaticInjectOptions {
       if (result.error) {
         throw result.error;
       }
-      manualInput = !!result.manualInput;
+      editorInput = !!result.editorInput;
       data = {
         resolvedWorkflow: result.data,
       };
     } else {
-      const { error, list } = this.#templateFormat.parse(
-        actionItem.template!.map((item) => item.content).join('\n'),
+      const result = this.#templateFormat.parseConversationTemplate(
+        actionItem.template,
       );
-      if (error) {
-        throw new Error('模板解析失败');
-      }
-      manualInput = list.some((item) => item.value === 'input');
 
       data = {
-        template: actionItem.template!,
+        template: result as any,
       };
     }
     this.#selectedEditorTemplate.set(options.filePath, {
       ...data,
       mode: actionItem.mode,
-      manualInput,
+      editorInput,
       input: {
         selection: selection,
       },
@@ -389,21 +613,11 @@ export class CompletionService extends RootStaticInjectOptions {
       position: range.start,
       initialSelection: new vscode.Selection(range.start, range.end),
       initialRange: range,
-      autoSend: !manualInput,
+      autoSend: !editorInput,
       message: '/default ',
     });
   }
-  // #workspace = inject(WorkspaceService);
-  #getOffset(name: string, prefix: string) {
-    if (name.startsWith(prefix)) {
-      const str = name.slice(prefix.length);
-      const result = str.match(/^\d+$/);
-      if (result) {
-        return +result[0];
-      }
-    }
-    return;
-  }
+
   #getLastLinePosition(
     document: vscode.TextDocument,
     endPosition: vscode.Position,
@@ -419,133 +633,92 @@ export class CompletionService extends RootStaticInjectOptions {
     );
   }
   #getDynamic(
-    key: string,
     document: vscode.TextDocument,
     selection: vscode.Selection,
     dirName: string,
     baseName: string,
     dirFileList: string[],
-  ) {
-    // 当前文件
-    if (key === 'currentFile') {
-      return document.getText();
-    } else if (key === 'selectionLine') {
-      return document.getText(
-        new vscode.Range(
-          new vscode.Position(selection.start.line, 0),
-          this.#getLastLinePosition(
-            document,
-            new vscode.Position(selection.end.line + 1, 0),
-          ),
+  ): {
+    currentFile: string;
+    selectionLine: string;
+    lineOffsetTop: string;
+    lineOffset: string;
+    fileOffsetTop: string;
+  } {
+    const selectionLine = document.getText(
+      new vscode.Range(
+        new vscode.Position(selection.start.line, 0),
+        this.#getLastLinePosition(
+          document,
+          new vscode.Position(selection.end.line + 1, 0),
         ),
-      );
-    }
+      ),
+    );
 
-    // 前x行
-    const linesOffset = this.#getOffset(key, 'topLines');
-    if (linesOffset) {
-      return document.getText(
-        new vscode.Range(
+    const offsetCount = 20;
+    const lineOffsetTop = document.getText(
+      new vscode.Range(
+        new vscode.Position(Math.max(0, selection.start.line - offsetCount), 0),
+        this.#getLastLinePosition(
+          document,
+          new vscode.Position(selection.start.line + 1, 0),
+        ),
+      ),
+    );
+
+    const lineOffset = document.getText(
+      new vscode.Range(
+        new vscode.Position(Math.max(0, selection.start.line - offsetCount), 0),
+        this.#getLastLinePosition(
+          document,
           new vscode.Position(
-            Math.max(0, selection.start.line - linesOffset),
+            Math.min(document.lineCount - 1, selection.end.line + offsetCount),
             0,
           ),
-          this.#getLastLinePosition(
-            document,
-            new vscode.Position(selection.start.line, 0),
-          ),
         ),
-      );
-    }
-    // 第x行
-    const lineOffset = this.#getOffset(key, 'topLine');
-    if (lineOffset) {
-      if (selection.start.line - lineOffset < 0) {
-        return '';
-      }
-      return document.getText(
-        new vscode.Range(
-          new vscode.Position(selection.start.line - lineOffset, 0),
-          this.#getLastLinePosition(
-            document,
-            new vscode.Position(selection.start.line - lineOffset + 1, 0),
-          ),
-        ),
-      );
-    }
-    // 前x章的文件
-    let filesOffset = this.#getOffset(key, 'topFiles');
-    if (filesOffset) {
-      const numberFileList = [] as string[];
-      do {
-        let useNumber = false;
-        const lastFileName = han2numberReChange(baseName, (a) => {
-          if (!useNumber && typeof a === 'number') {
-            useNumber = true;
-            return `${a - filesOffset!}`;
-          }
-          return useNumber ? '' : `${a}`;
-        });
-        if (!useNumber) {
-          break;
-        }
-        numberFileList.push(lastFileName);
-        filesOffset--;
-      } while (filesOffset);
-      return dirFileList
-        .map((item) => {
-          return {
-            compare: getNumberText(item),
-            origin: item,
-          };
-        })
-        .filter((item) => {
-          return numberFileList.some(
-            (numberItem) => numberItem === item.compare,
-          );
-        })
-        .map(({ origin }) => origin)
-        .sort(NumberCompare)
-        .map((origin) =>
-          this.#workspace.readFileByVSC(path.join(dirName, origin)),
-        )
-        .join('\n');
-    }
-    // 第x章的文件
-    const fileOffset = this.#getOffset(key, 'topFile');
-    if (fileOffset) {
-      const numberFileList = [] as string[];
+      ),
+    );
+
+    const numberFileList = [] as string[];
+    let filesOffsetCount = 5;
+    do {
       let useNumber = false;
       const lastFileName = han2numberReChange(baseName, (a) => {
         if (!useNumber && typeof a === 'number') {
           useNumber = true;
-          return `${a - fileOffset!}`;
+          return `${a - filesOffsetCount!}`;
         }
         return useNumber ? '' : `${a}`;
       });
       if (!useNumber) {
-        return '';
+        break;
       }
       numberFileList.push(lastFileName);
+      filesOffsetCount--;
+    } while (filesOffsetCount > 0);
 
-      return dirFileList
-        .map((item) => ({
-          compare: getNumberText(item),
-          origin: item,
-        }))
-        .filter((item) => {
-          return numberFileList.some(
-            (numberItem) => numberItem === item.compare,
-          );
-        })
-        .map(({ origin }) => origin)
-        .sort(NumberCompare)
-        .map((origin) =>
-          this.#workspace.readFileByVSC(path.join(dirName, origin)),
-        )
-        .join('\n');
-    }
-    throw new Error('动态获取参数异常');
+    const fileOffsetTop = dirFileList
+      .map((item) => ({
+        compare: getNumberText(item),
+        origin: item,
+      }))
+      .filter((item) => {
+        return numberFileList.some((numberItem) => numberItem === item.compare);
+      })
+      .map(({ origin }) => origin)
+      .sort(NumberCompare)
+      .map((origin) =>
+        this.#workspace.readFileByVSC(path.join(dirName, origin)),
+      )
+      .join('\n');
+
+    return {
+      currentFile: document.getText(),
+      selectionLine,
+      lineOffsetTop,
+      lineOffset,
+      fileOffsetTop,
+    };
   }
   #createDefaultInput(
     input: Record<string, any>,
@@ -555,24 +728,16 @@ export class CompletionService extends RootStaticInjectOptions {
     baseName: string,
     dirFileList: string[],
   ) {
-    const proxy = new Proxy(input, {
-      get: (target, p, receiver) => {
-        if (typeof p !== 'string') {
-          return;
-        }
-
-        return (
-          this.#getDynamic(
-            p,
-            document,
-            selection,
-            dirName,
-            baseName,
-            dirFileList,
-          ) ?? (target as any)[p]
-        );
-      },
-    });
-    return proxy;
+    const dynamic = this.#getDynamic(
+      document,
+      selection,
+      dirName,
+      baseName,
+      dirFileList,
+    );
+    return {
+      ...input,
+      ...dynamic,
+    };
   }
 }

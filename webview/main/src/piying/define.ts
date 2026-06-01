@@ -1,4 +1,4 @@
-import { actions, typedComponent } from '@piying/view-angular';
+import { actions, PiyingViewGroup, typedComponent } from '@piying/view-angular';
 import { PresetDefine } from '@piying-lib/angular-daisyui/preset';
 import {
   ChipInputListFCC,
@@ -13,18 +13,24 @@ import {
 import { computed } from '@angular/core';
 import { IconLabelNFCC } from '@fe/component/icon-label/component';
 import { LlamaModelConfigFCC } from '@fe/component/chip-list/component';
-import { ChipFAC, LabelChipFAC, RestChipFGC } from '@cyia/component/group';
+import {
+  CardFAC,
+  ChipFAC,
+  LabelChipFAC,
+  RadioFGC,
+  RestChipFGC,
+} from '@cyia/component/group';
 import { FileInputFCC } from '@fe/form/control/file-input/component';
 import { Select2 } from './preset/select2';
 import { CardFGC } from '@fe/component/group/card-group/component';
 import { setComponent } from '@piying/view-angular-core';
 import { ResetButtonNFCC } from '@fe/form/un-control/reset-button/component';
-import { CardWrapper } from '@cyia/component/wrapper';
+import { AlertValidWrapper, CardWrapper } from '@cyia/component/wrapper';
 import { BoxPickerFCC } from '@fe/component/box-picker/component';
 import { NodeTemplateApplyFCC } from '@fe/form/control/node-template/component';
-import { PromptListFCC } from '@fe/form/control/prompt-list/component';
 import { TreeSelectFCC } from '@fe/form/control/tree-select/component';
 import { AutoComplete2 } from './preset/autocomplete2';
+import { DivFCC } from '@cyia/component/core/component/div';
 const optionsMap = actions.inputs.mapAsync((field) => {
   const options$$ = computed(() => field.props()['options']);
   return (data) => {
@@ -46,7 +52,18 @@ export const safeDefine = typedComponent({
     },
     picklist: {
       type: PresetDefine.types.picklist.type,
-      actions: [...PresetDefine.types.picklist.actions, optionsMap],
+      actions: [
+        ...PresetDefine.types.picklist.actions,
+        optionsMap,
+        actions.class.bottom('appearance-none'),
+      ],
+    },
+    select: {
+      ...PresetDefine.types.select,
+      actions: [
+        ...PresetDefine.types.select.actions,
+        actions.class.bottom('appearance-none'),
+      ],
     },
     'styled-style': {
       type: StyledSelectFCC,
@@ -135,15 +152,21 @@ export const safeDefine = typedComponent({
     'shadow-picker': {
       type: ShadowPickerFCC,
     },
-    'prompt-list': {
-      type: PromptListFCC,
-    },
+
     'tree-select': { type: TreeSelectFCC },
+    'div-control': { type: DivFCC },
+    'card-array': { type: CardFAC },
+    'radio-group': { type: RadioFGC },
+    strict_object: { type: PiyingViewGroup },
+    slider: { type: PresetDefine.types.range.type },
   },
   wrappers: {
     ...PresetDefine.wrappers,
     card: {
       type: CardWrapper,
+    },
+    'alert-valid': {
+      type: AlertValidWrapper,
     },
   },
 });

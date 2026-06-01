@@ -11,27 +11,27 @@ import zod from 'zod';
 import zodToJsonSchema from 'zod-to-json-schema';
 import * as yaml from 'yaml';
 import { LogFactoryService } from '../../../../log.service';
-
-export class ScriptRunner extends NodeRunnerBase {
+import { SCRIPT_NODE_DEFINE } from '../script.node.define';
+export class ScriptRunner extends NodeRunnerBase<typeof SCRIPT_NODE_DEFINE> {
   #channel = inject(LogFactoryService).getLog('workflow');
   #workspace = inject(WorkspaceService);
   override async run() {
     // let nodeResult = v.parse(SCRIPT_NODE_DEFINE, this.node);
 
-    const contextObj = this.inputs$$();
+    const contextObj = this.inputs;
     const params = deepClone(contextObj);
-    if (!this.node.data.value) {
+    if (!this.inputs.value) {
       throw new Error(`代码为空`);
     }
     const typescriptPkg = await import('typescript');
     const { ModuleKind, ScriptTarget, transpile } = typescriptPkg.default;
-    const code = transpile(`(async()=>{${this.node.data.value}})()`, {
+    const code = transpile(`(async()=>{${this.inputs.value}})()`, {
       target: ScriptTarget.ES2022,
       module: ModuleKind.CommonJS,
     });
     // fs path 变量
     const result = await runInNewContext(code, {
-      parameters: params,
+      parameters: params.input,
       util: {
         /** 可以读取工作区 */
         fs: this.#workspace.vfs,
@@ -43,8 +43,8 @@ export class ScriptRunner extends NodeRunnerBase {
       require,
       console: this.#log,
     });
-    return async (outputName: string) => {
-      return result(outputName);
+    return async (id: string) => {
+      return result(id);
     };
   }
   #log = {

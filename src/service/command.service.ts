@@ -73,7 +73,7 @@ import { DictKnowledgeService } from '@shenghuabi/knowledge/knowledge';
 import { KnowledgeItemType } from '../share/define/knowledge/working-knowledge';
 import { LogFactoryService, LogService } from './log.service';
 import { dynamicInject } from '../token';
-import { isUndefined } from 'lodash-es';
+import { isUndefined } from 'es-toolkit';
 import { ChatHistoryTreeItem } from '../webview/custom-sidebar/chat/chat.history.tree';
 import { ExtensionConfig } from './config.service';
 import { captureException } from '@sentry/node';
@@ -491,7 +491,7 @@ export class CommandService extends RootStaticInjectOptions {
     const ms = new MS(content);
     const editor = vscode.window.activeTextEditor;
 
-    if (type === 'sentence') {
+    if (type === 'file-sentence') {
       const list = splitStrLine(content!);
       const newList = [];
       for (let index = 0; index < list.length; index++) {
@@ -503,16 +503,13 @@ export class CommandService extends RootStaticInjectOptions {
         const result = await this.#workflowExec.exec(
           workflow,
           {
-            input: {},
+            inputs: {},
             environmentParameters: defaultInput,
           },
           { showError: true },
           await channel.activeProgress,
         );
-        const resultContent = ((result.value ?? '') as string).replace(
-          LineReg,
-          `$2`,
-        );
+        const resultContent = ((result ?? '') as string).replace(LineReg, `$2`);
         if (sentenceItem.start !== sentenceItem.end) {
           ms.update(sentenceItem.start, sentenceItem.end, resultContent);
         } else if (resultContent) {
@@ -547,16 +544,13 @@ export class CommandService extends RootStaticInjectOptions {
       const result = await this.#workflowExec.exec(
         workflow,
         {
-          input: {},
+          inputs: {},
           environmentParameters: defaultInput,
         },
         { showError: true },
         await channel.activeProgress,
       );
-      const resultContent = ((result.value ?? '') as string).replace(
-        LineReg,
-        `$2`,
-      );
+      const resultContent = ((result ?? '') as string).replace(LineReg, `$2`);
 
       ms.update(0, content.length, resultContent);
     }
@@ -568,7 +562,7 @@ export class CommandService extends RootStaticInjectOptions {
     const channel = this.#injector.get(LogFactoryService).getLog('workflow');
     channel.createProgress('逐行处理中');
     try {
-      await this.#editorWorkflowChange(uri, 'sentence', false, channel);
+      await this.#editorWorkflowChange(uri, 'file-sentence', false, channel);
     } finally {
       channel.endProgress();
     }
@@ -578,7 +572,7 @@ export class CommandService extends RootStaticInjectOptions {
     const channel = this.#injector.get(LogFactoryService).getLog('workflow');
     channel.createProgress('逐行处理中');
     try {
-      await this.#editorWorkflowChange(uri, 'sentence', true, channel);
+      await this.#editorWorkflowChange(uri, 'file-sentence', true, channel);
     } finally {
       channel.endProgress();
     }
@@ -588,7 +582,7 @@ export class CommandService extends RootStaticInjectOptions {
     const channel = this.#injector.get(LogFactoryService).getLog('workflow');
     channel.createProgress('全文处理中');
     try {
-      await this.#editorWorkflowChange(uri, 'fullText', false, channel);
+      await this.#editorWorkflowChange(uri, 'file-content', false, channel);
     } finally {
       channel.endProgress();
     }
@@ -598,7 +592,7 @@ export class CommandService extends RootStaticInjectOptions {
     const channel = this.#injector.get(LogFactoryService).getLog('workflow');
     channel.createProgress('全文处理中');
     try {
-      await this.#editorWorkflowChange(uri, 'fullText', true, channel);
+      await this.#editorWorkflowChange(uri, 'file-content', true, channel);
     } finally {
       channel.endProgress();
     }
@@ -979,20 +973,20 @@ export class CommandService extends RootStaticInjectOptions {
         content,
       };
       const setResult = await this.#editorWorkflowService.workflowConfigSet(
-        'tts',
+        'file-tts',
         force,
       );
       if (!setResult) {
         return;
       }
-      const workflow = await this.#editorWorkflowService.getWorkflow('tts');
+      const workflow = await this.#editorWorkflowService.getWorkflow('file-tts');
       if (!workflow) {
         return;
       }
       const result = await this.#workflowExec.exec(
         workflow,
         {
-          input: {},
+          inputs: {},
           environmentParameters: defaultInput,
         },
         { showError: true },
@@ -1009,7 +1003,7 @@ export class CommandService extends RootStaticInjectOptions {
             )
         ).replace(/\.\w+$/, '') + '.tts';
       const rawFile = fileService.getFile(nFilePath);
-      await rawFile.save(result.value);
+      await rawFile.save(result);
       const openUri = vscode.Uri.file(nFilePath);
       vscode.commands.executeCommand('vscode.open', openUri);
     } finally {

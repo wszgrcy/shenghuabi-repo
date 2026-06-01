@@ -148,7 +148,7 @@ function useEdgeGroup(props: CustomNode, bridge: BridgeService) {
             <Tooltip title={FOLD ? '展开' : '折叠'} key={tooltipList.length}>
               <div
                 style={directionTransform(positionList[i])}
-                className="material-icons cursor-pointer toolbar-icon  w-[24px] h-[24px] "
+                className="material-icons cursor-pointer toolbar-icon   text-[16px]!"
                 onClick={() => {
                   changeSubNodeStatus(
                     props$.current as any,

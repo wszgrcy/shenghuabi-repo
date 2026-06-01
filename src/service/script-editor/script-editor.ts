@@ -100,12 +100,12 @@ export class ScriptEditorFileSystem
   async getSavedEditorScript({
     title,
     content,
-    input,
+    // input,
     output,
   }: {
     title: string;
     content: string;
-    input?: string[] | undefined;
+    // input?: string[] | undefined;
     output?: string[] | undefined;
   }) {
     const filePath = `/${v4()}.ts`;
@@ -113,17 +113,10 @@ export class ScriptEditorFileSystem
     const data$ = new BehaviorSubject(
       Buffer.from(`import { Util, NodeJsRequire, ChatJsonSchema } from "${dtsDir}";
 type NodeReturn = (
-   outputName: ${output && output.length ? output.map((a) => "'" + a + "'").join('|') + '|undefined' : 'undefined'},
-) => Promise<{
-  /** 出口数据 */
-  value: any;
-  /** 一般用于标识元数据,表示对话中使用了哪些引用 */
-  extra?: {
-    metadata?: { type: string; description: string; tooltip?: string };
-  };
-}>
+   id: ${output && output.length ? output.map((a) => "'" + a + "'").join('|') + '|undefined' : 'undefined'},
+) => Promise<any>
 async function main(
-  parameters: Record<${input && input.length ? input.map((a) => "'" + a + "'").join('|') : 'never'},{value:any,extra?:any}>,
+  parameters: any,
   util: Util,
   require: NodeRequire,
 ): NodeReturn {${content}}`),

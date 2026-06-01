@@ -2,7 +2,7 @@
   <div [class]="childrenWrapperClass$$()">
     @for (item of fixedChildren$$(); track $index) {
       <div [class]="'card'">
-        <div class="card-body">
+        <div class="card-body flex-none">
           <h2 class="card-title">
             {{ item.props()['title'] }}
           </h2>

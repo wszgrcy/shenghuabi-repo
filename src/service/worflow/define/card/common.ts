@@ -8,6 +8,6 @@ export const NODE_COMMON: NodeComponentType = {
   help: `- 选择脑图中的卡片`,
 
   disableHead: false,
-  disableConnect: false,
   // (injector) => MindCardNodeConfig.form(injector),
 };
+/** 改成插入 */

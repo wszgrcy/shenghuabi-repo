@@ -1,7 +1,5 @@
 import { inject } from 'static-injector';
 
-import { ChatMessageListOutputType } from '@shenghuabi/openai';
-
 import { CHAT_VL_NODE_DEFINE } from '../chat.node.define';
 import { createAssistantMessage } from '@shenghuabi/openai';
 
@@ -13,43 +11,40 @@ import {
   createLLMData,
   EnviromentParametersToken,
   NodeRunnerBase,
-  RUNNER_ORIGIN_OUTPUT_KEY,
-  TemplateFormatService,
+  useChat,
 } from '@shenghuabi/workflow';
 import { bufferToImageBase64, imageExtract } from '@shenghuabi/knowledge/image';
 import { vlMarkdownParser } from '@shenghuabi/knowledge/file-parser';
 import { path } from '@cyia/vfs2';
 import * as fs from 'fs/promises';
 import sharp from 'sharp';
+import { WorkspaceDirToken } from '../../const';
 
-export class ChatVlRunner extends NodeRunnerBase {
-  #format = inject(TemplateFormatService);
+export class ChatVlRunner extends NodeRunnerBase<typeof CHAT_VL_NODE_DEFINE> {
   #chatService = inject(ChatServiceToken);
   #envParameters = inject(EnviromentParametersToken);
   #abort = inject(AbortSignalToken);
   #channel = inject(LogService).getToken('chat');
-
+  chatParse = useChat();
+  #dir = inject(WorkspaceDirToken);
   override async run() {
-    const { metadataList, obj } = await this.getInputChat();
-    const imageBuffer = this.#envParameters!['image'];
-    // const inputJsonSchema = this.inputParams.get(DEFAULT_CHAT_SCHEMA_KEY);
-    const nodeResult = this.getParsedNode(CHAT_VL_NODE_DEFINE);
-    const config = nodeResult.data.config;
-
-    const list = nodeResult.data.value;
-    const historyList = list.map((item) => {
-      const content = this.#format.interpolate(
-        item.content
-          .map((item) => (item.type === 'text' ? item.text : ''))
-          .join('\n'),
-        obj,
+    let imageBuffer;
+    if (typeof this.inputs.image === 'string') {
+      imageBuffer = await fs.readFile(
+        path.resolve(this.#dir, this.inputs.image),
       );
-      return {
-        role: item.role,
-        content: [{ type: 'text', text: content }],
-      };
-    }) as ChatMessageListOutputType;
-    const lastUserItem = historyList.find((item) => item.role === 'user');
+    } else {
+      imageBuffer = this.inputs.image;
+    }
+    // const inputJsonSchema = this.inputParams.get(DEFAULT_CHAT_SCHEMA_KEY);
+    const nodeResult = this.inputs;
+    const config = nodeResult;
+
+    const list = nodeResult.value;
+
+    const { list: historyList, metadataList } = await this.chatParse(list);
+
+    const lastUserItem = historyList.findLast((item) => item.role === 'user');
     const imageContent = {
       type: 'image_url' as const,
       image_url: {
@@ -122,20 +117,12 @@ export class ChatVlRunner extends NodeRunnerBase {
         },
       });
     }
-    return async (outputName: string) => {
-      if (outputName === RUNNER_ORIGIN_OUTPUT_KEY) {
-        return {
-          value: streamData.value,
-          dataId: streamData.dataId,
-          extra: streamData.extra,
-        };
+    return async (id: string) => {
+      if (id === 'default') {
+        return streamData.value;
       }
 
-      return {
-        value: resultContent,
-        dataId: streamData.dataId,
-        extra: streamData.extra,
-      };
+      return resultContent;
     };
   }
 }

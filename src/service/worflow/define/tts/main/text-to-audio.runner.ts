@@ -8,14 +8,16 @@ import { TTSSerivce } from '@shenghuabi/python-addon';
 import { FolderName, WorkspaceService } from '../../../../workspace.service';
 import { path } from '@cyia/vfs2';
 import { getFileTimestamp } from '@cyia/util';
-export class TextToAuduioRunner extends NodeRunnerBase {
+export class TextToAuduioRunner extends NodeRunnerBase<
+  typeof TEXT_TO_AUDIO_DEFINE
+> {
   #ttsSerivce = inject(TTSSerivce);
   #workspace = inject(WorkspaceService);
   #format = inject(TemplateFormatService);
 
   override async run() {
     const nodeResult = this.getParsedNode(TEXT_TO_AUDIO_DEFINE);
-    return async (outputName: string) => {
+    return async (id: string) => {
       const outputPath = path.join(
         this.#workspace.dir[FolderName.pythonAddon](),
         'chunk',
@@ -33,7 +35,7 @@ export class TextToAuduioRunner extends NodeRunnerBase {
       //   { backend: ExtensionConfig.tts.backend() as any },
       //   ExtensionConfig.indexTTS(),
       // );
-      switch (outputName) {
+      switch (id) {
         default:
           return {
             value: outputPath,

@@ -59,26 +59,13 @@ export class DocumentVectorService extends RootStaticInjectOptions {
   }
 
   /** 文章使用? */
-  async querySimilar(value: string, articleList: string[], limit: number) {
+  async querySimilar(value: string, limit: number) {
     const articleName = await this.articleName;
 
     return this.#manager$$()
       .get(articleName)
       .then((instance) => {
-        return instance.searchChunk(
-          value,
-          {
-            must: [
-              {
-                key: 'fullName',
-                match: {
-                  any: articleList,
-                },
-              },
-            ],
-          },
-          { limit },
-        );
+        return instance.searchChunk(value, undefined, { limit });
       })
       .then((result) => result.map((item) => item.payload));
   }

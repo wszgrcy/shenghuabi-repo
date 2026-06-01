@@ -1,6 +1,6 @@
 import { inject } from 'static-injector';
 
-import { NodeRunnerBase } from '@shenghuabi/workflow';
+import { NodeRunnerBase, serializeLexicalTextarea } from '@shenghuabi/workflow';
 import { WorkflowRunnerService } from '@shenghuabi/workflow';
 
 import { parse } from 'yaml';
@@ -9,34 +9,45 @@ import { ChatService } from '../../../../ai/chat.service';
 
 import { ChatMessageListOutputType } from '@shenghuabi/openai';
 import { AbortSignalToken } from '@shenghuabi/workflow';
-import { TemplateFormatService } from '@shenghuabi/workflow';
 import { jsonParse } from '../../../../ai/util/json-parser';
+import { CATEGORY_NODE_DEFINE } from '../category.node.define';
 import * as v from 'valibot';
-import { CATEGORY_NODE_DEFINE } from '../webview/category.node.define';
+import { toJsonSchema } from '@valibot/to-json-schema';
 
-export class CategoryRunner extends NodeRunnerBase {
+export class CategoryRunner extends NodeRunnerBase<
+  typeof CATEGORY_NODE_DEFINE
+> {
   #chatService = inject(ChatService);
   #abort = inject(AbortSignalToken);
-  #format = inject(TemplateFormatService);
 
   override async run() {
-    const obj = this.inputValueObject$$();
-    // 连接点
-    const data = this.inputParams.get(this.node.inputs[0].value)!;
-    const nodeResult = v.parse(CATEGORY_NODE_DEFINE, this.node);
+    const rawSys = this.inputs.systemPrompt;
+    const contextData = await this.nodeContextData$$();
+    const sysContent = serializeLexicalTextarea(rawSys, {
+      context: contextData,
+      environmentContext: this.environmentContextData,
+    });
+    const userSys = this.inputs.content;
+    const userContent = serializeLexicalTextarea(userSys, {
+      context: contextData,
+      environmentContext: this.environmentContextData,
+    });
 
-    const config = nodeResult.data.config!;
+    const config = this.inputs!;
     const inputList = config.categories.map((item) => {
       return {
         category_id: v4().slice(0, 13),
-        category_name: this.#format.interpolate(item.value, obj),
+        // todo 用序列化
+        category_name: serializeLexicalTextarea(item.value, {
+          context: contextData,
+          environmentContext: this.environmentContextData,
+        }),
       };
     });
     // 返回显示问题
     /** 系统提示词 */
-    const value = this.node.data.value!;
     const templatePrompt = [
-      { role: 'system', content: [{ type: 'text', text: value }] },
+      { role: 'system', content: [{ type: 'text', text: sysContent }] },
       ...config.examples
         .filter((item) => item.input.value && item.output.value)
         .flatMap((item) => {
@@ -77,17 +88,24 @@ export class CategoryRunner extends NodeRunnerBase {
             type: 'text',
             text: JSON.stringify({
               categories: inputList,
-              input_text: data.value,
+              input_text: userContent,
             }),
           },
         ],
       },
     ] as ChatMessageListOutputType;
     const llm = await this.#chatService.chat(this.mergeChatModel(config.llm));
+    const vJsonSchema = v.object({
+      category_name: v.picklist(inputList.map((item) => item.category_name)),
+      category_id: v.picklist(inputList.map((item) => item.category_id)),
+    });
     const result = await llm.chat(
       {
         messages: templatePrompt,
-        response_format: { type: 'json_object' },
+        response_format: {
+          type: 'json_schema',
+          json_schema: { name: '', schema: toJsonSchema(vJsonSchema) as any },
+        },
       },
       { signal: this.#abort },
     );
@@ -104,11 +122,10 @@ export class CategoryRunner extends NodeRunnerBase {
     if (!subFlow) {
       throw new Error('未找到匹配分类');
     }
-    const newInputs = new Map(this.inputParams);
 
     const subResult = await this.injector
       .get(WorkflowRunnerService)
-      .createContext(subFlow.flow, newInputs, this.context, this.injector)
+      .createContext(subFlow.flow, this.runnerContext, this.injector)
       .run();
     return async () => {
       return subResult;

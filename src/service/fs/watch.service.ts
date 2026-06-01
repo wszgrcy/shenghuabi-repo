@@ -1,8 +1,11 @@
 import { RootStaticInjectOptions, inject, signal } from 'static-injector';
 import * as vscode from 'vscode';
+import { watch } from 'node:fs';
+// import { watch } from 'fs/promises';
 import { WorkspaceService } from '../workspace.service';
 import {
   BehaviorSubject,
+  debounceTime,
   filter,
   map,
   shareReplay,
@@ -12,6 +15,7 @@ import {
 
 import { MindNode } from '../../share';
 import { MIND_GLOB } from '../../const';
+import { WorkflowFileService } from '@shenghuabi/workflow';
 import {
   ReactFlowJsonObject,
   Edge,
@@ -28,6 +32,14 @@ interface FileChangeData {
   value: string;
 }
 interface FileDeleteData {
+  type: 'delete';
+  value: string;
+}
+interface WorkflowFileChangeData {
+  type: 'change' | 'create';
+  value: string;
+}
+interface WorkflowFileDeleteData {
   type: 'delete';
   value: string;
 }
@@ -63,6 +75,14 @@ export class WatchService extends RootStaticInjectOptions {
   #fileObject = {} as Record<string, Promise<ResolvedMindFile | undefined>>;
   mindList$ = signal<ResolvedMindFile[] | undefined>(undefined);
   #mindFileService = inject(MindFileService);
+  #workflowFileService = inject(WorkflowFileService);
+  #workflowFileObject = {} as Record<string, Promise<any>>;
+  #workflowFileEvent = new BehaviorSubject<
+    WorkflowFileChangeData | WorkflowFileDeleteData | undefined
+  >(undefined);
+  workflowList$ = signal<
+    { filePath: string; data: any; relPath: string }[] | undefined
+  >(undefined);
   fileObject$ = this.#mindFileEvent.pipe(
     filter(Boolean),
     map((item) => {
@@ -85,10 +105,42 @@ export class WatchService extends RootStaticInjectOptions {
     }),
     shareReplay(1),
   );
+  workflowFileObject$ = this.#workflowFileEvent.pipe(
+    debounceTime(500),
+    filter(Boolean),
+    map((item) => {
+      if (item.type === 'delete') {
+        delete this.#workflowFileObject[item.value];
+      } else {
+        this.#workflowFileObject[item.value] = this.#parserWorkflowFile(
+          item.value,
+        );
+      }
+      return this.#workflowFileObject;
+    }),
+    switchMap((data) => {
+      return Promise.all(
+        Object.entries(data).map(async ([filePath, promise]) => {
+          return {
+            filePath,
+            data: await promise,
+            relPath: path
+              .relative(this.#workspace.dir['workflowDir'](), filePath)
+              .replace(/\.workflow$/, ''),
+          };
+        }),
+      );
+    }),
+    tap((list) => {
+      this.workflowList$.set(list);
+    }),
+    shareReplay(1),
+  );
   #channel = inject(LogFactoryService).getLog('system');
   // 仅本地文件才监听,外部的不管
   init() {
     this.fileObject$.subscribe();
+    this.workflowFileObject$.subscribe();
 
     const cwd = this.#workspace.nFolder();
     if (!cwd) {
@@ -126,6 +178,57 @@ export class WatchService extends RootStaticInjectOptions {
         value: path.normalize(e.fsPath),
       });
     });
+
+    // 工作流文件监听
+    (async () => {
+      let workflowDir = this.#workspace.dir['workflowDir']();
+      const list = this.#workspace.vfs.glob(`**/*.workflow`, {
+        cwd: workflowDir,
+      });
+      for await (const item of list) {
+        this.#workflowFileEvent.next({
+          type: 'create',
+          value: path.join(workflowDir, item),
+        });
+      }
+      // 使用 fs.watch 监听 workflow 目录
+      try {
+        const watcher = watch(
+          workflowDir,
+          { recursive: true },
+          async (eventType, filename) => {
+            if (!filename) return;
+            const fullPath = path.join(workflowDir, filename);
+            if (eventType === 'change') {
+              this.#workflowFileEvent.next({
+                type: 'change',
+                value: path.normalize(fullPath),
+              });
+            } else {
+              try {
+                await this.#workspace.vfs.stat(fullPath);
+                this.#workflowFileEvent.next({
+                  type: 'create',
+                  value: path.normalize(fullPath),
+                });
+              } catch {
+                this.#workflowFileService.remove(fullPath);
+                this.#workflowFileEvent.next({
+                  type: 'delete',
+                  value: path.normalize(fullPath),
+                });
+              }
+            }
+          },
+        );
+
+        watcher.on('error', (error) => {
+          this.#channel.warn(`工作流文件监听错误: ${error}`);
+        });
+      } catch (error) {
+        this.#channel.warn(`无法使用 fs.watch 监听从工作流目录: ${error}`);
+      }
+    })();
   }
   async #parserFile(filePath: string) {
     const file = this.#mindFileService.getFile(filePath);
@@ -155,6 +258,16 @@ export class WatchService extends RootStaticInjectOptions {
       edges: data.flow?.edges || [],
       updateAt: stat.mtime.getTime(),
     };
+  }
+  async #parserWorkflowFile(filePath: string) {
+    const file = this.#workflowFileService.getFile(filePath);
+    try {
+      const data = await file.readOriginData();
+      return data;
+    } catch (error) {
+      console.error(`${filePath}: ${errorFormatByNode(error)}`);
+      return undefined;
+    }
   }
   #setNodeRelations(
     item: MindNode,

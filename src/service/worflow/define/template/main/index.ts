@@ -5,5 +5,5 @@ import { TemplateRunner } from './template.runner';
 export const TemplateMainConfig = {
   ...NODE_COMMON,
   runner: TemplateRunner,
-  define: TEMPLATE_NODE_DEFINE,
+  configDefine: TEMPLATE_NODE_DEFINE,
 } as const;

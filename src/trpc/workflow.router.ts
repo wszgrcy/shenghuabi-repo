@@ -1,24 +1,17 @@
 import * as v from 'valibot';
 import { t } from './t';
-import { TemplateFormatService } from '@shenghuabi/workflow';
+import { ModelOptionsToken, TemplateFormatService } from '@shenghuabi/workflow';
 import { WorkflowParserService } from '@shenghuabi/workflow';
 import { observable } from '@trpc/server/observable';
 import { MindEvent } from '../share';
-import {
-  WorkflowSelectService,
-  DEFAULT_INPUT_KEY,
-  WorkflowData,
-} from '@shenghuabi/workflow';
+import { WorkflowSelectService, WorkflowData } from '@shenghuabi/workflow';
 import { selectFile } from '../util/platform/select-file';
 import { WorkspaceService } from '../service/workspace.service';
 import * as vscode from 'vscode';
 import { path } from '@cyia/vfs2';
 import { ScriptEditorFileSystem } from '../service/script-editor/script-editor';
 import { WorkflowExecService } from '@shenghuabi/workflow';
-import {
-  WorkflowRunnerEnvironmentParams,
-  WorkflowStreamData,
-} from '@shenghuabi/workflow';
+import { WorkflowStreamData } from '@shenghuabi/workflow';
 import { MindService } from '../service/mind/mind.service';
 import { ChatService } from '../service/ai/chat.service';
 import { errorFormatByNode } from '@share/util/format/error-format-node';
@@ -32,29 +25,52 @@ import { effect } from 'static-injector';
 import { KnowledgeConfigService } from '../service/knowledge/knowledge-config.service';
 import { captureException } from '@sentry/node';
 import { WorkflowNativeSelectService } from '../native/workflow-select.service';
+import {
+  ResolvedWorkflow,
+  WorkflowRunnerInputsWithContext,
+} from '@shenghuabi/workflow/share';
 
 export const WorkflowRouter = t.router({
-  parseTemplate: t.procedure
+  convertChat: t.procedure
     .input(
       v.object({
-        content: v.array(v.string()),
-        language: v.optional(
-          v.picklist(['plaintext', 'js', 'liquid']),
-          'plaintext',
-        ),
+        list: v.array(v.any()),
       }),
     )
     .query(async ({ input, ctx }) => {
       const service = ctx.injector.get(TemplateFormatService);
-      const content = input.content.join('\n');
+      const content = input.list;
+
+      return service.parseConversationTemplate(content);
+    }),
+  parseTemplate: t.procedure
+    .input(
+      v.object({
+        content: v.string(),
+        language: v.optional(v.picklist(['plaintext', 'js']), 'plaintext'),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const service = ctx.injector.get(TemplateFormatService);
+      const content = input.content;
       switch (input.language) {
         case 'js':
           return service.parserJs(content);
         case 'plaintext':
           return service.parse(content);
-        case 'liquid':
-          return service.parserLiquid(content);
       }
+    }),
+  unParseTemplate: t.procedure
+    .input(
+      v.object({
+        content: v.any(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const service = ctx.injector.get(TemplateFormatService);
+      const content = input.content;
+
+      return service.unparse(content);
     }),
   getWorkflowInputList: t.procedure
     .input(v.string())
@@ -63,7 +79,8 @@ export const WorkflowRouter = t.router({
       const wpService = ctx.injector.get(WorkflowParserService);
       const result = await service.get({ workflowName: input });
       const result2 = wpService.parse(result);
-      return result2.data!.inputList;
+      // todo 重构 工作流运行相关,需要透传参数
+      return [];
     }),
   /** 工作流开发使用 */
   parseDefine: t.procedure
@@ -94,35 +111,36 @@ export const WorkflowRouter = t.router({
   chat: t.procedure
     .input(
       v.object({
-        data: v.custom<WorkflowData>(Boolean),
-        input: v.optional(v.custom<Record<string, any>>(Boolean), {}),
-        context: v.optional(v.custom<Record<string, any>>(Boolean), {}),
+        data: v.custom<
+          Pick<WorkflowData, 'flow'> & { define?: ResolvedWorkflow }
+        >(Boolean),
+        input: v.optional(
+          v.custom<WorkflowRunnerInputsWithContext>(Boolean),
+          {},
+        ),
         modelConfigName: v.optional(v.string()),
       }),
     )
     .subscription(async ({ input, ctx }) => {
+      console.log('进来了?', input);
       const exec = ctx.injector.get(WorkflowExecService);
       const chatService = ctx.injector.get(ChatService);
 
       const abort = new AbortController();
       return observable<WorkflowStreamData>((ob) => {
-        let parameters: WorkflowRunnerEnvironmentParams | undefined;
-        if (input.input[DEFAULT_INPUT_KEY]) {
-          parameters = input.input[DEFAULT_INPUT_KEY];
-          delete input.input[DEFAULT_INPUT_KEY];
-        }
         exec
           .exec(
             input.data,
-            {
-              input: input.input,
-              context: input.context,
-              environmentParameters: parameters,
-              modelOptions: chatService.getModelConfig(input.modelConfigName),
-            },
+            input.input,
             { showError: false },
             ob,
             abort.signal,
+            [
+              {
+                provide: ModelOptionsToken,
+                useValue: chatService.getModelConfig(input.modelConfigName),
+              },
+            ],
           )
 
           .catch((rej) => {
@@ -163,7 +181,6 @@ export const WorkflowRouter = t.router({
       v.object({
         title: v.string(),
         content: v.string(),
-        input: v.optional(v.array(v.string())),
         output: v.optional(v.array(v.string())),
       }),
     )
@@ -182,9 +199,13 @@ export const WorkflowRouter = t.router({
         })();
       });
     }),
-  selectWorkflow: t.procedure.input(v.any()).query(async ({ input, ctx }) => {
-    return ctx.injector.get(WorkflowNativeSelectService).selectWorkflow();
-  }),
+  selectWorkflow: t.procedure
+    .input(v.object({ type: v.optional(v.string()) }))
+    .query(async ({ input, ctx }) => {
+      return ctx.injector
+        .get(WorkflowNativeSelectService)
+        .selectWorkflow(input.type);
+    }),
   selectCard: t.procedure.input(v.any()).query(async ({ input, ctx }) => {
     return ctx.injector.get(MindService).getCardList();
   }),

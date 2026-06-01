@@ -9,7 +9,7 @@ export * from './rag';
 export * from './chat';
 export * from './workflow';
 export * from './define';
-export { LLMDataDefine, isChatStream } from '@shenghuabi/workflow/share';
+export { LLMDataDefine } from '@shenghuabi/workflow/share';
 export type { WorkflowStreamData } from '@shenghuabi/workflow/share';
 export * from './workflow/node-define/component-define';
 export * from '@shenghuabi/openai/define';

@@ -45,7 +45,6 @@ export class StoreComponent {
   dialog = inject(MatDialog);
   data = {
     card: '添加卡片',
-    chat: '添加对话',
     image: '添加图片',
   };
   defaultAddType = signal('card');

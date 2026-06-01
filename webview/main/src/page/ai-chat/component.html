@@ -1,3 +1,60 @@
-<div class="px-2 h-full">
-  <ai-chat #aiChat></ai-chat>
+<div class="px-2 h-full flex flex-col gap-2">
+  <!-- 标题部分 -->
+  <div class="pt-1 noValid flex w-full items-center gap-2">
+    @if (this.mode()) {
+      <menu-checkbox
+        [options]="CHAT_TYPE_LIST"
+        [(ngModel)]="mode"
+        [description]="menuTooltip$$()"
+      >
+        <div class="extra-menu">
+          <button
+            class="btn btn-circle btn-soft btn-ghost"
+            (click)="changeModelConfigName()"
+            [matTooltip]="
+              this.modelConfigName()
+                ? '已选择模型配置:' + this.modelConfigName()
+                : '请选择模型配置'
+            "
+          >
+            <span class="material-icons">settings</span>
+          </button>
+        </div>
+      </menu-checkbox>
+    }
+    <label class="floating-label flex-1">
+      <input
+        type="text"
+        placeholder="未命名"
+        class="input input-sm w-full"
+        [(ngModel)]="title$"
+      />
+      <span>标题</span>
+    </label>
+
+    <button
+      class="btn btn-circle btn-soft btn-warning btn-sm"
+      (click)="reset(false)"
+      [matTooltip]="'停止请求'"
+    >
+      <span class="material-icons">stop</span>
+    </button>
+    <button
+      class="btn btn-circle btn-soft btn-error btn-sm"
+      (click)="reset(true)"
+      [matTooltip]="'重置对话'"
+    >
+      <span class="material-icons">refresh</span>
+    </button>
+    <ng-content select=".title-action"></ng-content>
+  </div>
+
+  <ai-chat
+    class="flex-1"
+    [ngModel]="value$()"
+    (ngModelChange)="chatValueChange($event)"
+    [mode]="mode()"
+    [modelConfigName]="modelConfigName()"
+    [stopSignal]="stopSignal()"
+  ></ai-chat>
 </div>

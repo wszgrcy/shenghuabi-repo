@@ -163,7 +163,10 @@ export class CardEditorComponent extends NodeBase<CardDataType> {
     if (this.inStore()) {
       this.dataChange.emit(data);
     } else {
-      this.bridge.patchDataOne(this.props().id, data);
+      this.bridge.patchDataOne(this.props().id, (oldData) => ({
+        ...oldData.data,
+        ...data,
+      }));
     }
   }
 
@@ -354,12 +357,13 @@ export class CardEditorComponent extends NodeBase<CardDataType> {
         } else if (method === 'setReadonly') {
           this.setReadonly(parameters![0]);
         } else if (method === 'setEditorInteractionMode') {
-          this.bridge.patchDataOne(this.props().id, {
+          this.bridge.patchDataOne(this.props().id, (old) => ({
+            ...old.data,
             status: {
               ...this.data$().status,
               editorInteractionMode: parameters![0],
             },
-          });
+          }));
         } else if (method === 'closeFullscreen') {
           this.closeFullscreen();
         } else if (method === 'copyMarkdown') {
@@ -401,12 +405,13 @@ export class CardEditorComponent extends NodeBase<CardDataType> {
   }
 
   setReadonly(isReadonly: boolean) {
-    this.bridge.patchDataOne(this.props().id, {
+    this.bridge.patchDataOne(this.props().id, (old) => ({
+      ...old.data,
       status: {
         ...this.data$().status,
         readonly: isReadonly,
       },
-    });
+    }));
   }
   eventChanged(event: { method: string; parameters?: any[] }) {
     if (event.method === 'closeFullscreen') {

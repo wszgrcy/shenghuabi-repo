@@ -6,7 +6,8 @@
  *
  */
 
-import { $isCodeNode, CodeNode, normalizeCodeLang } from '@lexical/code';
+import { $isCodeNode, CodeNode } from '@lexical/code-core';
+import { normalizeCodeLanguage } from '@lexical/code-prism';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getNearestNodeFromDOMNode } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
@@ -141,7 +142,7 @@ function CodeActionMenuContainer({
             position: position,
             editor: editor,
             getCodeDOMNode,
-            nLang: normalizeCodeLang(lang),
+            nLang: normalizeCodeLanguage(lang),
           }}
         ></NgOutletReact>
       ) : null}

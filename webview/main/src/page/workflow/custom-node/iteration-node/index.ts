@@ -9,7 +9,6 @@ export const IterationNodeDefine: WebviewNodeConfig = {
   label: `迭代`,
   icon: { fontIcon: 'repeat' },
   disableHead: false,
-  disableConnect: false,
   color: 'accent',
   help: [
     `### 用于处理列表数据`,
@@ -24,7 +23,7 @@ export const IterationNodeDefine: WebviewNodeConfig = {
   ].join('\n'),
   component: IterationNodeComponent,
   // config: knowledgeConfig,
-  outputs: [[{ value: 'flat', label: '扁平数组' }]],
+  outputs: [[{ id: 'flat', name: 'flat', label: '扁平数组' }]],
   initData: () => {
     return {
       data: {
@@ -45,7 +44,7 @@ export const IterationNodeDefine: WebviewNodeConfig = {
     bridge.appendNode(
       { x: 0, y: 0 },
       {
-        ...defaultConfigMerge(config, config.config ?? config.displayConfig),
+        ...defaultConfigMerge(config, config.configDefine),
         type: type,
         extent: 'parent',
         parentId: node.id,

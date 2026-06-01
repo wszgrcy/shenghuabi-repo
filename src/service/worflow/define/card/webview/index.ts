@@ -4,9 +4,7 @@ import { NODE_COMMON } from '../common';
 
 export const CardWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  templateConfig: CARD_NODE_DEFINE,
-  displayConfig: CARD_NODE_DEFINE,
-  config: CARD_NODE_DEFINE,
+  configDefine: CARD_NODE_DEFINE,
   initData: () => {
     return {
       data: {

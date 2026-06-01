@@ -619,12 +619,18 @@ async function main() {
   }
 
   data['contributes']['configuration'] = await getConfig();
+
   writeFileSync(filePath, JSON.stringify(data, undefined, 2));
 }
 
 async function getConfig() {
   let { CONFIG } = await import('./config');
-  let { valibotToVscodeConfig } = await import('@cyia/vscode-valibot-config/valibot-to-vscode-config');
-  return valibotToVscodeConfig(CONFIG, { title: '软件配置', prefix: 'shenghuabi' });
+  let { valibotToVscodeConfig } = await import(
+    '@cyia/vscode-valibot-config/valibot-to-vscode-config'
+  );
+  return valibotToVscodeConfig(CONFIG, {
+    title: '软件配置',
+    prefix: 'shenghuabi',
+  });
 }
 main();

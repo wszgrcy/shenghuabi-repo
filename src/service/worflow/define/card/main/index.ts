@@ -5,5 +5,5 @@ import { CardRunner } from './card.runner';
 export const CardMainConfig = {
   ...NODE_COMMON,
   runner: CardRunner,
-  define: CARD_NODE_DEFINE,
+  configDefine: CARD_NODE_DEFINE,
 } as const;

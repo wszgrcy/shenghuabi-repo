@@ -5,5 +5,5 @@ import { ArrayMergeRunner } from './array-merge.runner';
 export const ArrayMergeMainConfig = {
   ...NODE_COMMON,
   runner: ArrayMergeRunner,
-  define: ARRAY_MERGE_NODE_DEFINE,
+  configDefine: ARRAY_MERGE_NODE_DEFINE,
 } as const;

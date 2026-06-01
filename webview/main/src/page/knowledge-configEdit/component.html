@@ -95,7 +95,11 @@
     #formly
     [options]="options"
   ></piying-view>
-  <button class="btn btn-soft btn-primary" [disabled]="formly.form$$()?.invalid" (click)="submit()">
+  <button
+    class="btn btn-soft btn-primary"
+    [disabled]="formly.form$$()?.invalid"
+    (click)="submit()"
+  >
     添加知识库集合
   </button>
 </form>

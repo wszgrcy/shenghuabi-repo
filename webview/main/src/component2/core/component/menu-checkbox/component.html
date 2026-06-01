@@ -1,25 +1,29 @@
 <button
-  class="btn btn-circle btn-soft btn-ghost btn-sm"
+  [class]="
+    'btn btn-circle btn-soft btn-ghost btn-sm'
+      | mergeClass: 'btn-' + item().color
+  "
   [matMenuTriggerFor]="menu"
   [matTooltip]="description() || item().description || ''"
 >
-  @if (item(); as item) {
-    <mat-icon [color]="item.color || 'primary'">{{ item.icon }}</mat-icon>
-  }
+  <span class="material-icons">{{ item().icon }}</span>
 </button>
 
 <mat-menu #menu="matMenu">
   <ng-template matMenuContent>
-    <div>
+    <div class="flex min-w-20 gap-2">
       @for (item of options(); track $index) {
         <button
-          class="btn btn-circle btn-soft btn-ghost"
-          (click)="buttonClicked(item.value, $index)"
+          [class]="
+            'btn btn-circle btn-soft btn-ghost'
+              | mergeClass: 'btn-' + item.color
+          "
+          (click)="buttonClicked(item, $index)"
           [matTooltipDisabled]="!item.description"
           [matTooltip]="item.description!"
           [disabled]="loading$() && (item.disabled ? item.disabled() : false)"
         >
-          <mat-icon [color]="item.color || 'primary'">{{ item.icon }}</mat-icon>
+          <span class="material-icons">{{ item.icon }}</span>
         </button>
       }
       <ng-content select=".extra-menu"></ng-content>

@@ -18,7 +18,7 @@ export class Rag2Class extends RootStaticInjectOptions {
 
   async query(
     searchContent: string,
-    queryParams: v.InferOutput<typeof RAG_NODE_DEFINE>['data']['config'],
+    queryParams: v.InferOutput<typeof RAG_NODE_DEFINE>,
     emitter: WorkflowEmitter,
     signal?: AbortSignal,
   ) {
@@ -144,12 +144,12 @@ export class Rag2Class extends RootStaticInjectOptions {
     const result = await this.#workflowExec.runParse(
       workflowData,
       {
-        input: {},
+        inputs: {},
         environmentParameters: inputs,
       },
       ob,
       signal,
     );
-    return result.value;
+    return result;
   }
 }

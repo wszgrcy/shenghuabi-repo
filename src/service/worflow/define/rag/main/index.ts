@@ -5,5 +5,5 @@ import { RagRunner } from './rag.runner';
 export const RagMainConfig = {
   ...NODE_COMMON,
   runner: RagRunner,
-  define: RAG_NODE_DEFINE,
+  configDefine: RAG_NODE_DEFINE,
 } as const;

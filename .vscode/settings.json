@@ -2,5 +2,19 @@
 {
     // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
     "typescript.tsdk": "node_modules/typescript/lib",
-    "typescript.experimental.useTsgo": true
+    "typescript.experimental.useTsgo": true,
+    "search.exclude": {
+        "**/lib": true
+    },
+    "files.exclude": {
+        "**/lib": true
+    },
+    // Exclude from file watcher to improve performance
+    "files.watcherExclude": {
+        "**/lib": true
+    },
+    // Ignore this sub-repo in Git source control view
+    "git.ignoredRepositories": [
+        "./lib/vscode"
+    ]
 }

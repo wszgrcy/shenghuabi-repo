@@ -2,10 +2,10 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   forwardRef,
   input,
   output,
+  signal,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -15,41 +15,35 @@ import {
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { deepClone } from '@bridge/share';
-import {
-  ChatCompletionContentPartImage,
-  ChatCompletionContentPartStr,
-  UserChatMessageType,
-} from '@shenghuabi/openai/define';
-import { MenuCheckboxFCC, SpanInputFCC } from '@cyia/component/core';
+import { UserChatMessageType } from '@shenghuabi/openai/define';
+import { MenuCheckboxFCC } from '@cyia/component/core';
 
 import { deepEqual } from 'fast-equals';
 
-import * as v from 'valibot';
-
+import { MenuCheckboxOption } from '@cyia/component/core/component/menu-checkbox/type';
+import { TextareaTemplateFCC } from '@fe/component/textarea-template/component';
+import {
+  SimpleVariableNode,
+  SimplifiedState,
+} from '@shenghuabi/lexical-textarea';
+import { ChatVariable } from '../../../type/chat-variable';
 @Component({
   selector: 'prompt-template',
   templateUrl: './component.html',
   standalone: true,
   imports: [
-    MatButtonModule,
-    MatInputModule,
-    MatFormFieldModule,
     MatIconModule,
     ReactiveFormsModule,
     MatMenuModule,
     MatTooltipModule,
     MenuCheckboxFCC,
-    SpanInputFCC,
     OverlayModule,
-    MatFormFieldModule,
     FormsModule,
+    TextareaTemplateFCC,
   ],
   providers: [
     {
@@ -62,41 +56,96 @@ import * as v from 'valibot';
 })
 export class PromptTemplateFCC implements ControlValueAccessor {
   disableImage = input(false);
-  readonly PROMPT_TYPE: any[] = [
+  variableChange = output<ChatVariable[]>();
+  readonly PROMPT_TYPE: MenuCheckboxOption[] = [
     {
       value: 'system',
-      color: 'primary',
+      color: 'info',
       icon: 'highlight',
-      description: '系统提示词',
-      disabled: computed(() => {
-        return !!this.list()?.some((item) => item.type === 'system');
-      }),
+      description: '修改为[系统提示词]',
+      // disabled: computed(() => {
+      //   return !!this.list()?.some((item) => item.type === 'system');
+      // }),
     },
     {
       //user
       value: 'user',
-      color: 'accent',
+      color: 'info',
       icon: 'account_circle',
-      description: '用户提示词',
+      description: '修改为[用户提示词]',
+      // disabled: computed(() => {
+      //   return !!this.list()?.some((item) => item.type === 'user');
+      // }),
     },
     {
       //assistant
       value: 'assistant',
-      color: 'accent',
+      color: 'info',
       icon: 'precision_manufacturing',
-      description: '模型返回',
+      description: '修改为[模型返回]',
+      // disabled: computed(() => {
+      //   return !!this.list()?.some((item) => item.type === 'assistant');
+      // }),
+    },
+    {
+      value: 'system',
+      color: 'success',
+      icon: 'highlight',
+      description: '新增[系统提示词]',
+      beforeChange: async (option) => {
+        this.addTemplateChange.emit(option.value);
+        return false;
+      },
+    },
+    {
+      //user
+      value: 'user',
+      color: 'success',
+      icon: 'account_circle',
+      description: '新增[用户提示词]',
+      beforeChange: async (option) => {
+        this.addTemplateChange.emit(option.value);
+        return false;
+      },
+    },
+    {
+      //assistant
+      value: 'assistant',
+      color: 'success',
+      icon: 'precision_manufacturing',
+      description: '新增[模型返回]',
+      beforeChange: async (option) => {
+        this.addTemplateChange.emit(option.value);
+        return false;
+      },
     },
   ];
   isLast = input(false);
   list = input<any[]>();
   forms = new FormGroup({
     type: new FormControl('system'),
-    content: new FormControl(''),
-    assets: new FormControl(''),
+    content: new FormControl(undefined),
+    assets: new FormControl(undefined),
   });
   opened = false;
-  addTemplateChange = output();
+  addTemplateChange = output<any>();
   onChange = (_: any) => {};
+
+  #emitVariableChange(value: any): void {
+    const list: ChatVariable[] = [...this.#textVarList$()];
+    if (value.assets) {
+      const imageList: SimpleVariableNode = {
+        type: 'variable',
+        item: {
+          label: '图片',
+          value: [value.assets],
+          type: 'custom',
+        },
+      };
+      list.push({ ...imageList.item, kind: 'image' });
+    }
+    this.variableChange.emit(list);
+  }
 
   ngOnInit(): void {
     this.forms.valueChanges.subscribe((value) => {
@@ -106,17 +155,27 @@ export class PromptTemplateFCC implements ControlValueAccessor {
       }
       const contentList = [];
       if (value.content) {
-        contentList.push(
-          v.parse(ChatCompletionContentPartStr, { text: value.content }),
-        );
+        contentList.push({ text: value.content, type: 'text' });
       }
+      let imageList: SimpleVariableNode | undefined;
       if (value.assets) {
-        contentList.push(
-          v.parse(ChatCompletionContentPartImage, {
-            image_url: { url: value.assets },
-          }),
-        );
+        imageList = {
+          type: 'variable',
+          item: {
+            label: '图片',
+            value: [value.assets],
+            type: 'custom',
+          },
+        };
+        contentList.push({
+          image_url: {
+            url: [[imageList]] as SimplifiedState,
+          },
+          type: 'image_url',
+        });
       }
+      this.#emitVariableChange(value);
+
       this.onChange({
         role: value.type,
         content: contentList,
@@ -125,15 +184,15 @@ export class PromptTemplateFCC implements ControlValueAccessor {
   }
   writeValue(obj: UserChatMessageType): void {
     if (obj) {
+      const image = obj.content.find((item) => item.type === 'image_url')
+        ?.image_url.url[0][0] as any;
       const inputValue = {
         type: obj.role,
-        content: obj.content.find((item) => item.type === 'text')?.text ?? '',
-        assets:
-          obj.content.find((item) => item.type === 'image_url')?.image_url
-            .url ?? '',
+        content: obj.content.find((item) => item.type === 'text')?.text,
+        assets: image?.item.value[0],
       };
       if (!deepEqual(inputValue, this.forms.value)) {
-        this.forms.patchValue(inputValue, { emitEvent: false });
+        this.forms.patchValue(inputValue as any, { emitEvent: false });
       }
     }
   }
@@ -142,5 +201,10 @@ export class PromptTemplateFCC implements ControlValueAccessor {
 
   registerOnChange(fn: (_: any) => any): void {
     this.onChange = fn;
+  }
+  #textVarList$ = signal<SimpleVariableNode['item'][]>([]);
+  textVarChange(obj: any) {
+    this.#textVarList$.set(obj.custom);
+    this.#emitVariableChange(this.forms.value);
   }
 }

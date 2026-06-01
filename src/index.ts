@@ -11,7 +11,13 @@ import {
 } from 'static-injector';
 import { WebViewMessageService } from './trpc';
 import { WebviewMapService } from './webview/webview.map';
-import { DynamicInjectToken, ExtensionContext } from './token';
+import {
+  CustomKnowledgeManagerServiceToken,
+  DocumentVectorServiceToken,
+  DynamicInjectToken,
+  ExtensionContext,
+  Rag2ClassToken,
+} from './token';
 import { HanyuService } from './service/language';
 import { CommandService } from './service/command.service';
 import { AiChatProvider } from './webview/custom-sidebar/ai-chat.service';
@@ -123,6 +129,9 @@ import {
 import { WorkflowNativeSelectService } from './native/workflow-select.service';
 import { EditorWorkflowService } from './service/editor-workflow.service';
 import * as InlineDefine from './service/worflow/define/index.main';
+import { WorkspaceDirToken } from './service/worflow/define/const';
+import { DocumentVectorService } from './service/vector-query/document-vector.service';
+import { Rag2Class } from './service/ai/rag/rag2.service';
 
 // todo 需要判断环境使用
 v.setGlobalConfig({ lang: 'zh-CN' });
@@ -175,13 +184,13 @@ export async function activate(context: vscode.ExtensionContext) {
           const editorWorkflowService = inject(EditorWorkflowService);
           return async (filePath: string, prefix: string, image: Buffer) => {
             const setResult = await editorWorkflowService.workflowConfigSet(
-              'image',
+              'image-parser',
               false,
             );
             if (!setResult) {
               return { content: '[[工作流未选择]]' };
             }
-            const workflow = await editorWorkflowService.getWorkflow('image');
+            const workflow = await editorWorkflowService.getWorkflow('image-parser');
             const result = await workflowExec.exec(
               workflow,
               {
@@ -194,10 +203,18 @@ export async function activate(context: vscode.ExtensionContext) {
               { showError: true },
             );
             return {
-              content: result.value,
-              parseTo: result.extra?.data.format,
+              content: result,
+              // todo 运行的时候,允许设置最后的outputId?
+              parseTo: 'markdown',
             };
           };
+        },
+      },
+      {
+        provide: WorkspaceDirToken,
+        useFactory: () => {
+          const workflowExec = inject(WorkspaceService);
+          return workflowExec.nFolder();
         },
       },
       DownloadService,
@@ -258,7 +275,6 @@ export async function activate(context: vscode.ExtensionContext) {
                         },
                       ],
                     };
-
                     await ExtensionConfig['llama.config'].server.set(oldServer);
                     await new Promise<void>((resovle) => {
                       // 因为下载完后还会触发第二次写入,暂时性修复
@@ -384,6 +400,10 @@ export async function activate(context: vscode.ExtensionContext) {
           return createInjector({
             providers: [
               CustomKnowledgeManagerService,
+              {
+                provide: CustomKnowledgeManagerServiceToken,
+                useExisting: CustomKnowledgeManagerService,
+              },
               FileParserService,
               {
                 provide: FileParserToken,
@@ -400,6 +420,14 @@ export async function activate(context: vscode.ExtensionContext) {
             parent: injector,
           });
         }),
+      },
+      {
+        provide: DocumentVectorServiceToken,
+        useExisting: DocumentVectorService,
+      },
+      {
+        provide: Rag2ClassToken,
+        useExisting: Rag2Class,
       },
     ],
   });

@@ -1,0 +1,30 @@
+<ng-template #templateRef let-attr="attributes" let-events="events">
+  <!-- todo 这里应该是一个类似锚点的,当拖动时进行校验 -->
+  <div [attributes]="attr()" [events]="events()" #child class="relative">
+    <react-outlet
+      [component]="Handle"
+      [root]="false"
+      [props]="$any(props$$())"
+      #outlet
+      [addHandle]="outlet"
+    >
+    </react-outlet>
+    <ng-container insertField></ng-container>
+    @if (isUsed$$()) {
+      <div
+        [class]="
+          'badge absolute top-0 right-0 left-0 bottom-0 w-full h-full opacity-80 tooltip'
+        "
+      >
+        <div class="flex-1">使用引用</div>
+        <!-- todo 需要更详细提示 -->
+        <button
+          class="btn btn-xs btn-circle btn-ghost btn-error"
+          (click)="unLink()"
+        >
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+    }
+  </div>
+</ng-template>

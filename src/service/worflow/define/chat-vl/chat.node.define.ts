@@ -1,58 +1,40 @@
 import * as v from 'valibot';
 
-import {
-  actions,
-  condition,
-  setComponent,
-  valueChange,
-} from '@piying/view-angular-core';
-import { ChatMessageListInputType } from '@shenghuabi/openai';
-import { llmModelConfig } from '@shenghuabi/workflow/share';
+import { actions, asControl, setComponent } from '@piying/view-angular-core';
 
-export const CHAT_VL_NODE_DEFINE = v.looseObject({
-  data: v.looseObject({
-    config: v.pipe(
-      v.optional(
-        v.object({
-          llm: v.optional(llmModelConfig()),
-          format: v.optional(v.picklist(['markdown', 'plaintext']), 'markdown'),
-        }),
-      ),
-      actions.wrappers.patch([
-        { type: 'div', attributes: { class: 'grid auto-rows-auto gap-2' } },
-      ]),
+import { llmModelConfig } from '@shenghuabi/workflow/share';
+import { RefDefine } from '../../preset/ref-define';
+export const CHAT_VL_NODE_DEFINE = v.pipe(
+  v.object({
+    llm: v.optional(llmModelConfig()),
+    format: v.pipe(
+      v.optional(v.picklist(['markdown', 'plaintext']), 'markdown'),
+      v.title('生成格式'),
     ),
     value: v.pipe(
-      v.custom<ChatMessageListInputType>(Boolean),
-      setComponent(''),
-      condition({
-        environments: ['display'],
-        actions: [
-          setComponent('prompt-list'),
-          valueChange((fn) => {
-            fn({ list: [undefined] }).subscribe(({ list: [value], field }) => {
-              if (!Array.isArray(value)) {
-                return;
-              }
-              const inputValue: ChatMessageListInputType = value ?? [];
-              field.context
-                .parseTemplate(
-                  inputValue.flatMap((item) =>
-                    item.content.map((item) =>
-                      item.type === 'text' ? item.text : '',
-                    ),
-                  ),
-                )
-                .then((value: any) => {
-                  if (!value) {
-                    return;
-                  }
-                  field.context.changeHandleData(field, 'input', 1, value);
-                });
-            });
-          }),
-        ],
-      }),
+      v.optional(v.array(v.any()), [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              content: [[{ type: 'text', text: '识别图中文件' }]],
+            },
+          ],
+        },
+      ]),
+      asControl(),
+      setComponent('prompt-list'),
+      v.title('提示词'),
+    ),
+    // todo 图片怎么获得?是buffer还是base64
+    image: v.pipe(
+      RefDefine,
+      v.title('图片文件/路径'),
+      actions.wrappers.patch(['label', 'use-ref']),
     ),
   }),
-});
+  actions.wrappers.patch([
+    { type: 'div', attributes: { class: 'grid auto-rows-auto gap-2' } },
+  ]),
+);

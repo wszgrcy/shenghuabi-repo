@@ -5,5 +5,5 @@ import { WorkflowExecRunner } from './workflow-exec.runner';
 export const WorkflowExecMainConfig = {
   ...NODE_COMMON,
   runner: WorkflowExecRunner,
-  define: WORKFLOW_EXEC_DEFINE,
+  configDefine: WORKFLOW_EXEC_DEFINE,
 } as const;

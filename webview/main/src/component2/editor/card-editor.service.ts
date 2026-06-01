@@ -31,10 +31,10 @@ import {
 } from '@lexical/list';
 import { MatDialog } from '@angular/material/dialog';
 import { INSERT_NEW_LINE } from './const';
-import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
+import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/extension';
 // import { TrpcService } from '@fe/trpc';
 // import { BridgeService } from '../../../service';
-import { $createCodeNode } from '@lexical/code';
+import { $createCodeNode } from '@lexical/code-core';
 import { TextEditorUtil } from './token';
 import { LexicalPlugin } from './lexical-plugin';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';

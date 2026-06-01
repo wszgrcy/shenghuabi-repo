@@ -5,5 +5,5 @@ import { ArticleRunner } from './article.runner';
 export const ArticleMainConfig = {
   ...NODE_COMMON,
   runner: ArticleRunner,
-  define: ARTICLE_NODE_DEFINE,
+  configDefine: ARTICLE_NODE_DEFINE,
 } as const;

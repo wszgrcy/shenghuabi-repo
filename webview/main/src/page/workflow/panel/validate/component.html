@@ -22,6 +22,11 @@
         <span class="material-icons">close</span>
       </button>
     </div>
-    <ai-chat #chat class="flex-1 overflow-auto"></ai-chat>
+    <ai-chat
+      class="flex-1 overflow-auto"
+      [mode]="mode"
+      [ngModel]="value$()"
+      [stopSignal]="stopSignal()"
+    ></ai-chat>
   </div>
 </div>

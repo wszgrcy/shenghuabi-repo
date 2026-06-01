@@ -121,7 +121,7 @@ export const ExtractWorkflowDefine = v.pipe(
   }),
   actions.inputs.patchAsync({
     clicked: (field) => () => {
-      return field.context.selectWorkflow();
+      return field.context.selectWorkflow({ type: 'chunk-to-graph-parser' });
     },
   }),
   layout({ keyPath: ['#'] }),

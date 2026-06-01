@@ -1,0 +1,12 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "rootDir": "../../",
+        // "baseUrl": "../../",
+     
+    },
+    "files": [
+        "contributes.ts",
+        "../../src/service/worflow/define/article/main/index.ts"
+    ]
+}

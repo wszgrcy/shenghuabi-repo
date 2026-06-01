@@ -4,7 +4,7 @@ import { TEMPLATE_NODE_DEFINE } from '../template.node.define';
 
 export const TemplateWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  config: TEMPLATE_NODE_DEFINE,
+  configDefine: TEMPLATE_NODE_DEFINE,
 
   initData: () => {
     return {

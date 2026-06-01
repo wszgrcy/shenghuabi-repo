@@ -4,8 +4,7 @@ import { NODE_COMMON } from '../common';
 
 export const ArticleWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  displayConfig: ARTICLE_NODE_DEFINE,
-  config: ARTICLE_NODE_DEFINE,
+  configDefine: ARTICLE_NODE_DEFINE,
   initData: () => {
     return {
       data: {

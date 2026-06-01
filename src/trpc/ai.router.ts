@@ -2,17 +2,12 @@ import * as v from 'valibot';
 import { t } from './t';
 
 import { observable } from '@trpc/server/observable';
-import {
-  CHAT_ITEM_TYPE,
-  PromptTemplateChatOption,
-  RawWorkflowNode,
-} from '../share';
+import { CHAT_ITEM_TYPE, CustomNode, PromptTemplateChatOption } from '../share';
 import { AiChatProvider } from '../webview/custom-sidebar/ai-chat.service';
-import { PromptInput } from '../service/ai/prompt.type';
 import { ChatService } from '../service/ai/chat.service';
 import { ChatMessageListOutputType } from '@shenghuabi/openai/define';
 import type { WorkflowStreamData } from '@shenghuabi/workflow/share';
-import { WorkflowExecService } from '@shenghuabi/workflow';
+import { ModelOptionsToken, WorkflowExecService } from '@shenghuabi/workflow';
 /**
  * 默认就是key
  * query=>通过value进行查询，查询有可能用到其他上下文，查询返回值为key
@@ -41,11 +36,7 @@ export const AiRouter = t.router({
     .input(
       v.object({
         template: v.optional(v.custom<ChatMessageListOutputType>(Boolean), []),
-        input: v.optional(v.custom<PromptInput>(Boolean), {}),
-        context: v.optional(
-          v.custom<Record<string, RawWorkflowNode>>(Boolean),
-          {},
-        ),
+        context: v.optional(v.custom<Record<string, CustomNode>>(Boolean), {}),
         modelConfigName: v.optional(v.string()),
       }),
     )
@@ -55,18 +46,27 @@ export const AiRouter = t.router({
       const abort = new AbortController();
       return observable<WorkflowStreamData>((emit) => {
         (async () => {
-          await exec.agentChat(
-            {
-              ...input,
-              inlineMode: false,
-              modelOptions: chatService.getModelConfig(input.modelConfigName),
-            },
-            (chatResult) => {
-              emit.next(chatResult);
-            },
-            abort.signal,
-          );
-          emit.complete();
+          try {
+            await exec.agentChat(
+              {
+                template: input.template,
+                environmentParameters: input.context,
+              },
+              (chatResult) => {
+                emit.next(chatResult);
+              },
+              abort.signal,
+              [
+                {
+                  provide: ModelOptionsToken,
+                  useValue: chatService.getModelConfig(input.modelConfigName),
+                },
+              ],
+            );
+            emit.complete();
+          } catch (error) {
+            emit.error(error);
+          }
         })();
         return () => {
           abort.abort();

@@ -13,8 +13,15 @@ import { ValueFormatDirective } from '../../../../directive/value-format.directi
 import { metadataFormat, metadataTooltipFormat } from '../../helper';
 import { ResultFieldComponent } from '../result-field/component';
 import { ShMarkdownTooltipDirective } from '../../../../directive/markdown-tooltip.directive';
-import { isChatStream, WorkflowStreamData } from '@bridge/share';
+import { LLMWorkflowData, WorkflowStreamData } from '@bridge/share';
 import { AsyncPipe } from '@angular/common';
+export function isChatStream(
+  data: WorkflowStreamData,
+): data is LLMWorkflowData {
+  return (
+    !!data.extra && 'content' in data.extra && 'thinkContent' in data.extra
+  );
+}
 @Component({
   templateUrl: './component.html',
   standalone: true,

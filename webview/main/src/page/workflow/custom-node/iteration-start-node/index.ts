@@ -5,7 +5,6 @@ export const IterationStartNodeDefine: WebviewNodeConfig = {
   type: 'iteration-start',
   label: '迭代项',
   disableHead: true,
-  disableConnect: true,
   component: IterationStartNodeComponent,
   initData: () => {
     return {

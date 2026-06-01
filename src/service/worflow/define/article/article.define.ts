@@ -1,9 +1,7 @@
 import {
   actions,
   asControl,
-  condition,
   hideWhen,
-  layout,
   setAlias,
   setComponent,
 } from '@piying/view-angular-core';
@@ -19,80 +17,49 @@ export const ModeList = [
   },
 ] as const;
 
-export const ARTICLE_NODE_DEFINE = v.looseObject({
-  data: v.pipe(
-    v.looseObject({
-      value: v.pipe(
-        v.optional(v.array(v.string()), []),
-        v.title('文章'),
-        v.minLength(1),
-        asControl(),
-        setComponent('tree-select'),
-        actions.inputs.set({ treeConfig: undefined }),
-        layout({ keyPath: ['..'] }),
-        actions.inputs.patchAsync({
-          treeConfig: (field) => field.context.getContextTree('article'),
-        }),
-        condition({
-          environments: ['display'],
-          actions: [asControl(), setComponent('readonly-value')],
-        }),
-      ),
-      config: v.pipe(
-        v.object({
-          mode: v.pipe(
-            v.optional(
-              v.picklist(ModeList.map((item) => item.value)),
-              'insert',
-            ),
-            v.title('模式'),
-            selectOptions(ModeList),
-            layout({ keyPath: ['..', '..'] }),
-            setAlias('mode'),
-            condition({
-              environments: ['display'],
-              actions: [
-                selectOptions(ModeList),
-                setComponent('readonly-value'),
-              ],
-            }),
-          ),
-          step: v.pipe(
-            v.optional(v.number(), 0),
-            v.title('文章数'),
-            v.description('按照数量将所有文章切分为多段,0为不切分'),
+export const ARTICLE_NODE_DEFINE = v.pipe(
+  v.object({
+    mode: v.pipe(
+      v.optional(v.picklist(ModeList.map((item) => item.value)), 'insert'),
+      v.title('模式'),
+      selectOptions(ModeList),
+      setAlias('mode'),
+    ),
+    step: v.pipe(
+      v.optional(v.number(), 0),
+      v.title('文章数'),
+      v.description('按照数量将所有文章切分为[step]段,0为不切分'),
 
-            actions.wrappers.set(['tooltip', 'label']),
-            layout({ keyPath: ['..', '..'] }),
-            condition({
-              environments: ['display'],
-              actions: [setComponent('readonly-value')],
-            }),
-          ),
-          chunkSize: v.pipe(
-            v.optional(v.number(), 1000),
-            v.title('分隔长度'),
-            v.description('知识库中每条内容保存的长度'),
-            actions.wrappers.set(['tooltip', 'label']),
-            hideWhen({
-              disabled: true,
-              listen: (fn) => {
-                return fn({
-                  list: [['@mode']],
-                }).pipe(map(({ list }) => list[0] !== 'chunk'));
-              },
-            }),
-            layout({ keyPath: ['..', '..'] }),
-            condition({
-              environments: ['display'],
-              actions: [setComponent('readonly-value')],
-            }),
-          ),
-        }),
-      ),
-    }),
-    actions.wrappers.patch([
-      { type: 'div', attributes: { class: 'grid gap-2' } },
-    ]),
-  ),
-});
+      actions.wrappers.set(['tooltip', 'label']),
+    ),
+    chunkSize: v.pipe(
+      v.optional(v.number(), 1000),
+      v.title('分隔长度'),
+      v.description('每条内容保存的长度'),
+      actions.wrappers.set(['tooltip', 'label']),
+      hideWhen({
+        disabled: true,
+        listen: (fn) => {
+          return fn({
+            list: [['@mode']],
+          }).pipe(map(({ list }) => list[0] !== 'chunk'));
+        },
+      }),
+    ),
+    value: v.pipe(
+      v.optional(v.array(v.string()), []),
+      v.title('文章'),
+      v.description('当前工作区内,有效的相对文件路径列表'),
+      v.minLength(1),
+      asControl(),
+      setComponent('tree-select'),
+      actions.inputs.set({ treeConfig: undefined }),
+      actions.inputs.patchAsync({
+        treeConfig: (field) => field.context.getContextTree('article'),
+      }),
+    ),
+  }),
+  actions.wrappers.patch([
+    { type: 'div', attributes: { class: 'grid gap-2' } },
+  ]),
+);

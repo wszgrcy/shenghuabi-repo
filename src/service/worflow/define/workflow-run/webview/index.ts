@@ -4,8 +4,7 @@ import { WORKFLOW_EXEC_DEFINE } from '../workflow-run.define';
 
 export const WorkflowExecWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  displayConfig: WORKFLOW_EXEC_DEFINE,
-  config: WORKFLOW_EXEC_DEFINE,
+  configDefine: WORKFLOW_EXEC_DEFINE,
   initData: () => {
     return {
       data: {

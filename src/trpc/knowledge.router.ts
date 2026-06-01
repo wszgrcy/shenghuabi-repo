@@ -63,7 +63,7 @@ export const KnowledgeRouter = t.router({
     return ctx.injector.get(DictService).getDictName(input);
   }),
   findAll: t.procedure
-    .input(v.object({ type: v.string() }))
+    .input(v.object({ type: v.optional(v.string()) }))
     .query(async ({ input, ctx }) => {
       const instance = ctx.injector.get(KnowledgeConfigService);
 
@@ -76,10 +76,13 @@ export const KnowledgeRouter = t.router({
             }
             ref.destroy();
             console.log(instance.originConfigList$());
+
             resolve(
-              instance.originConfigList$().filter((item) => {
-                return item.type === input.type;
-              }),
+              input.type
+                ? instance.originConfigList$().filter((item) => {
+                    return item.type === input.type;
+                  })
+                : instance.originConfigList$().slice(),
             );
           },
           { injector: ctx.injector },

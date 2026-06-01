@@ -5,5 +5,5 @@ import { ScriptRunner } from './script.runner';
 export const ScriptMainConfig = {
   ...NODE_COMMON,
   runner: ScriptRunner,
-  define: SCRIPT_NODE_DEFINE,
+  configDefine: SCRIPT_NODE_DEFINE,
 } as const;

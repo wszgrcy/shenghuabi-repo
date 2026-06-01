@@ -47,9 +47,9 @@ import {
 } from '@lexical/markdown';
 import { $createTableNodeWithDimensions } from '@lexical/table';
 
-import { $createHorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
+import { $createHorizontalRuleNode } from '@lexical/extension';
 import { $generateHtmlFromNodes } from '@lexical/html';
-import { $createCodeNode } from '@lexical/code';
+import { $createCodeNode } from '@lexical/code-core';
 import { INJECT_NG_COMPONENT } from './command';
 import { isMarkdown } from './utils/is-markdown';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';

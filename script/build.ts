@@ -128,14 +128,13 @@ async function main() {
     //debug.shenghuabi.top/api/0/organizations/shenghuabi/files/source-maps/?name=1.0.0
     console.log('准备安装');
     const ENV = {
-      ELECTRON_MIRROR: 'https://npmmirror.com/mirrors/electron/',
     };
     await $({
       cwd: OUT_DIR,
       stdio: 'inherit',
       env: ENV,
       extendEnv: true,
-    })`npm i --registry=https://registry.npmmirror.com`;
+    })`npm i`;
     console.log('准备移除');
     let platformList = ['darwin', 'linux', 'win32'];
     let archList = ['arm64', 'x64'];
