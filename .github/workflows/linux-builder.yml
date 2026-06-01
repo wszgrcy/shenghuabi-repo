@@ -3,15 +3,15 @@ run-name: shb-linux-builder
 on:
   push:
     branches:
-      - "master"
+      - 'master'
 
 permissions:
   contents: write
 env:
-  VSCODE_VERSION: "1.122.0"
+  VSCODE_VERSION: '1.122.0'
   ACTIONS_STEP_DEBUG: true
-  __platform: "linux"
-  __arch: "x64"
+  __platform: 'linux'
+  __arch: 'x64'
   SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
   channel: stable
 
@@ -22,14 +22,14 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version-file: ".nvmrc"
+          node-version-file: '.nvmrc'
       - name: install-pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: "11.5.0"
+          version: '11.5.0'
       - run: pnpm i
         env:
-          ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
       - id: check
         run: |
           npm run check-version
@@ -46,115 +46,61 @@ jobs:
     steps:
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
       - run: |
           sudo apt update
           sudo apt-get install build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version-file: ".nvmrc"
+          node-version-file: '.nvmrc'
       - name: install-pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: "11.5.0"
+          version: '11.5.0'
       - run: pnpm i
         env:
-          ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
       - name: init
         run: |
           git config --global user.name "wszgrcy"
           git config --global user.email "wszgrcy@gmail.com"
-      - name: pre-build-download
-        uses: wszgrcy/upload-s3-action@2.0.7
-        id: commonPackage
-        with:
-          mode: download
-          aws_key_id: ${{secrets.S3_ID}}
-          aws_secret_access_key: ${{secrets.S3_KEY}}
-          endpoint: ${{secrets.S3_ENDPOINT}}
-          aws_bucket: "shenghuabi-repo"
-          source_dir: ${{env.VSCODE_VERSION}}/${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
-          destination_dir: "./pre-build"
 
-      - name: 解压缩预构建
-        uses: wszgrcy/actions-pkg@1.2.5
-        if: ${{ steps.commonPackage.outputs.exist=='true' }}
-        with:
-          mode: unzip
-          unzipDir: ./lib/vscode
-          zipPath: ./pre-build/${{env.VSCODE_VERSION}}/${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
-          strip: 1
-          cleanUnzipDir: false
-      - name: 添加提交
-        if: ${{ steps.commonPackage.outputs.exist=='true' }}
-        working-directory: ./lib/vscode
-        run: |
-          rm -rf .git
-          git init
-          git add .
-          git commit -m '1'
-
-      - name: vscode仓库(如果不存在)
-        if: ${{ steps.commonPackage.outputs.exist=='false' }}
+      - name: vscode仓库
         uses: actions/checkout@v6
         with:
-          repository: "microsoft/vscode"
-          path: "./lib/vscode"
+          repository: 'microsoft/vscode'
+          path: './lib/vscode'
           ref: ${{env.VSCODE_VERSION}}
 
       - name: vscode构建
-        if: ${{ steps.commonPackage.outputs.exist=='false' }}
         run: npm run build:common-package
-      - name: 压缩预构建
-        uses: wszgrcy/actions-pkg@1.2.5
-        if: ${{ steps.commonPackage.outputs.exist=='false' }}
-        id: zipPreBuild
-        with:
-          mode: zip
-          unzipDir: ./lib/vscode
-          zipPath: ./${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
-          zstdLevel: "15"
-          cleanPaths: |
-            ./.git/**/*
-          cleanUnzipDir: false
 
-      - name: 上传预构建
-        uses: wszgrcy/upload-s3-action@2.0.7
-        if: ${{ steps.commonPackage.outputs.exist=='false' }}
-        with:
-          mode: upload
-          aws_key_id: ${{secrets.S3_ID}}
-          aws_secret_access_key: ${{secrets.S3_KEY}}
-          endpoint: ${{secrets.S3_ENDPOINT}}
-          aws_bucket: "shenghuabi-repo"
-          source_dir: ${{steps.zipPreBuild.outputs.zipFilePath}}
-          destination_dir: "./${{env.VSCODE_VERSION}}"
       - name: 通用output
         run: npm run build:vscode-output
       - name: 构建
         run: npm run move:extension
       - name: 构建deb
         run: npm run package:linux:deb
-        working-directory: "./lib/vscode"
+        working-directory: './lib/vscode'
       - name: 构建tar.gz
         run: |
           tar -czf ./shenghuabi-linux-x64-cuda-${{env.PUBLISH_VERSION}}.tar.gz -C ../VSCode-linux-x64 .
           rm -rf ../VSCode-linux-x64/resources/app/extensions/shenghuabi/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/libonnxruntime_providers_cuda.so
           tar -czf ./shenghuabi-linux-x64-cpu-${{env.PUBLISH_VERSION}}.tar.gz -C ../VSCode-linux-x64 .
-        working-directory: "./lib/vscode"
+        working-directory: './lib/vscode'
       - name: 复制到文件夹
         run: |
           mkdir ./.build/linux/publish
           cp ./shenghuabi-linux-x64-cuda-${{env.PUBLISH_VERSION}}.tar.gz ./.build/linux/publish/
           cp ./shenghuabi-linux-x64-cpu-${{env.PUBLISH_VERSION}}.tar.gz ./.build/linux/publish/
           cp ./.build/linux/deb/amd64/deb/* ./.build/linux/publish/
-        working-directory: "./lib/vscode"
+        working-directory: './lib/vscode'
       - name: github发行
         uses: softprops/action-gh-release@v3
         with:
           fail_on_unmatched_files: true
-          files: "./lib/vscode/.build/linux/publish/**/*.{exe,deb,tar.gz}"
+          files: './lib/vscode/.build/linux/publish/**/*.{exe,deb,tar.gz}'
           tag_name: ${{env.PUBLISH_VERSION}}
           name: ${{env.PUBLISH_VERSION}}
           draft: false
