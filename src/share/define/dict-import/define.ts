@@ -60,7 +60,6 @@ export const DictImportDefine = v.intersect([
                 );
               }),
               setComponent(''),
-              //             componentDefine({ type: undefined }),
             ),
           }),
           layout({ priority: 0, keyPath: ['#'] }),
@@ -70,17 +69,15 @@ export const DictImportDefine = v.intersect([
             regCode: v.pipe(
               v.optional(v.string()),
               v.title('注册码'),
-              actions.props.set({
+              actions.attributes.set({
                 placeholder: '如果存在则填写',
-                appearance: 'outline',
               }),
             ),
             userId: v.pipe(
               v.optional(v.string()),
               v.title('用户ID'),
-              actions.props.set({
+              actions.attributes.set({
                 placeholder: '如果存在则填写',
-                appearance: 'outline',
               }),
             ),
           }),
@@ -105,8 +102,8 @@ export const DictImportDefine = v.intersect([
       name: v.pipe(
         v.string(),
         v.title('字典名'),
-        actions.props.set({
-          placeholder: '默认与导入文件相同',
+        actions.attributes.set({
+          placeholder: '默认与导入文件相同1',
         }),
         actions.class.top('flex-1'),
 

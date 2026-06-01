@@ -8,7 +8,7 @@ on:
 permissions:
   contents: write
 env:
-  VSCODE_VERSION: "1.103.2"
+  VSCODE_VERSION: "1.122.0"
   ACTIONS_STEP_DEBUG: true
   __platform: "linux"
   __arch: "x64"
