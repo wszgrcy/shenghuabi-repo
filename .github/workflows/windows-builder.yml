@@ -3,15 +3,15 @@ run-name: shb-windows-builder
 on:
   push:
     branches:
-      - "master"
+      - 'master'
 
 permissions:
   contents: write
 env:
-  VSCODE_VERSION: "1.122.0"
+  VSCODE_VERSION: '1.122.0'
   ACTIONS_STEP_DEBUG: true
-  __platform: "win32"
-  __arch: "x64"
+  __platform: 'win32'
+  __arch: 'x64'
   SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
   channel: stable
 jobs:
@@ -21,14 +21,14 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version-file: ".nvmrc"
+          node-version-file: '.nvmrc'
       - name: install-pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: "11.5.0"
+          version: '11.5.0'
       - run: pnpm i
         env:
-          ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
       - id: check
         run: |
           npm run check-version
@@ -46,66 +46,36 @@ jobs:
     steps:
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version-file: ".nvmrc"
+          node-version-file: '.nvmrc'
       - name: install-pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: "11.5.0"
+          version: '11.5.0'
 
       - run: pnpm i
         env:
-          ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
       - name: MSVC
         uses: ilammy/msvc-dev-cmd@v1.13.0
         with:
           arch: x64
-          vsversion: "2022"
+          vsversion: '2022'
       - name: init
         run: |
           git config --global user.name "wszgrcy"
           git config --global user.email "wszgrcy@gmail.com"
-      # - name: pre-build-download
-      #   uses: wszgrcy/upload-s3-action@2.0.7
-      #   id: commonPackage
-      #   with:
-      #     mode: download
-      #     aws_key_id: ${{secrets.S3_ID}}
-      #     aws_secret_access_key: ${{secrets.S3_KEY}}
-      #     endpoint: ${{secrets.S3_ENDPOINT}}
-      #     aws_bucket: "shenghuabi-repo"
-      #     source_dir: ${{env.VSCODE_VERSION}}/${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
-      #     destination_dir: "./pre-build"
-      # - name: 解压缩预构建
-      #   uses: wszgrcy/actions-pkg@1.2.5
-      #   if: ${{ steps.commonPackage.outputs.exist=='true' }}
-      #   with:
-      #     mode: unzip
-      #     unzipDir: ./lib/vscode
-      #     zipPath: ./pre-build/${{env.VSCODE_VERSION}}/${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
-      #     strip: 1
-      #     cleanUnzipDir: false
-
-      # - name: 添加提交
-      #   if: ${{ steps.commonPackage.outputs.exist=='true' }}
-      #   working-directory: ./lib/vscode
-      #   run: |
-      #     ls
-      #     git init
-      #     git add .
-      #     git commit -m '1'
-
 
       - name: vscode仓库(如果不存在)
         # if: ${{ steps.commonPackage.outputs.exist=='false' }}
         uses: actions/checkout@v6
         with:
-          repository: "microsoft/vscode"
-          path: "./lib/vscode"
+          repository: 'microsoft/vscode'
+          path: './lib/vscode'
           ref: ${{env.VSCODE_VERSION}}
 
       - name: vscode构建
@@ -119,32 +89,6 @@ jobs:
           # git init
           git add .
           git commit -m '1'
-      # - name: 压缩预构建
-      #   uses: wszgrcy/actions-pkg@1.2.5
-      #   if: ${{ steps.commonPackage.outputs.exist=='false' }}
-      #   id: zipPreBuild
-      #   with:
-      #     mode: zip
-      #     unzipDir: ./lib/vscode
-      #     zipPath: ./${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
-      #     zstdLevel: "15"
-      #     cleanPaths: |
-      #       ./.git/**/*
-      #     cleanUnzipDir: false
-      # - run: |
-      #     ls 
-      #     echo "${{steps.zipPreBuild.outputs.zipFilePath}}"
-      # - name: 上传预构建
-      #   uses: wszgrcy/upload-s3-action@2.0.7
-      #   if: ${{ steps.commonPackage.outputs.exist=='false' }}
-      #   with:
-      #     mode: upload
-      #     aws_key_id: ${{secrets.S3_ID}}
-      #     aws_secret_access_key: ${{secrets.S3_KEY}}
-      #     endpoint: ${{secrets.S3_ENDPOINT}}
-      #     aws_bucket: "shenghuabi-repo"
-      #     source_dir: ./*.tar.zstd
-      #     destination_dir: "./${{env.VSCODE_VERSION}}"
       - name: 通用output
         run: npm run build:vscode-output
       - name: 构建
@@ -157,16 +101,16 @@ jobs:
           git status
           git rev-parse HEAD
           npm run build:user:win32-x64
-        working-directory: "./lib/vscode"
+        working-directory: './lib/vscode'
       - name: 查看vscode构建
         run: |
           tree /f .build/win32-x64
-        working-directory: "./lib/vscode"
+        working-directory: './lib/vscode'
       - name: github发行
         uses: softprops/action-gh-release@v3
         with:
           fail_on_unmatched_files: true
-          files: "./lib/vscode/.build/win32-x64/**/*.{exe,deb,tar.gz}"
+          files: './lib/vscode/.build/win32-x64/**/*.{exe,deb,tar.gz}'
           tag_name: ${{env.PUBLISH_VERSION}}
           name: ${{env.PUBLISH_VERSION}}
           draft: false
