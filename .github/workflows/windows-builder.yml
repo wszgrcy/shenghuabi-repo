@@ -69,39 +69,39 @@ jobs:
         run: |
           git config --global user.name "wszgrcy"
           git config --global user.email "wszgrcy@gmail.com"
-      - name: pre-build-download
-        uses: wszgrcy/upload-s3-action@2.0.7
-        id: commonPackage
-        with:
-          mode: download
-          aws_key_id: ${{secrets.S3_ID}}
-          aws_secret_access_key: ${{secrets.S3_KEY}}
-          endpoint: ${{secrets.S3_ENDPOINT}}
-          aws_bucket: "shenghuabi-repo"
-          source_dir: ${{env.VSCODE_VERSION}}/${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
-          destination_dir: "./pre-build"
-      - name: 解压缩预构建
-        uses: wszgrcy/actions-pkg@1.2.5
-        if: ${{ steps.commonPackage.outputs.exist=='true' }}
-        with:
-          mode: unzip
-          unzipDir: ./lib/vscode
-          zipPath: ./pre-build/${{env.VSCODE_VERSION}}/${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
-          strip: 1
-          cleanUnzipDir: false
+      # - name: pre-build-download
+      #   uses: wszgrcy/upload-s3-action@2.0.7
+      #   id: commonPackage
+      #   with:
+      #     mode: download
+      #     aws_key_id: ${{secrets.S3_ID}}
+      #     aws_secret_access_key: ${{secrets.S3_KEY}}
+      #     endpoint: ${{secrets.S3_ENDPOINT}}
+      #     aws_bucket: "shenghuabi-repo"
+      #     source_dir: ${{env.VSCODE_VERSION}}/${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
+      #     destination_dir: "./pre-build"
+      # - name: 解压缩预构建
+      #   uses: wszgrcy/actions-pkg@1.2.5
+      #   if: ${{ steps.commonPackage.outputs.exist=='true' }}
+      #   with:
+      #     mode: unzip
+      #     unzipDir: ./lib/vscode
+      #     zipPath: ./pre-build/${{env.VSCODE_VERSION}}/${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
+      #     strip: 1
+      #     cleanUnzipDir: false
 
-      - name: 添加提交
-        if: ${{ steps.commonPackage.outputs.exist=='true' }}
-        working-directory: ./lib/vscode
-        run: |
-          ls
-          git init
-          git add .
-          git commit -m '1'
+      # - name: 添加提交
+      #   if: ${{ steps.commonPackage.outputs.exist=='true' }}
+      #   working-directory: ./lib/vscode
+      #   run: |
+      #     ls
+      #     git init
+      #     git add .
+      #     git commit -m '1'
 
 
       - name: vscode仓库(如果不存在)
-        if: ${{ steps.commonPackage.outputs.exist=='false' }}
+        # if: ${{ steps.commonPackage.outputs.exist=='false' }}
         uses: actions/checkout@v6
         with:
           repository: "microsoft/vscode"
@@ -109,34 +109,42 @@ jobs:
           ref: ${{env.VSCODE_VERSION}}
 
       - name: vscode构建
-        if: ${{ steps.commonPackage.outputs.exist=='false' }}
+        # if: ${{ steps.commonPackage.outputs.exist=='false' }}
         run: npm run build:common-package
-      - name: 压缩预构建
-        uses: wszgrcy/actions-pkg@1.2.5
-        if: ${{ steps.commonPackage.outputs.exist=='false' }}
-        id: zipPreBuild
-        with:
-          mode: zip
-          unzipDir: ./lib/vscode
-          zipPath: ./${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
-          zstdLevel: "15"
-          cleanPaths: |
-            ./.git/**/*
-          cleanUnzipDir: false
+      - name: 添加提交
+        # if: ${{ steps.commonPackage.outputs.exist=='false' }}
+        working-directory: ./lib/vscode
+        run: |
+          ls
+          # git init
+          git add .
+          git commit -m '1'
+      # - name: 压缩预构建
+      #   uses: wszgrcy/actions-pkg@1.2.5
+      #   if: ${{ steps.commonPackage.outputs.exist=='false' }}
+      #   id: zipPreBuild
+      #   with:
+      #     mode: zip
+      #     unzipDir: ./lib/vscode
+      #     zipPath: ./${{env.__platform}}-${{env.__arch}}-${{env.VSCODE_VERSION}}.tar.zstd
+      #     zstdLevel: "15"
+      #     cleanPaths: |
+      #       ./.git/**/*
+      #     cleanUnzipDir: false
       # - run: |
       #     ls 
       #     echo "${{steps.zipPreBuild.outputs.zipFilePath}}"
-      - name: 上传预构建
-        uses: wszgrcy/upload-s3-action@2.0.7
-        if: ${{ steps.commonPackage.outputs.exist=='false' }}
-        with:
-          mode: upload
-          aws_key_id: ${{secrets.S3_ID}}
-          aws_secret_access_key: ${{secrets.S3_KEY}}
-          endpoint: ${{secrets.S3_ENDPOINT}}
-          aws_bucket: "shenghuabi-repo"
-          source_dir: ./*.tar.zstd
-          destination_dir: "./${{env.VSCODE_VERSION}}"
+      # - name: 上传预构建
+      #   uses: wszgrcy/upload-s3-action@2.0.7
+      #   if: ${{ steps.commonPackage.outputs.exist=='false' }}
+      #   with:
+      #     mode: upload
+      #     aws_key_id: ${{secrets.S3_ID}}
+      #     aws_secret_access_key: ${{secrets.S3_KEY}}
+      #     endpoint: ${{secrets.S3_ENDPOINT}}
+      #     aws_bucket: "shenghuabi-repo"
+      #     source_dir: ./*.tar.zstd
+      #     destination_dir: "./${{env.VSCODE_VERSION}}"
       - name: 通用output
         run: npm run build:vscode-output
       - name: 构建
