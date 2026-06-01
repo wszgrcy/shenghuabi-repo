@@ -800,9 +800,10 @@ async function getDefaultZhLanguage(userDataPath = '',) {
 		if (platform === 'win32') {
 			outputList.push(patchWin32DependenciesTask(destinationFolderName))
 		}
-		task.define(\`vscode-output\${dashed(platform)}\${dashed(arch)}\`,
+		const vscodeOutputTask = task.define(\`vscode-output\${dashed(platform)}\${dashed(arch)}\`,
 			task.series(...outputList)
-		);`,
+		);
+    task.task(vscodeOutputTask);`,
           description: `普通构建时去掉,手动调用`,
         },
       ],
