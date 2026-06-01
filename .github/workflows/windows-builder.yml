@@ -145,6 +145,9 @@ jobs:
         shell: powershell
         run: |
           Get-ChildItem env:
+          git --version
+          git status
+          git rev-parse HEAD
           npm run build:user:win32-x64
         working-directory: "./lib/vscode"
       - name: 查看vscode构建
