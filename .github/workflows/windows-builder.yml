@@ -142,7 +142,10 @@ jobs:
       - name: 构建
         run: npm run move:extension
       - name: user打包
-        run: npm run build:user:win32-x64
+        shell: powershell
+        run: |
+          Get-ChildItem env:
+          npm run build:user:win32-x64
         working-directory: "./lib/vscode"
       - name: 查看vscode构建
         run: |
