@@ -40,6 +40,7 @@ jobs:
     env:
       PUBLISH_VERSION: ${{ needs.check-version-branch.outputs.version }}
       BUILD_SOURCEVERSION: ${{ needs.check-version-branch.outputs.version }}
+      VSCODE_QUALITY: stable
     if: ${{ needs.check-version-branch.outputs.should-build == 'true' }}
     runs-on: windows-latest
     steps:
