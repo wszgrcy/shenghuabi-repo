@@ -68,7 +68,7 @@ export async function main() {
         env: ENV,
         extendEnv: true,
         shell: enableShell,
-      })(`npm`, ['install']);
+      })(`npm`, ['ci']);
       console.log('依赖安装完成');
       await $({ stdio: 'inherit', shell: enableShell })(`tsx`, [
         './script/change-vscode/remove-unuse-import.ts',
