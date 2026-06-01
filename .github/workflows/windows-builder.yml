@@ -96,6 +96,12 @@ jobs:
           git init
           git add .
           git commit -m '1'
+      - name: 添加提交
+        if: ${{ steps.commonPackage.outputs.exist=='false' }}
+        working-directory: ./lib/vscode
+        run: |
+          git add .
+          git commit -m '1'
 
       - name: vscode仓库(如果不存在)
         if: ${{ steps.commonPackage.outputs.exist=='false' }}
