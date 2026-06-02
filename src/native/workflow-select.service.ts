@@ -8,9 +8,9 @@ export class WorkflowNativeSelectService {
   async selectWorkflow(type?: string) {
     let list =
       (type
-        ? this.#watch
-            .workflowList$()
-            ?.filter((item) => type === item.data.options?.type)
+        ? this.#watch.workflowList$()?.filter((item) => {
+            return type === item.data.options?.type;
+          })
         : this.#watch.workflowList$()) ?? [];
     const result = await vscode.window.showQuickPick(
       list.map((item) => ({

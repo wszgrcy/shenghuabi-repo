@@ -5,6 +5,7 @@ import { watch } from 'node:fs';
 import { WorkspaceService } from '../workspace.service';
 import {
   BehaviorSubject,
+  bufferTime,
   debounceTime,
   filter,
   map,
@@ -106,15 +107,31 @@ export class WatchService extends RootStaticInjectOptions {
     shareReplay(1),
   );
   workflowFileObject$ = this.#workflowFileEvent.pipe(
-    debounceTime(500),
-    filter(Boolean),
-    map((item) => {
-      if (item.type === 'delete') {
-        delete this.#workflowFileObject[item.value];
-      } else {
-        this.#workflowFileObject[item.value] = this.#parserWorkflowFile(
-          item.value,
-        );
+    bufferTime(1000),
+    filter((list) => !!list.length),
+    map((list) => {
+      const deduped = Object.values(
+        list.reduce(
+          (acc, item) => {
+            if (item?.value) {
+              acc[item.value] = item;
+            }
+            return acc;
+          },
+          {} as Record<string, (typeof list)[number]>,
+        ),
+      );
+      for (const item of deduped) {
+        if (!item) {
+          continue;
+        }
+        if (item.type === 'delete') {
+          delete this.#workflowFileObject[item.value];
+        } else {
+          this.#workflowFileObject[item.value] = this.#parserWorkflowFile(
+            item.value,
+          );
+        }
       }
       return this.#workflowFileObject;
     }),
