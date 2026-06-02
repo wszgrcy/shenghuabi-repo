@@ -379,9 +379,11 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
           query: `VariableStatement:has(Identifier[value=osLocale])`,
           insertBefore: true,
           replace: `import { createHash } from "crypto";
+import { fileURLToPath } from 'url';
 
 async function getDefaultZhLanguage(userDataPath = '',) {
   if ('extensionDevelopmentPath' in args) { return }
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
 	let nlsMetadataPath = __dirname
 	let languagePacksPath = path.join(userDataPath, 'languagepacks.json')
 	try {
