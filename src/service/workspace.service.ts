@@ -146,7 +146,9 @@ export class WorkspaceService extends RootStaticInjectOptions {
   }
   #templateFormat = inject(TemplateFormatService);
   formatPath(input: string) {
-    return this.#templateFormat.interpolate(input, this.#pathListMap());
+    return path.normalize(
+      this.#templateFormat.interpolate(input, this.#pathListMap()),
+    );
   }
 
   shortPath(input: string) {
