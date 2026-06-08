@@ -22,6 +22,7 @@ overrides:
 minimumReleaseAge: 0
 
 allowBuilds:
+  '@google/genai': true
   '@parcel/watcher': true
   '@sentry/cli': true
   '@swc/core': true
