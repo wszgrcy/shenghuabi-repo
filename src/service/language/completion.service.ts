@@ -534,6 +534,13 @@ export class CompletionService extends RootStaticInjectOptions {
         }
       },
     );
+    vscode.chat.createChatParticipant(
+      'shenghuabi.chat.editor2',
+      async (req, context, stream, token) => {
+        console.log('调用');
+        console.log('调用', req, context, stream, token);
+      },
+    );
   }
   /** 多选 */
   #createCompletionListSelect(

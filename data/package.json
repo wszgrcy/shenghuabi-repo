@@ -53,6 +53,28 @@
             "description": "自动执行"
           }
         ]
+      },
+      {
+        "id": "shenghuabi.chat.editor2",
+        "name": "chat2",
+        "fullName": "chat2",
+        "description": "对话2",
+        "modes": [
+          "agent",
+          "ask",
+          "agent"
+        ],
+        "isDefault": true,
+        "isAgent": true,
+        "locations": [
+          "panel",
+          "editor"
+        ],
+        "commands": [
+          {
+            "name": "default"
+          }
+        ]
       }
     ],
     "languageModels": {
