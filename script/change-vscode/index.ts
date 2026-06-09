@@ -128,6 +128,11 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
           replace: '"cd build && npm run typecheck"',
         },
         {
+          query: 'property:has(>string[value*="watch-copilot"])::children(1)',
+          replace: '""',
+          description: 'copilot部分功能删除',
+        },
+        {
           query:
             'property:has(>string[value=\\"scripts"])>object::children(-1)',
           insertAfter: true,
@@ -789,6 +794,11 @@ async function getDefaultZhLanguage(userDataPath = '',) {
     {
       path: 'build/gulpfile.vscode.ts',
       list: [
+        {
+          query: `FunctionDeclaration:has(>Identifier[value=prepareCopilotRipgrepShimTask]) Block`,
+          replace: '{return async ()=>{}}',
+          description: `去掉copilot`,
+        },
         {
           query: `VariableDeclaration:has(>[value=packageTasks]) ArrayLiteralExpression CallExpression[value^=packageTask]`,
           delete: true,

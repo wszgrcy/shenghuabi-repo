@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { ESLint } from 'eslint';
 import tseslint from 'typescript-eslint';
+import { rm } from 'fs/promises';
 
 let unusedImports = require('eslint-plugin-unused-imports');
 
@@ -31,9 +32,9 @@ export async function removeUnuseImport() {
     ],
     fix: (message) => {
       if (message.message.includes('eslint-disable')) {
-        return false
+        return false;
       }
-      return true
+      return true;
     },
     // 关键：不使用任何配置文件，只使用 overrideConfig
     overrideConfigFile: true,
@@ -49,6 +50,12 @@ export async function removeUnuseImport() {
 
   let fixCount = list.filter((result) => result.output).length;
   console.log(`已修复 ${fixCount} 个文件中的未使用导入`);
+
+  // 删除 extensions/copilot 文件夹
+  let copilotPath = join(process.cwd(), VSCODE_REL_PATH, 'extensions/copilot');
+  console.log(`准备删除文件夹: ${copilotPath}`);
+  await rm(copilotPath, { recursive: true, force: true });
+  console.log('已删除 extensions/copilot 文件夹');
 }
 
 removeUnuseImport();

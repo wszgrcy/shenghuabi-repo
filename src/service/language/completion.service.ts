@@ -45,6 +45,17 @@ import { KnowledgeConfigService } from '../knowledge/knowledge-config.service';
 import { TOOL_CONFIG_LIST } from '../../share/tool-config';
 import { toJsonSchema } from '@valibot/to-json-schema';
 import * as v from 'valibot';
+import { Agent } from '@earendil-works/pi-agent-core';
+import {
+  Model,
+  UserMessage,
+  AssistantMessage,
+  TextContent,
+} from '@earendil-works/pi-ai';
+import { bufferToImageBase64 } from '@shenghuabi/knowledge/image';
+import { bufferDecodeToText } from '@shenghuabi/knowledge/file-parser';
+import fm from 'front-matter';
+
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -208,22 +219,10 @@ export class CompletionService extends RootStaticInjectOptions {
         disposeList.push(dispose);
       }
     });
-  }
-  init() {
-    vscode.languages.registerInlineCompletionItemProvider(Hanyu, {
-      provideInlineCompletionItems: async (doc, pos, context, token) => {
-        //todo 使用命令时进行补全
-        return null;
-      },
-    });
-    const list = ExtensionConfig.chatModelList();
-    const modelObject = {} as Record<string, NonNullable<typeof list>[number]>;
-    const event = new EventEmitter<void>();
+    effect((clean) => {
+      const list = ExtensionConfig.chatModelList();
 
-    vscode.lm.registerLanguageModelChatProvider(
-      'shenghuabi',
-      this.#inlineChat.createProvider({
-        onDidChangeLanguageModelChatInformation: event.event,
+      let res = vscode.lm.registerLanguageModelChatProvider('shenghuabi', {
         provideTokenCount: async (model, text, token) => {
           // 不准确
           return typeof text === 'string' ? text.length : 0;
@@ -325,9 +324,23 @@ export class CompletionService extends RootStaticInjectOptions {
           }
           sendTool();
         },
-      }),
-    );
-    event.fire();
+      });
+      clean(() => {
+        res.dispose();
+      });
+    });
+  }
+  init() {
+    vscode.languages.registerInlineCompletionItemProvider(Hanyu, {
+      provideInlineCompletionItems: async (doc, pos, context, token) => {
+        //todo 使用命令时进行补全
+        return null;
+      },
+    });
+    // todo
+    const list = ExtensionConfig.chatModelList();
+    const modelObject = {} as Record<string, NonNullable<typeof list>[number]>;
+
     const chatHistory = new Map<string, ChatMessageListInputType>();
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor',
@@ -537,8 +550,230 @@ export class CompletionService extends RootStaticInjectOptions {
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor2',
       async (req, context, stream, token) => {
-        console.log('调用');
-        console.log('调用', req, context, stream, token);
+        let systemPrompt: string | undefined;
+        if (req.modeInstructions2?.uri) {
+          let data = bufferDecodeToText(
+            await vscode.workspace.fs.readFile(req.modeInstructions2.uri),
+          );
+          let result = fm(data);
+          systemPrompt = result.body;
+        } else {
+          systemPrompt = req.modeInstructions;
+        }
+        let model = list[1];
+        let model2: Model<'openai-completions'> = {
+          baseUrl: model.baseURL,
+          api: 'openai-completions',
+          name: model.name,
+          id: model.model,
+          provider: 'shenghuabi',
+          reasoning: true,
+          contextWindow: 999999,
+          input: ['image', 'text'],
+          maxTokens: 999999,
+          cost: { input: 0, cacheRead: 0, cacheWrite: 0, output: 0 },
+        };
+        let result = new Agent({
+          initialState: {
+            systemPrompt: systemPrompt?.trim() || undefined,
+            tools: vscode.lm.tools
+              .filter(
+                (item) =>
+                  (req.tools.has(item) && req.tools.get(item)) ||
+                  item.tags.includes('shenghuabi'),
+              )
+              .map((item) => {
+                return {
+                  label: '',
+                  parameters: item.inputSchema ?? toJsonSchema(v.object({})),
+                  description: item.description,
+                  name: item.name,
+                  execute: async (id, params, signal, onUpdate) => {
+                    let result = await vscode.lm.invokeTool(item.name, {
+                      input: params as any,
+                      toolInvocationToken: req.toolInvocationToken,
+                    });
+
+                    let textList = result.content.filter((item) => {
+                      return item instanceof vscode.LanguageModelTextPart;
+                    });
+                    if (textList.length) {
+                      return {
+                        content: result.content
+                          .filter((item) => {
+                            return item instanceof vscode.LanguageModelTextPart;
+                          })
+                          .map((item) => {
+                            return { text: item.value, type: 'text' };
+                          }),
+                        details: '',
+                      };
+                    }
+                    let dataList = result.content.filter((item) => {
+                      return item instanceof vscode.LanguageModelDataPart;
+                    });
+                    if (dataList.length) {
+                      let imageList = dataList.filter((item) =>
+                        item.mimeType.startsWith('image'),
+                      );
+                      if (imageList.length) {
+                        return {
+                          content: imageList.map((item) => {
+                            return {
+                              type: 'image',
+                              data: bufferToImageBase64({
+                                type: item.mimeType,
+                                buffer: item.data,
+                              }),
+                              mimeType: item.mimeType,
+                            };
+                          }),
+                          details: '',
+                        };
+                      }
+                    }
+                    return {
+                      content: [{ type: 'text', text: '当前仅支持图片或文本' }],
+                      details: '',
+                    };
+                  },
+                };
+              }),
+            messages: context.history.map((item) => {
+              if (item instanceof vscode.ChatRequestTurn) {
+                return {
+                  role: 'user',
+                  content: item.prompt,
+                  timestamp: Date.now(),
+                } satisfies UserMessage;
+              } else if (item instanceof vscode.ChatResponseTurn) {
+                return {
+                  role: 'assistant',
+                  content: item.response.map((item) => {
+                    if (item instanceof vscode.ChatResponseMarkdownPart) {
+                      return {
+                        type: 'text',
+                        text: item.value.value,
+                      } satisfies TextContent;
+                    }
+                    debugger;
+                    throw 'assistant,出现不支持';
+                  }),
+                  api: 'openai-completions',
+                  provider: 'shenghuabi',
+                  model: '',
+                  usage: {
+                    input: 0,
+                    output: 0,
+                    cacheRead: 0,
+                    cacheWrite: 0,
+                    totalTokens: 0,
+                    cost: {
+                      input: 0,
+                      output: 0,
+                      cacheRead: 0,
+                      cacheWrite: 0,
+                      total: 0,
+                    },
+                  },
+                  stopReason: 'stop',
+                  timestamp: Date.now(),
+                } satisfies AssistantMessage;
+              }
+              debugger;
+              throw '未知对话历史项';
+            }),
+            model: model2,
+          },
+          getApiKey: () => model.apiKey,
+        });
+        let thinkIndex = 0;
+        token.onCancellationRequested((e) => {
+          result.abort();
+        });
+        result.subscribe((event) => {
+          console.log(event);
+          switch (event.type) {
+            case 'agent_end': {
+              break;
+            }
+            case 'agent_start': {
+              break;
+            }
+            case 'message_end': {
+              break;
+            }
+            case 'message_start': {
+              break;
+            }
+            case 'message_update': {
+              let assistantMessageEvent = event.assistantMessageEvent;
+              switch (assistantMessageEvent.type) {
+                case 'done': {
+                  break;
+                }
+                case 'error': {
+                  break;
+                }
+                case 'start': {
+                  break;
+                }
+                case 'text_delta': {
+                  stream.markdown(assistantMessageEvent.delta);
+                  break;
+                }
+                case 'text_end': {
+                  break;
+                }
+                case 'text_start': {
+                  stream.progress('回答中');
+                  break;
+                }
+                case 'thinking_delta': {
+                  stream.thinkingProgress({
+                    text: assistantMessageEvent.delta,
+                    id: `res-${thinkIndex++}`,
+                  });
+                  break;
+                }
+                case 'thinking_end': {
+                  break;
+                }
+                case 'thinking_start': {
+                  stream.progress('思考中');
+                  break;
+                }
+                case 'toolcall_delta': {
+                  break;
+                }
+                case 'toolcall_end': {
+                  break;
+                }
+                case 'toolcall_start': {
+                  break;
+                }
+              }
+              break;
+            }
+            case 'tool_execution_end': {
+              break;
+            }
+            case 'tool_execution_start': {
+              break;
+            }
+            case 'tool_execution_update': {
+              break;
+            }
+            case 'turn_end': {
+              break;
+            }
+            case 'turn_start': {
+              break;
+            }
+          }
+        });
+        await result.prompt(req.prompt);
+        return;
       },
     );
   }
