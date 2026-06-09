@@ -193,8 +193,9 @@ export class CompletionService extends RootStaticInjectOptions {
             toolReferenceName: item.type,
             displayName: item.type,
             description: item.help || '',
-            icon: new vscode.ThemeIcon('files'),
+            icon: new vscode.ThemeIcon('edit'),
             inputSchema,
+            userDescription: item.help || '',
           },
           {
             invoke: async (options) => {

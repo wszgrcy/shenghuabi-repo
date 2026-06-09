@@ -2,6 +2,7 @@ import { SingleNodeConfig } from '@shenghuabi/workflow';
 import * as v from 'valibot';
 import { KnowledgeMainConfig } from '../service/worflow/define/knowledge/main';
 import { RagMainConfig } from '../service/worflow/define/rag/main';
+import { ReadMindMainConfig } from '../service/worflow/define/read-mind/main';
 
 export const TOOL_CONFIG_LIST: SingleNodeConfig<v.BaseSchema<any, any, any>>[] =
   [
@@ -12,4 +13,5 @@ export const TOOL_CONFIG_LIST: SingleNodeConfig<v.BaseSchema<any, any, any>>[] =
     // ChatVlMainConfig,
     KnowledgeMainConfig,
     RagMainConfig,
+    ReadMindMainConfig,
   ];
