@@ -57,8 +57,8 @@
       {
         "id": "shenghuabi.chat.editor2",
         "name": "chat2",
-        "fullName": "chat2",
-        "description": "对话2",
+        "fullName": "生花笔",
+        "description": "使用接口/llama.cpp",
         "modes": [
           "agent",
           "ask",
