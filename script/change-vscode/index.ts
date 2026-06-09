@@ -128,7 +128,7 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
           replace: '"cd build && npm run typecheck"',
         },
         {
-          query: 'property:has(>string[value*="watch-copilot"])::children(1)',
+          query: 'property:has(>::children(0)[value*="watch-copilot"])::children(1)',
           replace: '""',
           description: 'copilot部分功能删除',
         },
