@@ -580,17 +580,25 @@ export class CompletionService extends RootStaticInjectOptions {
             : undefined);
 
         // 构建文件引用列表
-        const referenceUris = req.references.filter(
-          (ref) =>
-            !ref.name.startsWith('prompt') && ref.value instanceof vscode.Uri,
-        );
+        const referenceUris = req.references
+          .filter((ref) => !ref.name.startsWith('prompt'))
+          .map((item) => {
+            let filePath: string | undefined;
+            if (item.value instanceof vscode.Uri) {
+              filePath = item.value.fsPath;
+            } else {
+              let ref = (item.value as any)?.reference;
+              filePath = ref instanceof vscode.Uri ? ref.fsPath : undefined;
+            }
+            return filePath
+              ? path.relative(this.#workspace.nFolder(), filePath)
+              : undefined;
+          })
+          .filter(Boolean) as string[];
 
         const fileContextParts: string[] = [
           `<工作区>${this.#workspace.nFolder()}</工作区>`,
-          ...referenceUris.map(
-            (ref) =>
-              `<引用文件>${path.relative(this.#workspace.nFolder(), (ref.value as vscode.Uri).fsPath)}</引用文件>`,
-          ),
+          ...referenceUris.map((ref) => `<引用文件>${ref}</引用文件>`),
         ];
 
         if (currentFileUri) {
@@ -619,7 +627,9 @@ export class CompletionService extends RootStaticInjectOptions {
                 .filter(
                   (item) =>
                     (req.tools.has(item) && req.tools.get(item)) ||
-                    item.tags.includes('shenghuabi'),
+                    req.modeInstructions2?.toolReferences?.some(
+                      (item2) => item.name === item2.name,
+                    ),
                 )
                 .map((item) => {
                   return {
@@ -682,7 +692,9 @@ export class CompletionService extends RootStaticInjectOptions {
                     },
                   } satisfies AgentTool;
                 }),
-              createReadTool(this.#workspace.nFolder()),
+              createReadTool(this.#workspace.nFolder(), {
+                autoResizeImages: false,
+              }),
               createWriteTool(this.#workspace.nFolder()),
               createEditTool(this.#workspace.nFolder()),
               createLsTool(this.#workspace.nFolder()),
