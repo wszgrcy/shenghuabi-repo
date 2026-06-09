@@ -45,7 +45,7 @@ import { KnowledgeConfigService } from '../knowledge/knowledge-config.service';
 import { TOOL_CONFIG_LIST } from '../../share/tool-config';
 import { toJsonSchema } from '@valibot/to-json-schema';
 import * as v from 'valibot';
-import { Agent } from '@earendil-works/pi-agent-core';
+import { Agent, AgentTool } from '@earendil-works/pi-agent-core';
 import {
   Model,
   UserMessage,
@@ -55,6 +55,15 @@ import {
 import { bufferToImageBase64 } from '@shenghuabi/knowledge/image';
 import { bufferDecodeToText } from '@shenghuabi/knowledge/file-parser';
 import fm from 'front-matter';
+import {
+  createBashTool,
+  createEditTool,
+  createFindTool,
+  createGrepTool,
+  createLsTool,
+  createReadTool,
+  createWriteTool,
+} from '@earendil-works/pi-coding-agent';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -578,13 +587,14 @@ export class CompletionService extends RootStaticInjectOptions {
         const fileContextParts: string[] = [
           `<工作区>${this.#workspace.nFolder()}</工作区>`,
           ...referenceUris.map(
-            (ref) => `<引用文件>${(ref.value as vscode.Uri).fsPath}</引用文件>`,
+            (ref) =>
+              `<引用文件>${path.relative(this.#workspace.nFolder(), (ref.value as vscode.Uri).fsPath)}</引用文件>`,
           ),
         ];
 
         if (currentFileUri) {
           fileContextParts.push(
-            `<当前文件>${currentFileUri.fsPath}</当前文件>`,
+            `<当前文件>${path.relative(this.#workspace.nFolder(), currentFileUri.fsPath)}</当前文件>`,
           );
         }
         let model = list[1];
@@ -603,69 +613,81 @@ export class CompletionService extends RootStaticInjectOptions {
         let result = new Agent({
           initialState: {
             systemPrompt: systemPrompt?.trim() || undefined,
-            tools: vscode.lm.tools
-              .filter(
-                (item) =>
-                  (req.tools.has(item) && req.tools.get(item)) ||
-                  item.tags.includes('shenghuabi'),
-              )
-              .map((item) => {
-                return {
-                  label: '',
-                  parameters: item.inputSchema ?? toJsonSchema(v.object({})),
-                  description: item.description,
-                  name: item.name,
-                  execute: async (id, params, signal, onUpdate) => {
-                    let result = await vscode.lm.invokeTool(item.name, {
-                      input: params as any,
-                      toolInvocationToken: req.toolInvocationToken,
-                    });
+            tools: [
+              ...vscode.lm.tools
+                .filter(
+                  (item) =>
+                    (req.tools.has(item) && req.tools.get(item)) ||
+                    item.tags.includes('shenghuabi'),
+                )
+                .map((item) => {
+                  return {
+                    label: '',
+                    parameters: item.inputSchema ?? toJsonSchema(v.object({})),
+                    description: item.description,
+                    name: item.name,
+                    execute: async (id, params, signal, onUpdate) => {
+                      let result = await vscode.lm.invokeTool(item.name, {
+                        input: params as any,
+                        toolInvocationToken: req.toolInvocationToken,
+                      });
 
-                    let textList = result.content.filter((item) => {
-                      return item instanceof vscode.LanguageModelTextPart;
-                    });
-                    if (textList.length) {
-                      return {
-                        content: result.content
-                          .filter((item) => {
-                            return item instanceof vscode.LanguageModelTextPart;
-                          })
-                          .map((item) => {
-                            return { text: item.value, type: 'text' };
-                          }),
-                        details: '',
-                      };
-                    }
-                    let dataList = result.content.filter((item) => {
-                      return item instanceof vscode.LanguageModelDataPart;
-                    });
-                    if (dataList.length) {
-                      let imageList = dataList.filter((item) =>
-                        item.mimeType.startsWith('image'),
-                      );
-                      if (imageList.length) {
+                      let textList = result.content.filter((item) => {
+                        return item instanceof vscode.LanguageModelTextPart;
+                      });
+                      if (textList.length) {
                         return {
-                          content: imageList.map((item) => {
-                            return {
-                              type: 'image',
-                              data: bufferToImageBase64({
-                                type: item.mimeType,
-                                buffer: item.data,
-                              }),
-                              mimeType: item.mimeType,
-                            };
-                          }),
+                          content: result.content
+                            .filter((item) => {
+                              return (
+                                item instanceof vscode.LanguageModelTextPart
+                              );
+                            })
+                            .map((item) => {
+                              return { text: item.value, type: 'text' };
+                            }),
                           details: '',
                         };
                       }
-                    }
-                    return {
-                      content: [{ type: 'text', text: '当前仅支持图片或文本' }],
-                      details: '',
-                    };
-                  },
-                };
-              }),
+                      let dataList = result.content.filter((item) => {
+                        return item instanceof vscode.LanguageModelDataPart;
+                      });
+                      if (dataList.length) {
+                        let imageList = dataList.filter((item) =>
+                          item.mimeType.startsWith('image'),
+                        );
+                        if (imageList.length) {
+                          return {
+                            content: imageList.map((item) => {
+                              return {
+                                type: 'image',
+                                data: bufferToImageBase64({
+                                  type: item.mimeType,
+                                  buffer: item.data,
+                                }),
+                                mimeType: item.mimeType,
+                              };
+                            }),
+                            details: '',
+                          };
+                        }
+                      }
+                      return {
+                        content: [
+                          { type: 'text', text: '当前仅支持图片或文本' },
+                        ],
+                        details: '',
+                      };
+                    },
+                  } satisfies AgentTool;
+                }),
+              createReadTool(this.#workspace.nFolder()),
+              createWriteTool(this.#workspace.nFolder()),
+              createEditTool(this.#workspace.nFolder()),
+              createLsTool(this.#workspace.nFolder()),
+              createGrepTool(this.#workspace.nFolder()),
+              // createFindTool(this.#workspace.nFolder()),
+            ],
             messages: [
               {
                 role: 'user',
