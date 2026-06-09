@@ -55,7 +55,6 @@ import {
 import { bufferToImageBase64 } from '@shenghuabi/knowledge/image';
 import { bufferDecodeToText } from '@shenghuabi/knowledge/file-parser';
 import fm from 'front-matter';
-
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -560,6 +559,34 @@ export class CompletionService extends RootStaticInjectOptions {
         } else {
           systemPrompt = req.modeInstructions;
         }
+        // 获取当前活动文件和上下文
+        const activeEditor = vscode.window.activeTextEditor;
+        const activeTabInput =
+          vscode.window.tabGroups.activeTabGroup.activeTab?.input;
+        const currentFileUri =
+          activeEditor?.document.uri ||
+          (activeTabInput instanceof vscode.TabInputText
+            ? activeTabInput.uri
+            : undefined);
+
+        // 构建文件引用列表
+        const referenceUris = req.references.filter(
+          (ref) =>
+            !ref.name.startsWith('prompt') && ref.value instanceof vscode.Uri,
+        );
+
+        const fileContextParts: string[] = [
+          `<工作区>${this.#workspace.nFolder()}</工作区>`,
+          ...referenceUris.map(
+            (ref) => `<引用文件>${(ref.value as vscode.Uri).fsPath}</引用文件>`,
+          ),
+        ];
+
+        if (currentFileUri) {
+          fileContextParts.push(
+            `<当前文件>${currentFileUri.fsPath}</当前文件>`,
+          );
+        }
         let model = list[1];
         let model2: Model<'openai-completions'> = {
           baseUrl: model.baseURL,
@@ -639,50 +666,57 @@ export class CompletionService extends RootStaticInjectOptions {
                   },
                 };
               }),
-            messages: context.history.map((item) => {
-              if (item instanceof vscode.ChatRequestTurn) {
-                return {
-                  role: 'user',
-                  content: item.prompt,
-                  timestamp: Date.now(),
-                } satisfies UserMessage;
-              } else if (item instanceof vscode.ChatResponseTurn) {
-                return {
-                  role: 'assistant',
-                  content: item.response.map((item) => {
-                    if (item instanceof vscode.ChatResponseMarkdownPart) {
-                      return {
-                        type: 'text',
-                        text: item.value.value,
-                      } satisfies TextContent;
-                    }
-                    debugger;
-                    throw 'assistant,出现不支持';
-                  }),
-                  api: 'openai-completions',
-                  provider: 'shenghuabi',
-                  model: '',
-                  usage: {
-                    input: 0,
-                    output: 0,
-                    cacheRead: 0,
-                    cacheWrite: 0,
-                    totalTokens: 0,
-                    cost: {
+            messages: [
+              {
+                role: 'user',
+                content: fileContextParts.join('\n'),
+                timestamp: Date.now(),
+              },
+              ...context.history.map((item) => {
+                if (item instanceof vscode.ChatRequestTurn) {
+                  return {
+                    role: 'user',
+                    content: item.prompt,
+                    timestamp: Date.now(),
+                  } satisfies UserMessage;
+                } else if (item instanceof vscode.ChatResponseTurn) {
+                  return {
+                    role: 'assistant',
+                    content: item.response.map((item) => {
+                      if (item instanceof vscode.ChatResponseMarkdownPart) {
+                        return {
+                          type: 'text',
+                          text: item.value.value,
+                        } satisfies TextContent;
+                      }
+                      debugger;
+                      throw 'assistant,出现不支持';
+                    }),
+                    api: 'openai-completions',
+                    provider: 'shenghuabi',
+                    model: '',
+                    usage: {
                       input: 0,
                       output: 0,
                       cacheRead: 0,
                       cacheWrite: 0,
-                      total: 0,
+                      totalTokens: 0,
+                      cost: {
+                        input: 0,
+                        output: 0,
+                        cacheRead: 0,
+                        cacheWrite: 0,
+                        total: 0,
+                      },
                     },
-                  },
-                  stopReason: 'stop',
-                  timestamp: Date.now(),
-                } satisfies AssistantMessage;
-              }
-              debugger;
-              throw '未知对话历史项';
-            }),
+                    stopReason: 'stop',
+                    timestamp: Date.now(),
+                  } satisfies AssistantMessage;
+                }
+                debugger;
+                throw '未知对话历史项';
+              }),
+            ],
             model: model2,
           },
           getApiKey: () => model.apiKey,
@@ -701,6 +735,14 @@ export class CompletionService extends RootStaticInjectOptions {
               break;
             }
             case 'message_end': {
+              // 没用
+              // if (event.message.role === 'assistant') {
+              //   if (event.message.stopReason === 'aborted') {
+              //     stream.warning(
+              //       `请求已被取消\n${event.message.errorMessage ?? ''}`,
+              //     );
+              //   }
+              // }
               break;
             }
             case 'message_start': {
