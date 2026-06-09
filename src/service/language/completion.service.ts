@@ -36,10 +36,6 @@ import { getNumberText } from '@share/util/format/get-number-text';
 import { isStringArray } from '@share/util/assert/is-string-array';
 import { CommandPrefix } from '@global';
 import { captureException } from '@sentry/node';
-import { FunctionParameters } from 'openai/resources';
-import { convertVSCodeMessagesToOpenAI } from './vscodeToOpenAIConverter';
-import { EventEmitter } from 'vscode';
-import { OpenAI } from 'openai';
 import { SingleNodeRunnerService } from '@shenghuabi/workflow';
 import { KnowledgeConfigService } from '../knowledge/knowledge-config.service';
 import { TOOL_CONFIG_LIST } from '../../share/tool-config';
@@ -232,11 +228,10 @@ export class CompletionService extends RootStaticInjectOptions {
       const list = ExtensionConfig.chatModelList();
 
       let res = vscode.lm.registerLanguageModelChatProvider('shenghuabi', {
-        provideTokenCount: async (model, text, token) => {
-          // 不准确
-          return typeof text === 'string' ? text.length : 0;
+        provideTokenCount: async () => {
+          return 0;
         },
-        provideLanguageModelChatInformation: (a) => {
+        provideLanguageModelChatInformation: () => {
           return list.map((item) => {
             return {
               id: item.name,
@@ -253,86 +248,7 @@ export class CompletionService extends RootStaticInjectOptions {
             };
           });
         },
-        provideLanguageModelChatResponse: async (
-          model,
-          message,
-          options,
-          progress,
-          token,
-        ) => {
-          const result = convertVSCodeMessagesToOpenAI(message);
-          const model2 = ExtensionConfig.chatModelList()[0];
-
-          const openai = new OpenAI({
-            baseURL: model2.baseURL,
-            apiKey: model2.apiKey,
-          });
-          const resultxx = await openai.chat.completions.create({
-            model: model2.model,
-            messages: result,
-            stream: true,
-            tool_choice: options.toolMode === 1 ? 'auto' : 'required',
-            tools: options.tools?.map((item) => {
-              return {
-                type: 'function',
-                function: {
-                  description: item.description,
-                  name: item.name,
-                  parameters: item.inputSchema as
-                    | FunctionParameters
-                    | undefined,
-                },
-              };
-            }),
-          });
-          let toolList:
-            | OpenAI.ChatCompletionChunk.Choice.Delta.ToolCall[]
-            | undefined;
-          const sendTool = () => {
-            if (toolList) {
-              for (const item of toolList) {
-                progress.report(
-                  new vscode.LanguageModelToolCallPart(
-                    item.id!,
-                    item.function!.name!,
-                    item.function!.arguments
-                      ? JSON.parse(item.function!.arguments)
-                      : {},
-                  ),
-                );
-              }
-              toolList = undefined;
-            }
-          };
-          for await (const item of resultxx) {
-            if (item.choices[0].finish_reason === 'stop') {
-              break;
-            }
-
-            const tool_calls = item.choices[0].delta.tool_calls;
-            if (tool_calls) {
-              if (!toolList) {
-                toolList = tool_calls;
-              } else {
-                tool_calls.forEach((item, index) => {
-                  const argStr = item.function?.arguments;
-                  if (argStr) {
-                    toolList![index].function!.arguments += argStr;
-                  }
-                });
-              }
-            }
-            const deltaContent = item.choices[0].delta.content;
-
-            if (typeof deltaContent === 'string') {
-              if (deltaContent) {
-                sendTool();
-              }
-              progress.report(new vscode.LanguageModelTextPart(deltaContent));
-            }
-          }
-          sendTool();
-        },
+        provideLanguageModelChatResponse: async () => {},
       });
       clean(() => {
         res.dispose();
