@@ -618,6 +618,7 @@ export class CompletionService extends RootStaticInjectOptions {
           input: ['image', 'text'],
           maxTokens: 999999,
           cost: { input: 0, cacheRead: 0, cacheWrite: 0, output: 0 },
+          compat: { supportsDeveloperRole: false },
         };
         let result = new Agent({
           initialState: {
@@ -761,7 +762,7 @@ export class CompletionService extends RootStaticInjectOptions {
           result.abort();
         });
         result.subscribe((event) => {
-          console.log(event);
+          // console.log(event);
           switch (event.type) {
             case 'agent_end': {
               break;
