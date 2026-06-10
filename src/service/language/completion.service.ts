@@ -52,9 +52,7 @@ import { bufferToImageBase64 } from '@shenghuabi/knowledge/image';
 import { bufferDecodeToText } from '@shenghuabi/knowledge/file-parser';
 import fm from 'front-matter';
 import {
-  createBashTool,
   createEditTool,
-  createFindTool,
   createGrepTool,
   createLsTool,
   createReadTool,
@@ -102,7 +100,7 @@ export class CompletionService extends RootStaticInjectOptions {
         item.dispose();
       });
       disposeList = [];
-      let list = this.#knowledgeConfig.originConfigList$();
+      const list = this.#knowledgeConfig.originConfigList$();
       for (const item of TOOL_CONFIG_LIST) {
         const inputSchema = item.configDefine
           ? toJsonSchema(item.configDefine, {
@@ -114,7 +112,7 @@ export class CompletionService extends RootStaticInjectOptions {
                 'defineType',
               ],
               overrideAction: (context) => {
-                let currentAction = context.valibotAction;
+                const currentAction = context.valibotAction;
                 if (
                   currentAction.type === 'metadata' &&
                   'toolJsonSchema' in (currentAction as any).metadata
@@ -123,7 +121,7 @@ export class CompletionService extends RootStaticInjectOptions {
                   if (
                     (currentAction as any).metadata.toolJsonSchema.needKnowledge
                   ) {
-                    let newDefine = v.pipe(
+                    const newDefine = v.pipe(
                       v.picklist(list.map((item) => item.name)),
                       v.description(
                         list
@@ -133,7 +131,7 @@ export class CompletionService extends RootStaticInjectOptions {
                           .join('\n'),
                       ),
                     );
-                    let newJsonSchema = toJsonSchema(newDefine);
+                    const newJsonSchema = toJsonSchema(newDefine);
                     delete newJsonSchema.$schema;
                     return {
                       ...newJsonSchema,
@@ -143,7 +141,7 @@ export class CompletionService extends RootStaticInjectOptions {
                     (currentAction as any).metadata.toolJsonSchema
                       .needKnowledgeGraph
                   ) {
-                    let newDefine = v.pipe(
+                    const newDefine = v.pipe(
                       v.picklist(
                         list
                           .filter(
@@ -153,7 +151,7 @@ export class CompletionService extends RootStaticInjectOptions {
                           .map((item) => item.name),
                       ),
                     );
-                    let newJsonSchema = toJsonSchema(newDefine);
+                    const newJsonSchema = toJsonSchema(newDefine);
                     delete newJsonSchema.$schema;
                     return {
                       ...newJsonSchema,
@@ -162,7 +160,7 @@ export class CompletionService extends RootStaticInjectOptions {
                   } else if (
                     (currentAction as any).metadata.toolJsonSchema.replaceSchema
                   ) {
-                    let newJsonSchema = toJsonSchema(
+                    const newJsonSchema = toJsonSchema(
                       (currentAction as any).metadata.toolJsonSchema
                         .replaceSchema,
                     );
@@ -181,7 +179,7 @@ export class CompletionService extends RootStaticInjectOptions {
               },
             })
           : { type: 'object', properties: {} };
-        let dispose = vscode.lm.registerToolDefinition(
+        const dispose = vscode.lm.registerToolDefinition(
           {
             name: item.type,
             source: undefined,
@@ -227,7 +225,7 @@ export class CompletionService extends RootStaticInjectOptions {
     effect((clean) => {
       const list = ExtensionConfig.chatModelList();
 
-      let res = vscode.lm.registerLanguageModelChatProvider('shenghuabi', {
+      const res = vscode.lm.registerLanguageModelChatProvider('shenghuabi', {
         provideTokenCount: async () => {
           return 0;
         },
@@ -477,10 +475,10 @@ export class CompletionService extends RootStaticInjectOptions {
       async (req, context, stream, token) => {
         let systemPrompt: string | undefined;
         if (req.modeInstructions2?.uri) {
-          let data = bufferDecodeToText(
+          const data = bufferDecodeToText(
             await vscode.workspace.fs.readFile(req.modeInstructions2.uri),
           );
-          let result = fm(data);
+          const result = fm(data);
           systemPrompt = result.body;
         } else {
           systemPrompt = req.modeInstructions;
@@ -503,7 +501,7 @@ export class CompletionService extends RootStaticInjectOptions {
             if (item.value instanceof vscode.Uri) {
               filePath = item.value.fsPath;
             } else {
-              let ref = (item.value as any)?.reference;
+              const ref = (item.value as any)?.reference;
               filePath = ref instanceof vscode.Uri ? ref.fsPath : undefined;
             }
             return filePath
@@ -522,8 +520,8 @@ export class CompletionService extends RootStaticInjectOptions {
             `<当前文件>${path.relative(this.#workspace.nFolder(), currentFileUri.fsPath)}</当前文件>`,
           );
         }
-        let model = list[1];
-        let model2: Model<'openai-completions'> = {
+        const model = list[1];
+        const model2: Model<'openai-completions'> = {
           baseUrl: model.baseURL,
           api: 'openai-completions',
           name: model.name,
@@ -536,7 +534,7 @@ export class CompletionService extends RootStaticInjectOptions {
           cost: { input: 0, cacheRead: 0, cacheWrite: 0, output: 0 },
           compat: { supportsDeveloperRole: false },
         };
-        let result = new Agent({
+        const result = new Agent({
           initialState: {
             systemPrompt: systemPrompt?.trim() || undefined,
             tools: [
@@ -558,12 +556,12 @@ export class CompletionService extends RootStaticInjectOptions {
                     description: item.description,
                     name: item.name,
                     execute: async (id, params, signal, onUpdate) => {
-                      let result = await vscode.lm.invokeTool(item.name, {
+                      const result = await vscode.lm.invokeTool(item.name, {
                         input: params as any,
                         toolInvocationToken: req.toolInvocationToken,
                       });
 
-                      let textList = result.content.filter((item) => {
+                      const textList = result.content.filter((item) => {
                         return item instanceof vscode.LanguageModelTextPart;
                       });
                       if (textList.length) {
@@ -580,11 +578,11 @@ export class CompletionService extends RootStaticInjectOptions {
                           details: '',
                         };
                       }
-                      let dataList = result.content.filter((item) => {
+                      const dataList = result.content.filter((item) => {
                         return item instanceof vscode.LanguageModelDataPart;
                       });
                       if (dataList.length) {
-                        let imageList = dataList.filter((item) =>
+                        const imageList = dataList.filter((item) =>
                           item.mimeType.startsWith('image'),
                         );
                         if (imageList.length) {
@@ -704,7 +702,7 @@ export class CompletionService extends RootStaticInjectOptions {
               break;
             }
             case 'message_update': {
-              let assistantMessageEvent = event.assistantMessageEvent;
+              const assistantMessageEvent = event.assistantMessageEvent;
               switch (assistantMessageEvent.type) {
                 case 'done': {
                   break;

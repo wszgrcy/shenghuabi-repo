@@ -1,4 +1,4 @@
-import { inject, computed } from 'static-injector';
+import { inject } from 'static-injector';
 import * as vscode from 'vscode';
 import { WatchService } from '../service/fs/watch.service';
 
@@ -6,7 +6,7 @@ export class WorkflowNativeSelectService {
   #watch = inject(WatchService);
 
   async selectWorkflow(type?: string) {
-    let list =
+    const list =
       (type
         ? this.#watch.workflowList$()?.filter((item) => {
             return type === item.data.options?.type;

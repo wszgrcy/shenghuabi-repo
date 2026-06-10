@@ -226,7 +226,7 @@ export class LlamaModelConfigDialogNFCC {
           getCompletionList: undefined,
         }),
         v.title('自定义参数'),
-        actions.wrappers.patch(['label'])
+        actions.wrappers.patch(['label']),
       ),
       config: v.pipe(
         v.intersect([
@@ -353,7 +353,7 @@ export class LlamaModelConfigDialogNFCC {
     const data = this.downloadModelObj$$()!;
 
     this.#client.environment.llamaSwap.downloadModel.subscribe(
-      { ...data, },
+      { ...data },
       {
         onData: (result) => {
           if (result.type === 'end') {

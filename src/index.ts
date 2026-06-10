@@ -190,7 +190,8 @@ export async function activate(context: vscode.ExtensionContext) {
             if (!setResult) {
               return { content: '[[工作流未选择]]' };
             }
-            const workflow = await editorWorkflowService.getWorkflow('image-parser');
+            const workflow =
+              await editorWorkflowService.getWorkflow('image-parser');
             const result = await workflowExec.exec(
               workflow,
               {

@@ -979,7 +979,8 @@ export class CommandService extends RootStaticInjectOptions {
       if (!setResult) {
         return;
       }
-      const workflow = await this.#editorWorkflowService.getWorkflow('file-tts');
+      const workflow =
+        await this.#editorWorkflowService.getWorkflow('file-tts');
       if (!workflow) {
         return;
       }

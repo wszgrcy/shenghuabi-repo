@@ -24,7 +24,6 @@ import { effectOnce } from '@fe/util/effect-once';
 import {
   CardDataType,
   CardMindNode,
-  ChatDefaultDefine,
   ContainerMindNode,
   ContentCardDefaultDefine,
   deepClone,

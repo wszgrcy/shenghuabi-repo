@@ -6,7 +6,6 @@ import { WorkspaceService } from '../workspace.service';
 import {
   BehaviorSubject,
   bufferTime,
-  debounceTime,
   filter,
   map,
   shareReplay,
@@ -198,7 +197,7 @@ export class WatchService extends RootStaticInjectOptions {
 
     // 工作流文件监听
     (async () => {
-      let workflowDir = this.#workspace.dir['workflowDir']();
+      const workflowDir = this.#workspace.dir['workflowDir']();
       const list = this.#workspace.vfs.glob(`**/*.workflow`, {
         cwd: workflowDir,
       });
