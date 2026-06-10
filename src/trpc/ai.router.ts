@@ -95,7 +95,7 @@ export const AiRouter = t.router({
             ...input.historyList,
             { role: 'user', content: input.input },
           ];
-          const result = llm.stream(
+          const result = llm(
             {
               messages: historyList,
             },
@@ -103,19 +103,26 @@ export const AiRouter = t.router({
           );
           try {
             for await (const item of result) {
-              ob.next([
-                ...historyList,
-                {
-                  role: 'assistant',
-                  content: [
-                    {
-                      type: 'text',
-                      text: item.content,
-                    },
-                  ],
-                  thinkContent: item.thinkContent,
-                },
-              ] as ChatMessageListOutputType);
+              let textPart;
+              if (
+                item.type === 'text_delta' &&
+                (textPart = item.partial.content.find(
+                  (item) => item.type === 'text',
+                ))
+              ) {
+                ob.next([
+                  ...historyList,
+                  {
+                    role: 'assistant',
+                    content: [
+                      {
+                        type: 'text',
+                        text: textPart.text,
+                      },
+                    ],
+                  },
+                ] as ChatMessageListOutputType);
+              }
             }
           } catch (error) {
             ob.error(error);

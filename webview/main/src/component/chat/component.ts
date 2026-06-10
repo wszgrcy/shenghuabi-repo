@@ -96,7 +96,7 @@ export type ChatValue = {
   };
 };
 const DefaultUserTemplate = [{ role: 'user', content: [] }];
-
+// todo 可能需要删除?因为功能重复
 @Component({
   selector: 'ai-chat',
   templateUrl: './component.html',
@@ -187,7 +187,7 @@ export class ChatComponent extends BaseControl<ChatValue> {
       return lastItem.historyList;
     }
     const item = this.#lastChatResult();
-    return item?.extra!.historyList || [];
+    return [];
   });
 
   ngOnChanges(changes: SimpleChanges): void {

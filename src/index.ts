@@ -118,7 +118,6 @@ import { deepClone } from '@cyia/util';
 import { createMessage2Log } from '@cyia/dl';
 import { DownloadService } from './service/download.service';
 import {
-  ChatServiceToken,
   InlineNodeService,
   NodeRunnerBase,
   WORKFLOW_MODULE,
@@ -158,7 +157,6 @@ export async function activate(context: vscode.ExtensionContext) {
       // 工作流相关
       ...WORKFLOW_MODULE.provider,
       WorkflowNativeSelectService,
-      { provide: ChatServiceToken, useClass: ChatService },
       {
         provide: WorkflowConfigToken,
         useFactory: () => {
@@ -285,13 +283,6 @@ export async function activate(context: vscode.ExtensionContext) {
                     });
                   }
                   return;
-                },
-                captureException(error) {
-                  captureException(error);
-                },
-                history: {
-                  enable: ExtensionConfig.chatHistory.enable(),
-                  dir: workspace.dir[FolderName.chatHistory](),
                 },
               }) as OpenAIConfig,
           );
@@ -538,10 +529,10 @@ export async function activate(context: vscode.ExtensionContext) {
     PromptTree.viewId,
     injector.get(PromptTree),
   );
-  vscode.window.registerTreeDataProvider(
-    ChatHistoryTree.viewId,
-    injector.get(ChatHistoryTree),
-  );
+  // vscode.window.registerTreeDataProvider(
+  //   ChatHistoryTree.viewId,
+  //   injector.get(ChatHistoryTree),
+  // );
   vscode.window.registerTreeDataProvider(
     WorkflowTree.viewType,
     injector.get(WorkflowTree),

@@ -2,12 +2,13 @@ import { BehaviorSubject } from 'rxjs';
 import { RootStaticInjectOptions, inject } from 'static-injector';
 import { PromptItem } from './prompt.type';
 import { ExtensionConfig } from '../config.service';
-import { ChatProviderService } from '@shenghuabi/openai';
-import { ChatModelOptions } from '@shenghuabi/openai';
+
 import { omitBy } from 'lodash-es';
 import { LogFactoryService } from '../log.service';
 import { deepClone, isEmptyInput, isTruthy } from '@cyia/util';
 import { ChatMetadata } from '@shenghuabi/workflow';
+import { create } from 'domain';
+import { createChatStream, ModelConfigInputType } from '@shenghuabi/openai';
 
 export class ChatService extends RootStaticInjectOptions {
   /** @internal */
@@ -23,16 +24,12 @@ export class ChatService extends RootStaticInjectOptions {
   changedIndex?: number;
   /** llm请求 */
   // 配置自动更新
-  #chatProvider = inject(ChatProviderService);
   #channel = inject(LogFactoryService).getLog('chat');
-  async chat(config?: Partial<ChatModelOptions>) {
+  async chat(config?: Partial<ModelConfigInputType>) {
     this.#channel.info('传入对话配置', config);
     const model = ExtensionConfig.chatModelList()[0];
     this.#channel.info('默认配置', model);
-    return this.#chatProvider.create({
-      ...model,
-      ...omitBy(config, isEmptyInput),
-    } as any);
+    return createChatStream(model);
   }
 
   getModelConfig(name?: string) {

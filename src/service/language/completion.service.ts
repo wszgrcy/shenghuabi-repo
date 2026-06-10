@@ -58,6 +58,7 @@ import {
   createReadTool,
   createWriteTool,
 } from '@earendil-works/pi-coding-agent';
+import { getModelConfig } from '@shenghuabi/openai';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -224,7 +225,6 @@ export class CompletionService extends RootStaticInjectOptions {
     });
     effect((clean) => {
       const list = ExtensionConfig.chatModelList();
-
       const res = vscode.lm.registerLanguageModelChatProvider('shenghuabi', {
         provideTokenCount: async () => {
           return 0;
@@ -264,7 +264,6 @@ export class CompletionService extends RootStaticInjectOptions {
     const list = ExtensionConfig.chatModelList();
     const modelObject = {} as Record<string, NonNullable<typeof list>[number]>;
 
-    const chatHistory = new Map<string, ChatMessageListInputType>();
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor',
       async (req, context, stream, token) => {
@@ -281,13 +280,11 @@ export class CompletionService extends RootStaticInjectOptions {
         const filePath = location2.document.uri.fsPath;
         // 优先常规对话
         if (context.history.length > 0) {
-          const list = chatHistory.get(filePath);
           const llm = await this.#chatService.chat(modelOptions);
           const messages = [
-            ...list!,
             { role: 'user', content: [{ type: 'text', text: req.prompt }] },
           ] as ChatMessageListInputType;
-          const result = llm.stream(
+          const result = llm(
             {
               messages: messages,
             },
@@ -296,26 +293,20 @@ export class CompletionService extends RootStaticInjectOptions {
           let lastResult;
 
           for await (const item of result) {
-            lastResult = item;
-            stream.markdown(item.delta);
+            if (item.type === 'text_delta') {
+              stream.markdown(item.delta);
+            } else if (item.type === 'done') {
+              lastResult = item;
+            }
           }
 
-          chatHistory.set(filePath, [
-            ...messages,
-            {
-              role: 'assistant' as const,
-              content: [
-                {
-                  type: 'text',
-                  text: lastResult!.content,
-                },
-              ],
-              thinkContent: lastResult!.thinkContent,
-            } as AssistantChatMessageType,
-          ]);
-
           stream.textEdit(location2.document.uri, [
-            new vscode.TextEdit(location2.selection, lastResult!.content),
+            new vscode.TextEdit(
+              location2.selection,
+              lastResult!.message.content.find(
+                (item) => item.type === 'text',
+              )!.text,
+            ),
           ]);
           return;
         }
@@ -329,9 +320,7 @@ export class CompletionService extends RootStaticInjectOptions {
 
         let lastMessage: WorkflowStreamData;
         let lastId: string | undefined;
-        let thinkProgressStatus;
         const thinkEnd = Promise.withResolvers<void>();
-        let lastThinkStatus = false;
         const streamFn = (message: WorkflowStreamData) => {
           const isChat = isChatStream(message);
           // 对话类型
@@ -340,27 +329,10 @@ export class CompletionService extends RootStaticInjectOptions {
             if (lastId && item.node.id !== lastId) {
               stream.markdown('\n\n');
             }
-            if (item.extra.isThinking && !thinkProgressStatus!) {
-              thinkProgressStatus = true;
-              stream.progress('思考中', (p) => {
-                return thinkEnd.promise;
-              });
-            }
-            if (item.extra.isThinking) {
-              stream.markdown(item.extra.delta!);
-            } else if (lastThinkStatus === true && !item.extra.isThinking) {
-              stream.markdown('\n\n');
-              stream.markdown('---');
-              stream.markdown('\n\n');
-              stream.markdown(item.extra.delta!);
-            } else {
-              stream.markdown(item.extra.delta!);
-            }
+
             lastId = message.node.id;
             // todo 思考应该独立?
-            chatHistory.set(filePath, item.extra.historyList!);
             lastMessage = message;
-            lastThinkStatus = !!item.extra.isThinking;
           }
         };
         const input = deepClone(inlineEditorData.input) as Record<string, any>;
@@ -520,20 +492,8 @@ export class CompletionService extends RootStaticInjectOptions {
             `<当前文件>${path.relative(this.#workspace.nFolder(), currentFileUri.fsPath)}</当前文件>`,
           );
         }
-        const model = list[1];
-        const model2: Model<'openai-completions'> = {
-          baseUrl: model.baseURL,
-          api: 'openai-completions',
-          name: model.name,
-          id: model.model,
-          provider: 'shenghuabi',
-          reasoning: true,
-          contextWindow: 999999,
-          input: ['image', 'text'],
-          maxTokens: 999999,
-          cost: { input: 0, cacheRead: 0, cacheWrite: 0, output: 0 },
-          compat: { supportsDeveloperRole: false },
-        };
+        const model = list.find((item) => item.name === req.model.id)!;
+        let modelConfig = getModelConfig(model);
         const result = new Agent({
           initialState: {
             systemPrompt: systemPrompt?.trim() || undefined,
@@ -670,7 +630,7 @@ export class CompletionService extends RootStaticInjectOptions {
                 throw '未知对话历史项';
               }),
             ],
-            model: model2,
+            model: modelConfig.model,
           },
           getApiKey: () => model.apiKey,
         });

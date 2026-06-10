@@ -8,14 +8,12 @@ import {
   TTSConfigDefine,
 } from '@shenghuabi/python-addon/define';
 
-import {
-  ChatParamsItemDefine,
-  ChatParamsListDefine,
-} from '@shenghuabi/openai/define';
+
 import { SpeedControlDefine } from '@shenghuabi/crunker/define';
 import { omitIntersect } from '@piying/valibot-visit';
 import { DownloadConfigDefine } from '@cyia/external-call';
 import { QdrantOptionsDefine } from '@shenghuabi/knowledge/qdrant';
+import { ModelConfigDefine } from '@shenghuabi/openai/define';
 const EmbedingStartupType = [
   { value: 'transformers', description: '内置' },
   { value: 'openai', description: '需要设置baseURL' },
@@ -462,7 +460,7 @@ export const CONFIG = v.object({
     }),
     v.description('AI对话历史管理配置，包括保存开关和存储位置'),
   ),
-  chatModelList: ChatParamsListDefine,
+  chatModelList: v.array(ModelConfigDefine),
 
   download: v.pipe(
     v.object({

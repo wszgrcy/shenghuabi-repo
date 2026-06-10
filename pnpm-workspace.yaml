@@ -16,7 +16,7 @@ onlyBuiltDependencies:
   - sharp
 
 overrides:
-  '@huggingface/transformers>onnxruntime-node': '1.20.1'
+  '@huggingface/transformers>onnxruntime-node': '1.24.3'
   '@shenghuabi/knowledge>pdfjs-dist': '5.4.624'
 
 minimumReleaseAge: 0

@@ -13,7 +13,6 @@ import {
 import dayjs from 'dayjs';
 import { path } from '@cyia/vfs2';
 import { parse } from 'yaml';
-import { ChatHistoryService } from '@shenghuabi/openai';
 type FileDataItem = {
   level: 1;
 };
@@ -50,13 +49,11 @@ export class ChatHistoryTree
     this.#onDidChangeTreeData.event;
   #workspace = inject(WorkspaceService);
   #vfs = this.#workspace.rootVfs;
-  #chatHistory = inject(ChatHistoryService);
   #injector = inject(Injector);
 
   constructor() {
     super();
     effect(() => {
-      this.#chatHistory.update$$();
       this.#onDidChangeTreeData.fire(undefined);
     });
   }

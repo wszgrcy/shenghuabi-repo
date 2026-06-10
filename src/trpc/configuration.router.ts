@@ -168,19 +168,7 @@ export const EnvironmentConfigurationRouter = t.router({
       };
     });
     await ExtensionConfig['llama.startup'].set(input.llm.startup);
-    if (input.llm.startup) {
-      const HOST = ExtensionConfig['llama.listen']();
-      ExtensionConfig.chatModelList.update((list) => {
-        list = list.slice() ?? [];
-        list[0] = {
-          ...list[0],
-          name: list[0]?.name ?? 'default',
-          model: input.llm.llamaConfig.modelName,
-          baseURL: `http://${HOST}/v1`,
-        };
-        return list;
-      });
-    }
+    // todo 去掉了llama的配置,准备调用/model接口
     await ExtensionConfig['llama.dir'].set(input.llm.llamaConfig.dir);
     await ExtensionConfig['llama.config'].update((config) => {
       return {
@@ -192,7 +180,7 @@ export const EnvironmentConfigurationRouter = t.router({
       };
     });
     // 对话
-    ExtensionConfig.chatModelList.set(input.chatModelList);
+    await ExtensionConfig.chatModelList.set(input.chatModelList);
   }),
   toggleEmbedding: t.procedure.input(v.any()).query(async ({ input, ctx }) => {
     const text2vecService = ctx.injector.get(Text2VecService);
@@ -461,7 +449,7 @@ export const EnvironmentConfigurationRouter = t.router({
 
       const result = await (
         await service.chat()
-      ).stream({
+      )({
         messages: [
           {
             role: 'user',
@@ -477,7 +465,19 @@ export const EnvironmentConfigurationRouter = t.router({
       return observable<string>((ob) => {
         (async () => {
           for await (const item of result) {
-            ob.next(item.content);
+            let textPart;
+            if (
+              item.type === 'text_delta' &&
+              (textPart = item.partial.content.find(
+                (item) => item.type === 'text',
+              ))
+            ) {
+              ob.next(textPart.text);
+            } else if (item.type === 'done') {
+              ob.next(
+                item.message.content.find((item) => item.type === 'text')!.text,
+              );
+            }
           }
           ob.complete();
         })();
