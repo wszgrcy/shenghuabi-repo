@@ -334,16 +334,20 @@ export class CompletionService extends RootStaticInjectOptions {
             systemPrompt: systemPrompt?.trim() || undefined,
             tools: [
               ...vscode.lm.tools
-                .filter(
-                  (item) =>
+                .filter((item) => {
+                  if (item.name === 'replace-select-string') {
+                    return isEditor;
+                  }
+                  return (
                     (req.tools.has(item) && req.tools.get(item)) ||
                     req.modeInstructions2?.toolReferences?.some(
                       (item2) => item.name === item2.name,
                     ) ||
                     req.toolReferences?.some(
                       (item2) => item.name === item2.name,
-                    ),
-                )
+                    )
+                  );
+                })
                 .map((item) => {
                   return {
                     label: '',
