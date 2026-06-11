@@ -3,8 +3,8 @@ import { NodeComponentType } from '@shenghuabi/workflow/share';
 export const NODE_COMMON: NodeComponentType = {
   icon: { fontIcon: 'school' },
   color: 'accent' as const,
-  label: `读取脑图`,
-  type: 'read-mind',
+  label: `替换选中字符串`,
+  type: 'replace-select-string',
   disableHead: false,
-  help: `读取当前工作区内的脑图文件(.nt/.naotu)`,
+  help: `按照要求修改和替换选中的字符串`,
 };

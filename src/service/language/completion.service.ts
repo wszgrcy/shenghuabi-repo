@@ -41,7 +41,7 @@ import { KnowledgeConfigService } from '../knowledge/knowledge-config.service';
 import { TOOL_CONFIG_LIST } from '../../share/tool-config';
 import { toJsonSchema } from '@valibot/to-json-schema';
 import * as v from 'valibot';
-import { Agent, AgentTool } from '@earendil-works/pi-agent-core';
+import { Agent, AgentMessage, AgentTool } from '@earendil-works/pi-agent-core';
 import {
   Model,
   UserMessage,
@@ -82,9 +82,6 @@ interface InlineEditorData {
   template?: ChatMessageListInputType;
 }
 export class CompletionService extends RootStaticInjectOptions {
-  #inlineChat = inject(InlineChatService);
-  #promptService = inject(PromptService);
-  #chatService = inject(ChatService);
   #workflowExec = inject(WorkflowExecService);
   #workflow = inject(WorkflowSelectService);
   #workspace = inject(WorkspaceService);
@@ -93,9 +90,15 @@ export class CompletionService extends RootStaticInjectOptions {
   #selectSubscriptionMap = new Map<string, Subscription>();
   #injector = inject(Injector);
   #knowledgeConfig = inject(KnowledgeConfigService);
+  /** 对话时使用 */
+  activatedChatData!: {
+    stream: vscode.ChatResponseStream;
+    location2: vscode.ChatRequestEditorData;
+  };
   constructor() {
     super();
     let disposeList: vscode.Disposable[] = [];
+    // 更新知识库
     effect(() => {
       disposeList.forEach((item) => {
         item.dispose();
@@ -223,6 +226,7 @@ export class CompletionService extends RootStaticInjectOptions {
         disposeList.push(dispose);
       }
     });
+    // 更新模型
     effect((clean) => {
       const list = ExtensionConfig.chatModelList();
       const res = vscode.lm.registerLanguageModelChatProvider('shenghuabi', {
@@ -262,189 +266,15 @@ export class CompletionService extends RootStaticInjectOptions {
     });
     // todo
     const list = ExtensionConfig.chatModelList();
-    const modelObject = {} as Record<string, NonNullable<typeof list>[number]>;
 
-    vscode.chat.createChatParticipant(
-      'shenghuabi.chat.editor',
-      async (req, context, stream, token) => {
-        // todo 似乎只有编辑可以工作
-        // token只能监听到取消,不能监听到关闭
-        const modelOptions =
-          req.model.family === 'custom' ? modelObject[req.model.id] : undefined;
-        const abort = new AbortController();
-        token.onCancellationRequested(() => abort.abort());
-        const { location2 } = req;
-        if (!isEditorData(location2)) {
-          return;
-        }
-        const filePath = location2.document.uri.fsPath;
-        // 优先常规对话
-        if (context.history.length > 0) {
-          const llm = await this.#chatService.chat(modelOptions);
-          const messages = [
-            { role: 'user', content: [{ type: 'text', text: req.prompt }] },
-          ] as ChatMessageListInputType;
-          const result = llm(
-            {
-              messages: messages,
-            },
-            { signal: abort.signal },
-          );
-          let lastResult;
-
-          for await (const item of result) {
-            if (item.type === 'text_delta') {
-              stream.markdown(item.delta);
-            } else if (item.type === 'done') {
-              lastResult = item;
-            }
-          }
-
-          stream.textEdit(location2.document.uri, [
-            new vscode.TextEdit(
-              location2.selection,
-              lastResult!.message.content.find(
-                (item) => item.type === 'text',
-              )!.text,
-            ),
-          ]);
-          return;
-        }
-        const inlineEditorData = this.#selectedEditorTemplate.get(filePath)!;
-        const dirName = path.dirname(location2.document.uri.fsPath);
-        // 无工作区的情况下,应该没有文件列表
-        const dirFileList = this.#workspace.nFolder()
-          ? await this.#workspace.vfs.list(dirName)
-          : [];
-        const baseName = path.basename(location2.document.uri.fsPath);
-
-        let lastMessage: WorkflowStreamData;
-        let lastId: string | undefined;
-        const thinkEnd = Promise.withResolvers<void>();
-        const streamFn = (message: WorkflowStreamData) => {
-          const isChat = isChatStream(message);
-          // 对话类型
-          if (isChat) {
-            const item = message as LLMWorkflowData;
-            if (lastId && item.node.id !== lastId) {
-              stream.markdown('\n\n');
-            }
-
-            lastId = message.node.id;
-            // todo 思考应该独立?
-            lastMessage = message;
-          }
-        };
-        const input = deepClone(inlineEditorData.input) as Record<string, any>;
-        if (inlineEditorData.editorInput) {
-          input['input'] = req.prompt;
-        }
-        const defaultInput = this.#createDefaultInput(
-          input,
-          location2.document,
-          location2.selection,
-          dirName,
-          baseName,
-          dirFileList,
-        );
-
-        let result;
-        // 两种,一种是工作流,一种是上下文
-        if (inlineEditorData.mode === ChatMode.workflow) {
-          const subject = new Subject<WorkflowStreamData>();
-          subject.subscribe(streamFn);
-          result = await this.#workflowExec
-            .runParse(
-              inlineEditorData.resolvedWorkflow!,
-              {
-                inputs: {},
-                environmentParameters: defaultInput,
-              },
-              subject,
-              abort.signal,
-              [{ provide: ModelOptionsToken, useValue: modelOptions }],
-            )
-            .catch((rej) => {
-              captureException(rej);
-              throw rej;
-            });
-        } else {
-          result = await this.#workflowExec
-            .agentChat(
-              {
-                template: inlineEditorData.template!,
-                // inputs: {},
-                // context: {},
-                // modelOptions: modelOptions,
-                environmentParameters: defaultInput,
-                // inlineMode: true,
-              },
-
-              streamFn,
-              abort.signal,
-              [{ provide: ModelOptionsToken, useValue: modelOptions }],
-            )
-            .catch((rej) => {
-              captureException(rej);
-              throw rej;
-            });
-        }
-        if (typeof result === 'string') {
-          stream.textEdit(location2.document.uri, [
-            new vscode.TextEdit(location2.selection, result),
-          ]);
-        } else if (isStringArray(result)) {
-          this.#createCompletionListSelect(result, stream, location2);
-        }
-        if (!lastMessage!) {
-          return;
-        }
-        thinkEnd.resolve();
-        const knowledgeDir = this.#workspace.dir[FolderName.knowledgeDir]();
-        if (isChatStream(lastMessage)) {
-          for (const item of lastMessage!.extra.references ?? []) {
-            if (item.reference) {
-              if (item.reference.type === 'knowledge') {
-                const selection = new vscode.Selection(
-                  new vscode.Position(item.reference.loc!.lines.from - 1, 0),
-                  new vscode.Position(item.reference.loc!.lines.to, 0),
-                );
-                const local = new vscode.Location(
-                  vscode.Uri.file(
-                    path.join(
-                      knowledgeDir,
-                      item.reference.knowledgeName,
-                      item.reference.fileName,
-                    ),
-                  ).with({
-                    scheme: KnowledgeFileSystem.scheme,
-                    query: item.reference.knowledgeName,
-                  }),
-                  selection,
-                );
-                stream.reference2(local, new vscode.ThemeIcon('book'), {
-                  status: {
-                    description: item.tooltip || item.description,
-                    kind: vscode.ChatResponseReferencePartStatusKind.Partial,
-                  },
-                });
-              } else if (item.reference.type === 'card') {
-                const local = vscode.Uri.file(item.reference.fileName);
-                stream.reference2(local, undefined, {
-                  status: {
-                    description: item.tooltip || item.description,
-                    kind: vscode.ChatResponseReferencePartStatusKind.Partial,
-                  },
-                });
-              }
-            }
-          }
-        }
-      },
-    );
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor2',
       async (req, context, stream, token) => {
+        let isEditor = false;
+        if (req.location2 instanceof vscode.ChatRequestEditorData) {
+          isEditor = true;
+          this.activatedChatData = { location2: req.location2, stream: stream };
+        }
         let systemPrompt: string | undefined;
         if (req.modeInstructions2?.uri) {
           const data = bufferDecodeToText(
@@ -491,6 +321,11 @@ export class CompletionService extends RootStaticInjectOptions {
           fileContextParts.push(
             `<当前文件>${path.relative(this.#workspace.nFolder(), currentFileUri.fsPath)}</当前文件>`,
           );
+        }
+        if (isEditor) {
+          let location2 = req.location2! as vscode.ChatRequestEditorData;
+          const selection = location2.document.getText(location2.selection);
+          fileContextParts.push(`<选中内容>${selection}</选中内容>`);
         }
         const model = list.find((item) => item.name === req.model.id)!;
         let modelConfig = getModelConfig(model);
@@ -638,10 +473,13 @@ export class CompletionService extends RootStaticInjectOptions {
         token.onCancellationRequested((e) => {
           result.abort();
         });
+        let lastEvent: AgentMessage[] | undefined;
+        let editToolCalled = false;
         result.subscribe((event) => {
           // console.log(event);
           switch (event.type) {
             case 'agent_end': {
+              lastEvent = event.messages;
               break;
             }
             case 'agent_start': {
@@ -711,6 +549,8 @@ export class CompletionService extends RootStaticInjectOptions {
               break;
             }
             case 'tool_execution_end': {
+              editToolCalled =
+                editToolCalled || event.toolName === 'replace-select-string';
               break;
             }
             case 'tool_execution_start': {
@@ -728,6 +568,19 @@ export class CompletionService extends RootStaticInjectOptions {
           }
         });
         await result.prompt(req.prompt);
+        if (isEditor && !editToolCalled && lastEvent) {
+          let text = lastEvent
+            .find((item) => item.role === 'assistant')
+            ?.content.find((item) => item.type === 'text')?.text;
+          if (text) {
+            await vscode.lm.invokeTool('inline_chat_exit', {
+              toolInvocationToken: req.toolInvocationToken,
+              input: {
+                response: text,
+              },
+            });
+          }
+        }
         return;
       },
     );
@@ -769,37 +622,25 @@ export class CompletionService extends RootStaticInjectOptions {
         }),
     );
   }
-  #templateFormat = inject(TemplateFormatService);
   async codeActionResolve(options: CodeChatActionOptions) {
-    const list = await this.#promptService.actionConfig.getList();
-    const actionItem = list.find((item) => item.title === options.title)!;
     let editorInput = false;
     let data: Partial<InlineEditorData>;
     const selection = options.document.getText(options.range);
-    if (actionItem.mode === ChatMode.workflow) {
-      const workflowData = await this.#workflow.get({
-        workflowName: actionItem.workflow!.path!,
-      });
-      const result = this.#workflowExec.parse(workflowData);
-      if (result.error) {
-        throw result.error;
-      }
-      editorInput = !!result.editorInput;
-      data = {
-        resolvedWorkflow: result.data,
-      };
-    } else {
-      const result = this.#templateFormat.parseConversationTemplate(
-        actionItem.template,
-      );
-
-      data = {
-        template: result as any,
-      };
+    const workflowData = await this.#workflow.get({
+      workflowName: options.title,
+    });
+    const result = this.#workflowExec.parse(workflowData);
+    if (result.error) {
+      throw result.error;
     }
+    editorInput = !!result.editorInput;
+    data = {
+      resolvedWorkflow: result.data,
+    };
+
     this.#selectedEditorTemplate.set(options.filePath, {
       ...data,
-      mode: actionItem.mode,
+      mode: ChatMode.workflow,
       editorInput,
       input: {
         selection: selection,
@@ -813,128 +654,5 @@ export class CompletionService extends RootStaticInjectOptions {
       autoSend: !editorInput,
       message: '/default ',
     });
-  }
-
-  #getLastLinePosition(
-    document: vscode.TextDocument,
-    endPosition: vscode.Position,
-  ) {
-    const offset = document.offsetAt(endPosition);
-    const nextPosition = new vscode.Position(
-      endPosition.line,
-      endPosition.character + 1,
-    );
-
-    return document.positionAt(
-      document.offsetAt(nextPosition) === offset ? offset : offset - 1,
-    );
-  }
-  #getDynamic(
-    document: vscode.TextDocument,
-    selection: vscode.Selection,
-    dirName: string,
-    baseName: string,
-    dirFileList: string[],
-  ): {
-    currentFile: string;
-    selectionLine: string;
-    lineOffsetTop: string;
-    lineOffset: string;
-    fileOffsetTop: string;
-  } {
-    const selectionLine = document.getText(
-      new vscode.Range(
-        new vscode.Position(selection.start.line, 0),
-        this.#getLastLinePosition(
-          document,
-          new vscode.Position(selection.end.line + 1, 0),
-        ),
-      ),
-    );
-
-    const offsetCount = 20;
-    const lineOffsetTop = document.getText(
-      new vscode.Range(
-        new vscode.Position(Math.max(0, selection.start.line - offsetCount), 0),
-        this.#getLastLinePosition(
-          document,
-          new vscode.Position(selection.start.line + 1, 0),
-        ),
-      ),
-    );
-
-    const lineOffset = document.getText(
-      new vscode.Range(
-        new vscode.Position(Math.max(0, selection.start.line - offsetCount), 0),
-        this.#getLastLinePosition(
-          document,
-          new vscode.Position(
-            Math.min(document.lineCount - 1, selection.end.line + offsetCount),
-            0,
-          ),
-        ),
-      ),
-    );
-
-    const numberFileList = [] as string[];
-    let filesOffsetCount = 5;
-    do {
-      let useNumber = false;
-      const lastFileName = han2numberReChange(baseName, (a) => {
-        if (!useNumber && typeof a === 'number') {
-          useNumber = true;
-          return `${a - filesOffsetCount!}`;
-        }
-        return useNumber ? '' : `${a}`;
-      });
-      if (!useNumber) {
-        break;
-      }
-      numberFileList.push(lastFileName);
-      filesOffsetCount--;
-    } while (filesOffsetCount > 0);
-
-    const fileOffsetTop = dirFileList
-      .map((item) => ({
-        compare: getNumberText(item),
-        origin: item,
-      }))
-      .filter((item) => {
-        return numberFileList.some((numberItem) => numberItem === item.compare);
-      })
-      .map(({ origin }) => origin)
-      .sort(NumberCompare)
-      .map((origin) =>
-        this.#workspace.readFileByVSC(path.join(dirName, origin)),
-      )
-      .join('\n');
-
-    return {
-      currentFile: document.getText(),
-      selectionLine,
-      lineOffsetTop,
-      lineOffset,
-      fileOffsetTop,
-    };
-  }
-  #createDefaultInput(
-    input: Record<string, any>,
-    document: vscode.TextDocument,
-    selection: vscode.Selection,
-    dirName: string,
-    baseName: string,
-    dirFileList: string[],
-  ) {
-    const dynamic = this.#getDynamic(
-      document,
-      selection,
-      dirName,
-      baseName,
-      dirFileList,
-    );
-    return {
-      ...input,
-      ...dynamic,
-    };
   }
 }

@@ -39,24 +39,8 @@
     ],
     "chatParticipants": [
       {
-        "id": "shenghuabi.chat.editor",
-        "name": "chat",
-        "fullName": "chat",
-        "description": "对话",
-        "isDefault": true,
-        "locations": [
-          "editor"
-        ],
-        "commands": [
-          {
-            "name": "default",
-            "description": "自动执行"
-          }
-        ]
-      },
-      {
         "id": "shenghuabi.chat.editor2",
-        "name": "chat2",
+        "name": "shb",
         "fullName": "生花笔",
         "description": "使用接口/llama.cpp",
         "modes": [

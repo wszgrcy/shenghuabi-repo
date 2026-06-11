@@ -1,10 +1,10 @@
 import { WebviewNodeConfig } from '@shenghuabi/workflow/share';
 import { NODE_COMMON } from '../common';
-import { READ_MIND_NODE_DEFINE } from '../node.define';
+import { REPLACE_SELECT_STRING_NODE_DEFINE } from '../node.define';
 
-export const KnowledgeWebviewConfig: WebviewNodeConfig = {
+export const ReplaceSelectStringtWebviewConfig: WebviewNodeConfig = {
   ...NODE_COMMON,
-  configDefine: READ_MIND_NODE_DEFINE,
+  configDefine: REPLACE_SELECT_STRING_NODE_DEFINE,
   initData: () => {
     return {
       data: {

@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { PromptService } from '../ai/prompt.service';
 import { COMMAND, CommandPrefix } from '@global';
 import { KnowledgeQueryOptions } from '../../share';
+import { WatchService } from '../fs/watch.service';
 export interface CodeChatActionOptions {
   title: string;
   range: vscode.Range | vscode.Selection;
@@ -74,14 +75,17 @@ export class CodeActionService
     all.command = createCommandFn({ knowledge: true, dict: true });
     return [knowledge, dict, all];
   }
+  #watch = inject(WatchService);
   async #getChatList(
     document: vscode.TextDocument,
     range: vscode.Range | vscode.Selection,
   ) {
-    const list = await this.#prompt.actionConfig.getList();
-    return list.map((item) => {
+    let workflowList = (this.#watch.workflowList$() ?? []).filter(
+      (item) => item.data.options?.type === 'editor-completion',
+    );
+    return workflowList.map((item) => {
       const codeAction = new vscode.CodeAction(
-        item.title,
+        item.relPath,
         vscode.CodeActionKind.Refactor,
       );
       (codeAction as any).isAI = true;
@@ -90,7 +94,7 @@ export class CodeActionService
         title: '',
         arguments: [
           {
-            title: item.title,
+            title: item.relPath,
             range: range,
             filePath: document.uri.fsPath,
             document: document,

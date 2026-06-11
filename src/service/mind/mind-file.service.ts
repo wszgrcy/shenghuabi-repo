@@ -5,7 +5,6 @@ import { MindFile } from '@cyia/bundle-file';
 
 export class MindFileService extends RootStaticInjectOptions {
   #fileMap = new Map<string, MindFile<MindData>>();
-  #injector = inject(Injector);
   getFile(filePath: string) {
     const nFilePath = path.normalize(filePath);
     let file = this.#fileMap.get(nFilePath);

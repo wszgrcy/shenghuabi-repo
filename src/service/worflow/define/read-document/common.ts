@@ -6,5 +6,5 @@ export const NODE_COMMON: NodeComponentType = {
   label: `读取文档`,
   type: 'read-document',
   disableHead: false,
-  help: `读取任意文档;支持.srt, .pptx, .odt, .odp, .ods, .pdf, .csv, .docx, .xlsx, .epub的读取`,
+  help: `读取任意非文本文档;支持.srt, .pptx, .odt, .odp, .ods, .pdf, .csv, .docx, .xlsx, .epub, .nt , .naotu的读取`,
 };
