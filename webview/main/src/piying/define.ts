@@ -31,6 +31,7 @@ import { NodeTemplateApplyFCC } from '@fe/form/control/node-template/component';
 import { TreeSelectFCC } from '@fe/form/control/tree-select/component';
 import { AutoComplete2 } from './preset/autocomplete2';
 import { DivFCC } from '@cyia/component/core/component/div';
+import { ResetCardFGC } from '@cyia/component/group/reset-card/component';
 const optionsMap = actions.inputs.mapAsync((field) => {
   const options$$ = computed(() => field.props()['options']);
   return (data) => {
@@ -159,6 +160,7 @@ export const safeDefine = typedComponent({
     'radio-group': { type: RadioFGC },
     strict_object: { type: PiyingViewGroup },
     slider: { type: PresetDefine.types.range.type },
+    'reset-card': { type: ResetCardFGC },
   },
   wrappers: {
     ...PresetDefine.wrappers,

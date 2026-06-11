@@ -16,8 +16,8 @@
     "@angular/platform-browser-dynamic": ">=21.2.12",
     "@angular/router": ">=21.2.12",
     "@piying/valibot-visit": ">=1.3.13",
-    "@piying/view-angular": ">=2.10.5",
-    "@piying/view-angular-core": ">=2.10.5",
+    "@piying/view-angular": ">=2.10.7",
+    "@piying/view-angular-core": ">=2.10.7",
     "valibot": ">=1.4.0"
   },
   "devDependencies": {
