@@ -225,6 +225,14 @@ async function main() {
       title: '环境配置',
     },
     {
+      command: 'write-agent-file',
+      title: '写入代理文件',
+    },
+    {
+      command: 'open-agent-dir',
+      title: '打开代理文件夹',
+    },
+    {
       command: 'workflow.tree.file.copy',
       title: '复制',
       icon: '$(files)',

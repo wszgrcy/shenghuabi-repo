@@ -304,6 +304,14 @@
         "title": "环境配置"
       },
       {
+        "command": "shenghuabi.write-agent-file",
+        "title": "写入代理文件"
+      },
+      {
+        "command": "shenghuabi.open-agent-dir",
+        "title": "打开代理文件夹"
+      },
+      {
         "command": "shenghuabi.workflow.tree.file.copy",
         "title": "复制",
         "icon": "$(files)"
@@ -502,6 +510,14 @@
         },
         {
           "command": "shenghuabi.open-environment-configuration",
+          "when": "false"
+        },
+        {
+          "command": "shenghuabi.write-agent-file",
+          "when": "false"
+        },
+        {
+          "command": "shenghuabi.open-agent-dir",
           "when": "false"
         },
         {

@@ -2,6 +2,10 @@
   --default-theme: 'open';
 }
 :host .markdown-body ::ng-deep {
+  p {
+    display: flex;
+    align-items: center;
+  }
   * {
     &::after {
       white-space: normal;

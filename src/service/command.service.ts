@@ -41,6 +41,7 @@ import { ChannelService } from './channel.service';
 import { OCRService } from './external-call/ocr.service';
 
 import { webviewAssetPath } from '../util/webview-asset-path';
+import * as fs from 'fs/promises';
 import { MindEditorProvider } from '../webview/custom-editor/mind-editor2';
 import { MindService } from './mind/mind.service';
 import { KnowledgeGraphWebview } from '../webview/custom-webview/knowledge-graph';
@@ -63,7 +64,7 @@ import { CustomKnowledgeManagerService } from './knowledge/custom-knowledge.mana
 import { DictKnowledgeService } from '@shenghuabi/knowledge/knowledge';
 import { KnowledgeItemType } from '../share/define/knowledge/working-knowledge';
 import { LogFactoryService, LogService } from './log.service';
-import { dynamicInject } from '../token';
+import { dynamicInject, ExtensionContext } from '../token';
 import { isUndefined } from 'es-toolkit';
 import { ExtensionConfig } from './config.service';
 import { captureException } from '@sentry/node';
@@ -71,6 +72,8 @@ import { RawFileService } from './mind/raw-file.service';
 import { PluginConfigWebview } from '../webview/custom-webview/plugin.webview';
 import { PlatformApi } from '../platform/get-documnet';
 import { WorkflowFileService } from '@shenghuabi/workflow';
+import open from 'open';
+
 type Path = string;
 const COMMANDS: {
   commandId: string;
@@ -302,10 +305,41 @@ export class CommandService extends RootStaticInjectOptions {
   }
   #environmentConfiguration = inject(EnvironmentConfiguration);
   #fileMarkdown = inject(FileMarkdownWebview);
-
+  #extension = inject(ExtensionContext);
   @Command('open-environment-configuration')
   async OpenConfiguration([]: any[]) {
     return this.#environmentConfiguration.open();
+  }
+  @Command('write-agent-file')
+  async writeAgentFile([]: any[]) {
+    let dir = this.#workspace.formatPath(
+      `{{extensionFolder}}/data/agent/copilot`,
+    );
+    let globalStorageDir = this.#extension.globalStorageUri;
+    let toPath = path.join(globalStorageDir.fsPath, '../../prompts');
+    await fs.mkdir(toPath, { recursive: true });
+    await this.copyDirFiles(dir, toPath);
+    vscode.window.showInformationMessage('文件复制完成');
+  }
+
+  async copyDirFiles(src: string, dest: string) {
+    const entries = await fs.readdir(src, { withFileTypes: true });
+    for (const entry of entries) {
+      const srcPath = path.join(src, entry.name);
+      const destPath = path.join(dest, entry.name);
+      if (entry.isDirectory()) {
+        await fs.mkdir(destPath, { recursive: true });
+        await this.copyDirFiles(srcPath, destPath);
+      } else {
+        await fs.cp(srcPath, destPath);
+      }
+    }
+  }
+  @Command('open-agent-dir')
+  async openAgentDir([]: any[]) {
+    let globalStorageDir = this.#extension.globalStorageUri;
+    let toPath = path.join(globalStorageDir.fsPath, '../../prompts');
+    open(toPath);
   }
   @Command('help')
   async OpenHelp([]: any[]) {
