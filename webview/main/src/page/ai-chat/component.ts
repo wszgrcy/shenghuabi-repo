@@ -66,21 +66,8 @@ export default class AiChatPage {
       ? `\n工作流: ${this.value$().workflow?.path || ''}`
       : '';
   });
-  constructor() {
+  constructor() {}
 
- 
-
-  }
-  changeModelConfigName() {
-    this.#client.chat.getChatModelConfigName
-      .query(undefined)
-      .then((configName) => {
-        if (!configName) {
-          return;
-        }
-        this.modelConfigName.set(configName);
-      });
-  }
   reset(clear: boolean) {
     this.stopSignal.set({ clear });
   }

@@ -20,7 +20,6 @@ import {
 } from './token';
 import { HanyuService } from './service/language';
 import { CommandService } from './service/command.service';
-import { ChatHistoryTree } from './webview/custom-sidebar/chat/chat.history.tree';
 import { MindEditorProvider } from './webview/custom-editor/mind-editor2';
 import { KnowledgeCreateProvider } from './webview/custom-sidebar/knowledge/knowledge-create.service';
 import { KnowledgeTree } from './webview/custom-sidebar/knowledge/knowledge.tree';

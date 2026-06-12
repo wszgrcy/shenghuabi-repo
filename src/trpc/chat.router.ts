@@ -8,32 +8,15 @@ import { firstValueFrom } from 'rxjs';
 import * as vscode from 'vscode';
 import { COMMAND } from '@global';
 import { ExtensionConfig } from '../service/config.service';
+import { ChatService } from '../service/ai/chat.service';
 export const ChatRouter = t.router({
-
-
- 
-
-
-  getChatModelConfigName: t.procedure
-    .input(v.any())
-    .query(async ({ input, ctx }) => {
-      const list = ExtensionConfig.chatModelList();
-      if (!list) {
-        return;
-      }
-      const result = await vscode.window.showQuickPick(
-        list.map((item) => ({ label: item.name, value: item.name })),
-      );
-
-      return result?.value;
-    }),
   getChatModelConfigNameOptions: t.procedure
     .input(v.any())
     .query(async ({ input, ctx }) => {
-      const list = ExtensionConfig.chatModelList();
+      let list = ctx.injector.get(ChatService).modelList$$();
       return (list ?? []).map((item) => ({
-        label: item.name,
-        value: item.name,
+        label: item.name ?? item.model,
+        value: item.model,
       }));
     }),
 });

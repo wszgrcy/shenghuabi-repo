@@ -9,7 +9,6 @@ import {
 } from 'static-injector';
 import { InlineChatService } from './inline-chat.service';
 
-
 import {
   AssistantChatMessageType,
   ChatMessageListInputType,
@@ -59,6 +58,7 @@ import {
   createWriteTool,
 } from '@earendil-works/pi-coding-agent';
 import { getModelConfig } from '@shenghuabi/openai';
+import { ChatService } from '../ai/chat.service';
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -94,6 +94,7 @@ export class CompletionService extends RootStaticInjectOptions {
     stream: vscode.ChatResponseStream;
     location2: vscode.ChatRequestEditorData;
   };
+  #chat = inject(ChatService);
   constructor() {
     super();
     let disposeList: vscode.Disposable[] = [];
@@ -227,7 +228,7 @@ export class CompletionService extends RootStaticInjectOptions {
     });
     // 更新模型
     effect((clean) => {
-      const list = ExtensionConfig.chatModelList();
+      const list = this.#chat.modelList$$();
       const res = vscode.lm.registerLanguageModelChatProvider('shenghuabi', {
         provideTokenCount: async () => {
           return 0;
@@ -235,8 +236,8 @@ export class CompletionService extends RootStaticInjectOptions {
         provideLanguageModelChatInformation: () => {
           return list.map((item) => {
             return {
-              id: item.name,
-              name: item.name,
+              id: item.name ?? item.model,
+              name: item.name ?? item.model,
               tooltip: '',
               family: 'shenghuabi',
               maxInputTokens: 9999999,
@@ -264,7 +265,8 @@ export class CompletionService extends RootStaticInjectOptions {
       },
     });
     // todo
-    const list = ExtensionConfig.chatModelList();
+      const list = this.#chat.modelList$$();
+
 
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor2',

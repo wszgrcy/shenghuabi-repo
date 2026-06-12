@@ -9,13 +9,19 @@ import { deepClone, isEmptyInput, isTruthy } from '@cyia/util';
 import { ChatMetadata } from '@shenghuabi/workflow';
 import { create } from 'domain';
 import { createChatStream, ModelConfigInputType } from '@shenghuabi/openai';
+import { computed, signal } from 'static-injector';
 
 export class ChatService extends RootStaticInjectOptions {
+  /** 动态 */
+  llamaSwapModelList$ = signal<ModelConfigInputType[]>([]);
+  modelList$$ = computed(() => {
+    return [...ExtensionConfig.chatModelList(), ...this.llamaSwapModelList$()];
+  });
   getModelConfig(name?: string) {
     if (!name) {
       return;
     }
-    const list = ExtensionConfig.chatModelList();
+    const list = this.modelList$$();
     if (!list) {
       return;
     }

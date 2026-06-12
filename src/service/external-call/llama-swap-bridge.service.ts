@@ -8,12 +8,16 @@ import {
   QdrantServerService,
   QdrantStartToken,
 } from '@shenghuabi/knowledge/qdrant';
+import { OpenAI } from 'openai';
+import { ModelConfigInputType } from '@shenghuabi/openai';
+import { ChatService } from '../ai/chat.service';
 
 export class LlamaSwapBridgeService {
   #llamaSwap = inject(LlamaSwapService);
   #injector = inject(Injector);
   #status = inject(StatusService);
   #qdServer = inject(QdrantServerService);
+  #chat = inject(ChatService);
   init() {
     // 配置变更同步到llamaswap文件中
     vscode.workspace.onDidChangeConfiguration(async (e) => {
@@ -27,13 +31,16 @@ export class LlamaSwapBridgeService {
             title: 'llama配置同步中',
             location: vscode.ProgressLocation.Notification,
           },
-          (progress) => {
+          async (progress) => {
             const server = ExtensionConfig['llama.config'].server();
             const swap = ExtensionConfig['llama.config'].swap();
-            return this.#llamaSwap.writeConfig({
+            await this.#llamaSwap.writeConfig({
               server,
               swap,
             });
+            setTimeout(() => {
+              this.#updateLlmList();
+            }, 2000);
           },
         );
       }
@@ -48,6 +55,7 @@ export class LlamaSwapBridgeService {
           this.#status.llamacpp.setSuccessMessage('已安装');
         } else {
           this.#status.llamacpp.setSuccessMessage('未知');
+          this.#chat.llamaSwapModelList$.set([]);
         }
       },
       { injector: this.#injector },
@@ -67,6 +75,7 @@ export class LlamaSwapBridgeService {
         if (start) {
           this.#injector.get(QdrantStartToken).resolve();
           this.#status.qdrant.setSuccessMessage('运行中');
+          this.#updateLlmList();
         } else if (exist) {
           this.#status.qdrant.setSuccessMessage('已安装');
         } else {
@@ -75,5 +84,27 @@ export class LlamaSwapBridgeService {
       },
       { injector: this.#injector },
     );
+  }
+
+  #updateLlmList() {
+    let url = `http://${ExtensionConfig['llama.listen']()}/v1`;
+    let openai = new OpenAI({
+      baseURL: url,
+      apiKey: ' ',
+    });
+    openai.models.list().then((page) => {
+      let llamaList = page.data.map((item) => {
+        return {
+          apiKey: ' ',
+          model: item.id,
+          name: `llama/${item.id}`,
+          provider: 'openai-completions',
+          config: {
+            baseUrl: url,
+          },
+        } satisfies ModelConfigInputType;
+      });
+      this.#chat.llamaSwapModelList$.set(llamaList);
+    });
   }
 }

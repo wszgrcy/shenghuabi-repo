@@ -32,6 +32,7 @@ import { createAsyncGeneratorAdapter } from '../share';
 import { QdrantServerService } from '@shenghuabi/knowledge/qdrant';
 import { LanguageMap } from '@shenghuabi/python-addon/define';
 import { createChatStream } from '@shenghuabi/openai';
+import { ChatService } from '../service/ai/chat.service';
 
 export const EnvironmentConfigurationRouter = t.router({
   saveDefaultDir: t.procedure
@@ -59,7 +60,6 @@ export const EnvironmentConfigurationRouter = t.router({
         } catch (error) {}
         // 提示词复制
 
-       
         ctx.injector.get(QdrantServerService).startup();
         ctx.injector.get(Text2VecService).check();
       }
@@ -70,9 +70,10 @@ export const EnvironmentConfigurationRouter = t.router({
 
   getConfiguration: t.procedure.query(async ({ input, ctx }) => {
     const workspace = ctx.injector.get(WorkspaceService);
+    const chatService = ctx.injector.get(ChatService);
     const rerankerConfig = ExtensionConfig.reranker();
 
-    const modelConfig = ExtensionConfig.chatModelList()[0];
+    const modelConfig = chatService.modelList$$()[0];
     return {
       download: {
         direct: ExtensionConfig.download.direct(),
@@ -106,7 +107,7 @@ export const EnvironmentConfigurationRouter = t.router({
           modelName: modelConfig?.model,
         },
       },
-      chatModelList: ExtensionConfig.chatModelList(),
+      chatModelList: chatService.modelList$$(),
     };
   }),
 
@@ -147,7 +148,7 @@ export const EnvironmentConfigurationRouter = t.router({
       };
     });
     await ExtensionConfig['llama.startup'].set(input.llm.startup);
-    // todo 去掉了llama的配置,准备调用/model接口
+
     await ExtensionConfig['llama.dir'].set(input.llm.llamaConfig.dir);
     await ExtensionConfig['llama.config'].update((config) => {
       return {

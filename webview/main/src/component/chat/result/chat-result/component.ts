@@ -50,8 +50,6 @@ export class WorkflowChatResultComponent {
   #client = inject(TrpcService).client;
   root = input(true);
 
-
-
   metadataItem = metadataFormat;
   metadataTooltip = metadataTooltipFormat;
   isStringResult = (data: string) => {
