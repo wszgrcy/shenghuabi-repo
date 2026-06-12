@@ -8,8 +8,8 @@ import {
   effect,
 } from 'static-injector';
 import { InlineChatService } from './inline-chat.service';
-import { PromptService } from '../ai/prompt.service';
-import { ChatService } from '../ai/chat.service';
+
+
 import {
   AssistantChatMessageType,
   ChatMessageListInputType,

@@ -20,8 +20,6 @@ import {
 } from './token';
 import { HanyuService } from './service/language';
 import { CommandService } from './service/command.service';
-import { AiChatProvider } from './webview/custom-sidebar/ai-chat.service';
-import { PromptTree } from './webview/custom-sidebar/prompt.tree';
 import { ChatHistoryTree } from './webview/custom-sidebar/chat/chat.history.tree';
 import { MindEditorProvider } from './webview/custom-editor/mind-editor2';
 import { KnowledgeCreateProvider } from './webview/custom-sidebar/knowledge/knowledge-create.service';
@@ -482,13 +480,7 @@ export async function activate(context: vscode.ExtensionContext) {
     },
   );
   // ai对话
-  vscode.window.registerWebviewViewProvider(
-    AiChatProvider.viewType,
-    injector.get(AiChatProvider),
-    {
-      webviewOptions: { retainContextWhenHidden: true },
-    },
-  );
+
   // 知识库创建
   vscode.window.registerWebviewViewProvider(
     KnowledgeCreateProvider.viewType,
@@ -525,10 +517,7 @@ export async function activate(context: vscode.ExtensionContext) {
     injector.get(KnowledgeQueryResultTree),
   );
   // 提示词模板
-  vscode.window.registerTreeDataProvider(
-    PromptTree.viewId,
-    injector.get(PromptTree),
-  );
+
   // vscode.window.registerTreeDataProvider(
   //   ChatHistoryTree.viewId,
   //   injector.get(ChatHistoryTree),
@@ -632,7 +621,6 @@ export async function activate(context: vscode.ExtensionContext) {
               root: {
                 injector,
                 FileParserToken,
-                ChatService,
                 FileParserService,
                 KnowledgeManagerService: CustomKnowledgeManagerService,
                 OCRService,

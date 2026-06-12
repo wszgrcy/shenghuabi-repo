@@ -7,13 +7,9 @@ import { FolderName, WorkspaceService } from './workspace.service';
 import { IMAGE_SUFFIX } from './const';
 
 import { DocumentVectorService } from './vector-query/document-vector.service';
-import { AiChatProvider } from '../webview/custom-sidebar/ai-chat.service';
-import {
-  PromptTree,
-  PromptTreeItem,
-} from '../webview/custom-sidebar/prompt.tree';
-import { PromptService } from './ai/prompt.service';
-import { ChatService } from './ai/chat.service';
+
+
+
 import { CommandListen$ } from './command.listen';
 import {
   KnowledgeTree,
@@ -158,55 +154,19 @@ export class CommandService extends RootStaticInjectOptions {
   updateArticleVector([]: []) {
     return this.#documentVector.syncDocument();
   }
-  #aiChat = inject(AiChatProvider);
-  @Command('call-ai-chat-sidebar')
-  async callAiChatSidebar(data: any[]) {
-    this.#aiChat.codeActionData$.next({
-      option: data[0],
-      documentChange: data[1],
-    });
-    vscode.commands.executeCommand(`shenghuabi.aiChat.focus`);
-  }
+
   #completion = inject(CompletionService);
   @Command('call-ai-chat-editor')
   async callAiChatEditor(data: any[]) {
     const options = data[0] as CodeChatActionOptions;
     this.#completion.codeActionResolve(options);
   }
-  @Command('chatReset')
-  async chatReset(data: any[]) {
-    this.#aiChat.reset$.next(true);
-  }
-  #promptService = inject(PromptService);
-  #promptTree = inject(PromptTree);
-  @Command('chat.tree.item.delete')
-  async chatTreeItemDelete([data]: [PromptTreeItem]) {
-    this.#promptTree.deleteItem(data.from!, data.index!);
-  }
 
-  #chatService = inject(ChatService);
-  @Command('chat.tree.item.edit')
-  async chatTreeItemEdit([data]: [PromptTreeItem]) {
-    this.#chatService.changePrompt$.next({
-      from: data.from!,
-      item: data.promptData,
-      type: 'edit',
-    });
-    this.#chatService.changedIndex = data.index;
-  }
-  @Command('chat.tree.item.add')
-  async chatTreeItemAdd([data]: any[]) {
-    this.#chatService.changePrompt$.next({
-      from: data.from,
-      type: 'add',
-    });
-    this.#chatService.changedIndex = undefined;
-  }
-  // 准备保存模板
-  @Command('promptTemplateSave')
-  async promptTemplateSave(data: any[]) {
-    CommandListen$.next({ command: 'promptTemplateSave', arguments: [] });
-  }
+
+
+
+
+
   #knowledgeTree = inject(KnowledgeTree);
   @Command('knowledge.add.default')
   async KnowledgeAddDefault(data: any[]) {
@@ -758,38 +718,7 @@ export class CommandService extends RootStaticInjectOptions {
   async showChannel([value]: [string]) {
     this.#channel.show(value);
   }
-  @Command(`chatTemplateSync`)
-  async chatTemplateSync() {
-    for (const { filePath, title, savePath } of [
-      {
-        filePath: `{{extensionFolder}}/data/prompt/selection_prompt.yml`,
-        title: `[模板同步]-选中处理`,
-        savePath: this.#workspace.dir[FolderName.selectionPromptDir](),
-      },
-      {
-        filePath: `{{extensionFolder}}/data/prompt/common_prompt.yml`,
-        title: `[模板同步]-通用对话`,
-        savePath: this.#workspace.dir[FolderName.commonPromptDir](),
-      },
-    ]) {
-      const presetPath = this.#workspace.formatPath(filePath);
-      if (existsSync(savePath)) {
-        if (presetPath !== savePath) {
-          await vscode.commands.executeCommand(
-            `vscode.diff`,
-            vscode.Uri.file(presetPath),
-            vscode.Uri.file(savePath),
-            title,
-            { preview: false } as vscode.TextDocumentShowOptions,
-          );
-        }
-      } else {
-        await fs.promises.cp(presetPath, savePath);
-      }
-    }
 
-    this.#promptTree.refresh();
-  }
   #workflowFile = inject(WorkflowFileService);
   @Command(`workflowSync`)
   async workflowSync() {
@@ -935,26 +864,8 @@ export class CommandService extends RootStaticInjectOptions {
       this.#correction.clear(vscode.window.activeTextEditor);
     }
   }
-  @Command(`chat.history.use`)
-  async chatHistoryUse([input]: [ChatHistoryTreeItem]) {
-    if (input.data.level !== 2) {
-      return;
-    }
-    this.#chatService.changePrompt$.next({
-      from: 'history',
-      item: {
-        title: '',
-        mode: ChatMode.default,
-        template: input.data.item.messages,
-      },
-      type: 'edit',
-    });
-  }
-  @Command(`chat.history.openFolder`)
-  async chatHistoryOpen([input]: [ChatHistoryTreeItem]) {
-    const dir = this.#workspace.dir[FolderName.chatHistory]();
-    openFolder(dir);
-  }
+
+
 
   async #tts(uri: vscode.Uri, force: boolean) {
     const channel = this.#injector.get(LogFactoryService).getLog('workflow');

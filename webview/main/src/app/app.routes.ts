@@ -18,10 +18,7 @@ export const routes: Routes = [
     path: WebviewPage.ttsEditor,
     loadComponent: () => import('../page/tts-editor/component'),
   },
-  {
-    path: WebviewPage.aiChat,
-    loadComponent: () => import('../page/ai-chat/component'),
-  },
+
   {
     path: WebviewPage.knowledgeCreate,
     loadComponent: () => import('../page/knowledge-create/component'),

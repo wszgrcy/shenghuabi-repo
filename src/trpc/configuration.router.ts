@@ -9,7 +9,7 @@ import {
   RunningStatus,
 } from '../service/external-call/type';
 import { Text2VecService } from '../service/external-call/text2vec.service';
-import { ChatService } from '../service/ai/chat.service';
+
 import { ChannelService } from '../service/channel.service';
 import { ConfigurationTarget } from 'vscode';
 import * as vscode from 'vscode';
@@ -31,6 +31,7 @@ import { ReRankerService } from '../service/external-call/ranker/ranker.service'
 import { createAsyncGeneratorAdapter } from '../share';
 import { QdrantServerService } from '@shenghuabi/knowledge/qdrant';
 import { LanguageMap } from '@shenghuabi/python-addon/define';
+import { createChatStream } from '@shenghuabi/openai';
 
 export const EnvironmentConfigurationRouter = t.router({
   saveDefaultDir: t.procedure
@@ -57,30 +58,8 @@ export const EnvironmentConfigurationRouter = t.router({
           ctx.injector.get(WorkflowTree).refresh();
         } catch (error) {}
         // 提示词复制
-        {
-          const presetFilePath = workspace.formatPath(
-            `{{extensionFolder}}/data/prompt/common_prompt.yml`,
-          );
-          try {
-            await vscode.workspace.fs.copy(
-              vscode.Uri.file(presetFilePath),
-              vscode.Uri.file(workspace.dir[FolderName.commonPromptDir]()),
-              { overwrite: true },
-            );
-          } catch (error) {}
-        }
-        {
-          const presetFilePath = workspace.formatPath(
-            `{{extensionFolder}}/data/prompt/selection_prompt.yml`,
-          );
-          try {
-            await vscode.workspace.fs.copy(
-              vscode.Uri.file(presetFilePath),
-              vscode.Uri.file(workspace.dir[FolderName.selectionPromptDir]()),
-              { overwrite: true },
-            );
-          } catch (error) {}
-        }
+
+       
         ctx.injector.get(QdrantServerService).startup();
         ctx.injector.get(Text2VecService).check();
       }
@@ -445,11 +424,9 @@ export const EnvironmentConfigurationRouter = t.router({
   chat: t.router({
     //对话应该是直接测试就ok了不需要太多
     test: t.procedure.input(v.any()).subscription(async ({ input, ctx }) => {
-      const service = ctx.injector.get(ChatService);
-
-      const result = await (
-        await service.chat()
-      )({
+      let list = ExtensionConfig.chatModelList();
+      let chatStream = createChatStream(list[0]);
+      const result = chatStream({
         messages: [
           {
             role: 'user',

@@ -15,7 +15,7 @@ import {
   TextSplitterToken,
 } from '@shenghuabi/knowledge/knowledge';
 import { NodeRunnerBase } from '@shenghuabi/workflow';
-import { ChatService } from '../ai/chat.service';
+
 import { CustomKnowledgeManagerService } from '../knowledge/custom-knowledge.manager.service';
 import { inject, Injector } from 'static-injector';
 import { OCRService } from '../external-call/ocr.service';
@@ -36,8 +36,7 @@ export interface ManifestInput {
       injector: Injector;
       /** 允许重写 */
       FileParserToken: typeof FileParserToken;
-      /** 对话 */
-      ChatService: typeof ChatService;
+
       /** 文件解析 */
       FileParserService: typeof FileParserService;
       /** 知识库管理 */

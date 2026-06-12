@@ -50,10 +50,7 @@ export class WorkflowChatResultComponent {
   #client = inject(TrpcService).client;
   root = input(true);
 
-  /** 到编辑器中 */
-  async insertRight(index: number) {
-    await this.#client.ai.applyCodeAction.query(this.result()[index]!.value);
-  }
+
 
   metadataItem = metadataFormat;
   metadataTooltip = metadataTooltipFormat;

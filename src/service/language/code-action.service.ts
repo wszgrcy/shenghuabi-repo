@@ -1,6 +1,6 @@
 import { RootStaticInjectOptions, inject } from 'static-injector';
 import * as vscode from 'vscode';
-import { PromptService } from '../ai/prompt.service';
+
 import { COMMAND, CommandPrefix } from '@global';
 import { KnowledgeQueryOptions } from '../../share';
 import { WatchService } from '../fs/watch.service';
@@ -16,7 +16,7 @@ export class CodeActionService
   extends RootStaticInjectOptions
   implements vscode.CodeActionProvider
 {
-  #prompt = inject(PromptService);
+
   public static readonly providedCodeActionKinds = [
     vscode.CodeActionKind.Refactor,
   ];

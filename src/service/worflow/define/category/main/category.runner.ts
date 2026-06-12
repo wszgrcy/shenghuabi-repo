@@ -5,7 +5,6 @@ import { WorkflowRunnerService } from '@shenghuabi/workflow';
 
 import { parse } from 'yaml';
 import { v4 } from 'uuid';
-import { ChatService } from '../../../../ai/chat.service';
 
 import { ChatMessageListOutputType } from '@shenghuabi/openai';
 import { AbortSignalToken } from '@shenghuabi/workflow';
@@ -13,11 +12,10 @@ import { jsonParse } from '../../../../ai/util/json-parser';
 import { CATEGORY_NODE_DEFINE } from '../category.node.define';
 import * as v from 'valibot';
 import { toJsonSchema } from '@valibot/to-json-schema';
-
+// todo 暂时去掉
 export class CategoryRunner extends NodeRunnerBase<
   typeof CATEGORY_NODE_DEFINE
 > {
-  #chatService = inject(ChatService);
   #abort = inject(AbortSignalToken);
 
   override async run() {
@@ -94,41 +92,41 @@ export class CategoryRunner extends NodeRunnerBase<
         ],
       },
     ] as ChatMessageListOutputType;
-    const llm = await this.#chatService.chat(this.mergeChatModel(config.llm));
-    const vJsonSchema = v.object({
-      category_name: v.picklist(inputList.map((item) => item.category_name)),
-      category_id: v.picklist(inputList.map((item) => item.category_id)),
-    });
-    const result = await llm.chat(
-      {
-        messages: templatePrompt,
-        response_format: {
-          type: 'json_schema',
-          json_schema: { name: '', schema: toJsonSchema(vJsonSchema) as any },
-        },
-      },
-      { signal: this.#abort },
-    );
+    // const llm = await this.#chatService.chat(this.mergeChatModel(config.llm));
+    // const vJsonSchema = v.object({
+    //   category_name: v.picklist(inputList.map((item) => item.category_name)),
+    //   category_id: v.picklist(inputList.map((item) => item.category_id)),
+    // });
+    // const result = await llm.chat(
+    //   {
+    //     messages: templatePrompt,
+    //     response_format: {
+    //       type: 'json_schema',
+    //       json_schema: { name: '', schema: toJsonSchema(vJsonSchema) as any },
+    //     },
+    //   },
+    //   { signal: this.#abort },
+    // );
 
-    const resultContent = result.content;
-    const jsonResult = jsonParse(resultContent);
-    const index = inputList.findIndex(
-      (item) =>
-        jsonResult?.['category_name'] === item.category_name ||
-        jsonResult?.['category_id'] === item.category_id,
-    );
-    const subFlow =
-      this.node.subFlowList![index] || this.node.subFlowList!.at(-1);
-    if (!subFlow) {
-      throw new Error('未找到匹配分类');
-    }
+    // const resultContent = result.content;
+    // const jsonResult = jsonParse(resultContent);
+    // const index = inputList.findIndex(
+    //   (item) =>
+    //     jsonResult?.['category_name'] === item.category_name ||
+    //     jsonResult?.['category_id'] === item.category_id,
+    // );
+    // const subFlow =
+    //   this.node.subFlowList![index] || this.node.subFlowList!.at(-1);
+    // if (!subFlow) {
+    //   throw new Error('未找到匹配分类');
+    // }
 
-    const subResult = await this.injector
-      .get(WorkflowRunnerService)
-      .createContext(subFlow.flow, this.runnerContext, this.injector)
-      .run();
+    // const subResult = await this.injector
+    //   .get(WorkflowRunnerService)
+    //   .createContext(subFlow.flow, this.runnerContext, this.injector)
+    //   .run();
     return async () => {
-      return subResult;
+      // return subResult;
     };
   }
 }

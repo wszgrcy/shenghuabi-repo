@@ -234,35 +234,7 @@ export class ChatComponent extends BaseControl<ChatValue> {
     this.list$.update((list) => {
       return list.slice(0, nextIndex);
     });
-    return new Promise<void>((resolve, reject) => {
-      this.#chatRef = this.#client.ai.chat.subscribe(
-        {
-          input: input,
-          historyList: historyList,
-          modelConfigName: this.modelConfigName(),
-        },
-        {
-          onData: (data) => {
-            this.list$.update((list) => {
-              list[nextIndex] = {
-                input: input,
-                historyList: data,
-                result: data[
-                  historyList.length + 1
-                ] as AssistantChatMessageType,
-              };
-              return list.slice();
-            });
-          },
-          onComplete: () => {
-            resolve();
-          },
-          onError: () => {
-            resolve();
-          },
-        },
-      );
-    });
+ 
   };
   protected chatOneResponseFactory(resolve: any) {
     const list: WorkflowStreamData[] = [];
@@ -288,16 +260,7 @@ export class ChatComponent extends BaseControl<ChatValue> {
   #chatRef?: Unsubscribable;
 
   #chatTemplate() {
-    return new Promise<void>(async (resolve) => {
-      this.#chatRef = this.#client.ai.agentChat.subscribe(
-        {
-          context: this.value$().template!.contextValue!,
-          template: this.value$().template!.template!,
-          modelConfigName: this.modelConfigName(),
-        },
-        this.chatOneResponseFactory(resolve),
-      );
-    });
+ 
   }
   #chatWorkflow() {
     return new Promise<void>(async (resolve) => {

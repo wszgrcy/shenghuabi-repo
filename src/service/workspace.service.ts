@@ -23,8 +23,6 @@ export const enum FolderName {
   text2vecDir = 'text2vecDir',
   reRankerDir = 'reRankerDir',
   knowledgeDir = 'knowledgeDir',
-  selectionPromptDir = 'selectionPromptDir',
-  commonPromptDir = 'commonPromptDir',
   workflowDir = 'workflowDir',
   ocrDir = 'ocrDir',
   updatePackageDir = 'updatePackageDir',
@@ -213,20 +211,7 @@ export class WorkspaceService extends RootStaticInjectOptions {
         'knowledge_base',
       );
     }),
-    [FolderName.selectionPromptDir]: computed(() => {
-      return this.getDir(
-        ExtensionConfig.prompt.selection?.() || '',
-        ExtensionConfig.defaultDir(),
-        'prompt/selection_prompt.yml',
-      );
-    }),
-    [FolderName.commonPromptDir]: computed(() => {
-      return this.getDir(
-        ExtensionConfig.prompt.common?.() || '',
-        ExtensionConfig.defaultDir(),
-        'prompt/common_prompt.yml',
-      );
-    }),
+
     [FolderName.workflowDir]: computed(() => {
       return this.getDir(
         ExtensionConfig.workflow.dir?.() || '',

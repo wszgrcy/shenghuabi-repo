@@ -102,11 +102,6 @@
           "title": "脑图"
         },
         {
-          "id": "shenghuabi-aiChat-bar",
-          "icon": "$(chat-editor-label-icon)",
-          "title": "对话"
-        },
-        {
           "id": "shenghuabi-knowledge-bar",
           "icon": "$(book)",
           "title": "知识库"
@@ -124,27 +119,6 @@
       ]
     },
     "views": {
-      "shenghuabi-aiChat-bar": [
-        {
-          "id": "shenghuabi.chat.tree",
-          "name": "模板列表",
-          "type": "tree",
-          "visibility": "visible",
-          "initialSize": 200
-        },
-        {
-          "id": "shenghuabi.chat.history",
-          "name": "对话历史",
-          "type": "tree",
-          "visibility": "collapsed",
-          "initialSize": 200
-        },
-        {
-          "id": "shenghuabi.aiChat",
-          "name": "AI对话",
-          "type": "webview"
-        }
-      ],
       "shenghuabi-knowledge-bar": [
         {
           "id": "shenghuabi.knowledge.create",
@@ -272,42 +246,13 @@
         "title": "同步文章"
       },
       {
-        "command": "shenghuabi.call-ai-chat-sidebar",
-        "title": "调用ai对话(侧边栏)"
-      },
-      {
         "command": "shenghuabi.call-ai-chat-editor",
         "title": "调用ai对话(编辑器)"
-      },
-      {
-        "command": "shenghuabi.chatTemplateSync",
-        "title": "同步内置模板",
-        "icon": "$(sync)"
-      },
-      {
-        "command": "shenghuabi.promptTemplateSave",
-        "title": "提示词模板保存",
-        "icon": "$(check)"
       },
       {
         "command": "shenghuabi.workflowSync",
         "title": "同步内置工作流",
         "icon": "$(sync)"
-      },
-      {
-        "command": "shenghuabi.chat.tree.item.delete",
-        "title": "删除模板",
-        "icon": "$(trash)"
-      },
-      {
-        "command": "shenghuabi.chat.tree.item.edit",
-        "title": "编辑模板",
-        "icon": "$(edit)"
-      },
-      {
-        "command": "shenghuabi.chat.tree.item.add",
-        "title": "新增模板",
-        "icon": "$(add)"
       },
       {
         "command": "shenghuabi.knowledge.delete",
@@ -512,35 +457,11 @@
           "when": "false"
         },
         {
-          "command": "shenghuabi.call-ai-chat-sidebar",
-          "when": "false"
-        },
-        {
           "command": "shenghuabi.call-ai-chat-editor",
           "when": "false"
         },
         {
-          "command": "shenghuabi.chatTemplateSync",
-          "when": "false"
-        },
-        {
-          "command": "shenghuabi.promptTemplateSave",
-          "when": "false"
-        },
-        {
           "command": "shenghuabi.workflowSync",
-          "when": "false"
-        },
-        {
-          "command": "shenghuabi.chat.tree.item.delete",
-          "when": "false"
-        },
-        {
-          "command": "shenghuabi.chat.tree.item.edit",
-          "when": "false"
-        },
-        {
-          "command": "shenghuabi.chat.tree.item.add",
           "when": "false"
         },
         {
@@ -710,16 +631,6 @@
       ],
       "view/title": [
         {
-          "command": "shenghuabi.chatTemplateSync",
-          "group": "navigation@1",
-          "when": "view == shenghuabi.chat.tree"
-        },
-        {
-          "command": "shenghuabi.promptTemplateSave",
-          "group": "navigation@2",
-          "when": "view == shenghuabi.aiChat"
-        },
-        {
           "command": "shenghuabi.workflowSync",
           "group": "navigation@1",
           "when": "view == shenghuabi.workflow.tree"
@@ -751,16 +662,6 @@
         }
       ],
       "view/item/context": [
-        {
-          "command": "shenghuabi.chat.tree.item.delete",
-          "group": "inline",
-          "when": "view == shenghuabi.chat.tree && viewItem == prompt"
-        },
-        {
-          "command": "shenghuabi.chat.tree.item.add",
-          "group": "inline",
-          "when": "view == shenghuabi.chat.tree && viewItem == codeActionList"
-        },
         {
           "command": "shenghuabi.knowledge.delete",
           "when": "view == shenghuabi.knowledge.tree && viewItem == knowledgeDirContextValue"
