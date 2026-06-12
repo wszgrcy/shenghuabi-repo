@@ -1,15 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { PurePipe } from '@cyia/ngx-common/pipe';
-import { PI_VIEW_FIELD_TOKEN, PiyingViewGroupBase } from '@piying/view-angular';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { PiyingViewGroupBase } from '@piying/view-angular';
 import { NgTemplateOutlet } from '@angular/common';
 @Component({
   selector: 'reset-card',

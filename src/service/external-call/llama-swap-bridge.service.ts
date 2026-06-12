@@ -87,13 +87,13 @@ export class LlamaSwapBridgeService {
   }
 
   #updateLlmList() {
-    let url = `http://${ExtensionConfig['llama.listen']()}/v1`;
-    let openai = new OpenAI({
+    const url = `http://${ExtensionConfig['llama.listen']()}/v1`;
+    const openai = new OpenAI({
       baseURL: url,
       apiKey: ' ',
     });
     openai.models.list().then((page) => {
-      let llamaList = page.data.map((item) => {
+      const llamaList = page.data.map((item) => {
         return {
           apiKey: ' ',
           model: item.id,

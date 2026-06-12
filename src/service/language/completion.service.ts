@@ -7,34 +7,15 @@ import {
   createInjector,
   effect,
 } from 'static-injector';
-import { InlineChatService } from './inline-chat.service';
 
-import {
-  AssistantChatMessageType,
-  ChatMessageListInputType,
-  ChatMode,
-  deepClone,
-} from '../../share';
-import {
-  WorkflowExecService,
-  ResolvedWorkflow,
-  ModelOptionsToken,
-} from '@shenghuabi/workflow';
+import { ChatMode } from '../../share';
+import { WorkflowExecService, ResolvedWorkflow } from '@shenghuabi/workflow';
 import { WorkflowSelectService } from '@shenghuabi/workflow';
-import { filter, Subject, Subscription, take } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { LLMWorkflowData, WorkflowStreamData } from '@shenghuabi/workflow';
-import { KnowledgeFileSystem } from '../../webview/common-webview/knowledge.fs';
-import { FolderName, WorkspaceService } from '../workspace.service';
+import { WorkspaceService } from '../workspace.service';
 import { path } from '@cyia/vfs2';
 import { CodeChatActionOptions } from './code-action.service';
-import { TemplateFormatService } from '@shenghuabi/workflow';
-import { han2numberReChange } from '@shenghuabi/han2number';
-import { NumberCompare } from '../../util/number-compare';
-import { ExtensionConfig } from '../config.service';
-import { getNumberText } from '@share/util/format/get-number-text';
-import { isStringArray } from '@share/util/assert/is-string-array';
-import { CommandPrefix } from '@global';
-import { captureException } from '@sentry/node';
 import { SingleNodeRunnerService } from '@shenghuabi/workflow';
 import { KnowledgeConfigService } from '../knowledge/knowledge-config.service';
 import { TOOL_CONFIG_LIST } from '../../share/tool-config';
@@ -42,7 +23,6 @@ import { toJsonSchema } from '@valibot/to-json-schema';
 import * as v from 'valibot';
 import { Agent, AgentMessage, AgentTool } from '@earendil-works/pi-agent-core';
 import {
-  Model,
   UserMessage,
   AssistantMessage,
   TextContent,
@@ -265,8 +245,7 @@ export class CompletionService extends RootStaticInjectOptions {
       },
     });
     // todo
-      const list = this.#chat.modelList$$();
-
+    const list = this.#chat.modelList$$();
 
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor2',
@@ -278,8 +257,8 @@ export class CompletionService extends RootStaticInjectOptions {
           isEditor = true;
           this.activatedChatData = { location2: req.location2, stream: stream };
           const filePath = req.location2.document.uri.fsPath;
-          let data = this.#selectedEditorTemplate.get(filePath)!;
-          let result = fm(
+          const data = this.#selectedEditorTemplate.get(filePath)!;
+          const result = fm(
             bufferDecodeToText(
               await vscode.workspace.fs.readFile(data.useFilePath),
             ),
@@ -335,12 +314,12 @@ export class CompletionService extends RootStaticInjectOptions {
           );
         }
         if (isEditor) {
-          let location2 = req.location2! as vscode.ChatRequestEditorData;
+          const location2 = req.location2! as vscode.ChatRequestEditorData;
           const selection = location2.document.getText(location2.selection);
           fileContextParts.push(`<选中内容>${selection}</选中内容>`);
         }
         const model = list.find((item) => item.name === req.model.id)!;
-        let modelConfig = getModelConfig(model);
+        const modelConfig = getModelConfig(model);
         const result = new Agent({
           initialState: {
             systemPrompt: systemPrompt?.trim() || undefined,
@@ -350,7 +329,7 @@ export class CompletionService extends RootStaticInjectOptions {
                   if (item.name === 'replace-select-string') {
                     return isEditor;
                   } else if (isEditor) {
-                    let name =
+                    const name =
                       (item.source && 'id' in item.source
                         ? `${item.source.id}/`
                         : '') + item.name;
@@ -593,7 +572,7 @@ export class CompletionService extends RootStaticInjectOptions {
         });
         await result.prompt(req.prompt);
         if (isEditor && !editToolCalled && lastEvent) {
-          let text = lastEvent
+          const text = lastEvent
             .find((item) => item.role === 'assistant')
             ?.content.find((item) => item.type === 'text')?.text;
           if (text) {
@@ -611,7 +590,7 @@ export class CompletionService extends RootStaticInjectOptions {
   }
 
   async codeActionResolve(options: CodeChatActionOptions) {
-    let editorInput = false;
+    const editorInput = false;
 
     this.#selectedEditorTemplate.set(options.filePath, {
       useFilePath: options.useFilePath,

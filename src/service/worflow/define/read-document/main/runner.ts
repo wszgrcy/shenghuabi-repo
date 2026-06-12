@@ -26,7 +26,7 @@ export class ReadDocumentRunner extends NodeRunnerBase<
           return JSON.stringify(content);
         }
       }
-      let buffer = await fs.promises.readFile(
+      const buffer = await fs.promises.readFile(
         path.resolve(this.#workspace.nFolder(), this.inputs.filePath),
       );
       content = this.#fileParser.parseOne(this.inputs.filePath, buffer);

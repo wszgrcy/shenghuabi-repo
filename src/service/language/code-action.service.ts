@@ -16,7 +16,6 @@ export class CodeActionService
   extends RootStaticInjectOptions
   implements vscode.CodeActionProvider
 {
-
   public static readonly providedCodeActionKinds = [
     vscode.CodeActionKind.Refactor,
   ];
@@ -83,7 +82,7 @@ export class CodeActionService
     range: vscode.Range | vscode.Selection,
     token: vscode.CancellationToken,
   ) {
-    let list = await vscode.chat.getCustomAgents(token);
+    const list = await vscode.chat.getCustomAgents(token);
     return list
       .filter((item) => {
         return item.tools?.includes('wszgrcy.shenghuabi/replace-select-string');

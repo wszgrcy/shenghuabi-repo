@@ -1,4 +1,4 @@
-import { inject, Injector, RootStaticInjectOptions } from 'static-injector';
+import { RootStaticInjectOptions } from 'static-injector';
 import { path } from '@cyia/vfs2';
 import { MindData } from '../../share';
 import { MindFile } from '@cyia/bundle-file';

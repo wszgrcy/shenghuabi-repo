@@ -1,17 +1,13 @@
 import { inject } from 'static-injector';
 
 import { NodeRunnerBase, serializeLexicalTextarea } from '@shenghuabi/workflow';
-import { WorkflowRunnerService } from '@shenghuabi/workflow';
 
 import { parse } from 'yaml';
 import { v4 } from 'uuid';
 
 import { ChatMessageListOutputType } from '@shenghuabi/openai';
 import { AbortSignalToken } from '@shenghuabi/workflow';
-import { jsonParse } from '../../../../ai/util/json-parser';
 import { CATEGORY_NODE_DEFINE } from '../category.node.define';
-import * as v from 'valibot';
-import { toJsonSchema } from '@valibot/to-json-schema';
 // todo 暂时去掉
 export class CategoryRunner extends NodeRunnerBase<
   typeof CATEGORY_NODE_DEFINE

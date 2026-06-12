@@ -8,9 +8,6 @@ import { IMAGE_SUFFIX } from './const';
 
 import { DocumentVectorService } from './vector-query/document-vector.service';
 
-
-
-import { CommandListen$ } from './command.listen';
 import {
   KnowledgeTree,
   KnowledgeTreeItem,
@@ -29,7 +26,7 @@ import {
   EditorWorkflowService,
   EditorWorkflowType,
 } from './editor-workflow.service';
-import { ChatMode, deepClone, KnowledgeQueryOptions, UUID_NS } from '../share';
+import { deepClone, KnowledgeQueryOptions, UUID_NS } from '../share';
 import { UIService } from './platform/ui.service';
 import { path } from '@cyia/vfs2';
 import { IdAssetReferenceWebview } from '../webview/custom-webview/id-asset-reference';
@@ -41,8 +38,6 @@ import { parseDocument, ElementType } from 'htmlparser2';
 import { render } from 'dom-serializer';
 import { NodeWithChildren } from 'domhandler';
 import { ChannelService } from './channel.service';
-import * as fs from 'fs';
-import { existsSync } from 'node:fs';
 import { OCRService } from './external-call/ocr.service';
 
 import { webviewAssetPath } from '../util/webview-asset-path';
@@ -70,7 +65,6 @@ import { KnowledgeItemType } from '../share/define/knowledge/working-knowledge';
 import { LogFactoryService, LogService } from './log.service';
 import { dynamicInject } from '../token';
 import { isUndefined } from 'es-toolkit';
-import { ChatHistoryTreeItem } from '../webview/custom-sidebar/chat/chat.history.tree';
 import { ExtensionConfig } from './config.service';
 import { captureException } from '@sentry/node';
 import { RawFileService } from './mind/raw-file.service';
@@ -161,11 +155,6 @@ export class CommandService extends RootStaticInjectOptions {
     const options = data[0] as CodeChatActionOptions;
     this.#completion.codeActionResolve(options);
   }
-
-
-
-
-
 
   #knowledgeTree = inject(KnowledgeTree);
   @Command('knowledge.add.default')
@@ -864,8 +853,6 @@ export class CommandService extends RootStaticInjectOptions {
       this.#correction.clear(vscode.window.activeTextEditor);
     }
   }
-
-
 
   async #tts(uri: vscode.Uri, force: boolean) {
     const channel = this.#injector.get(LogFactoryService).getLog('workflow');

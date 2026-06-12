@@ -9,7 +9,7 @@ export class Runner extends NodeRunnerBase<
   #completion = inject(CompletionService);
   override async run() {
     return async (id: string) => {
-      let data = this.#completion.activatedChatData;
+      const data = this.#completion.activatedChatData;
       data.stream.textEdit(data.location2.document.uri, [
         new vscode.TextEdit(data.location2.selection, this.inputs.replace),
       ]);

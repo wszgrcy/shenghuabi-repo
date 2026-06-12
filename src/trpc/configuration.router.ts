@@ -425,8 +425,8 @@ export const EnvironmentConfigurationRouter = t.router({
   chat: t.router({
     //对话应该是直接测试就ok了不需要太多
     test: t.procedure.input(v.any()).subscription(async ({ input, ctx }) => {
-      let list = ExtensionConfig.chatModelList();
-      let chatStream = createChatStream(list[0]);
+      const list = ExtensionConfig.chatModelList();
+      const chatStream = createChatStream(list[0]);
       const result = chatStream({
         messages: [
           {

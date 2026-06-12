@@ -17,5 +17,5 @@ export const TOOL_CONFIG_LIST: SingleNodeConfig<v.BaseSchema<any, any, any>>[] =
     RagMainConfig,
     // ReadMindMainConfig,
     ReadDocumentMainConfig,
-    ReplaceSelectStringMainConfig
+    ReplaceSelectStringMainConfig,
   ];

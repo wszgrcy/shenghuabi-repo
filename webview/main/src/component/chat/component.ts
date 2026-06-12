@@ -12,7 +12,6 @@ import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputFormComponent } from './input/input-form/component';
 import { deepClone } from '../../util/clone';
 import {
-  AssistantChatMessageType,
   CHAT_ITEM_TYPE,
   ChatMessageListInputType,
   ChatMessageListOutputType,
@@ -234,7 +233,6 @@ export class ChatComponent extends BaseControl<ChatValue> {
     this.list$.update((list) => {
       return list.slice(0, nextIndex);
     });
- 
   };
   protected chatOneResponseFactory(resolve: any) {
     const list: WorkflowStreamData[] = [];
@@ -259,9 +257,7 @@ export class ChatComponent extends BaseControl<ChatValue> {
   }
   #chatRef?: Unsubscribable;
 
-  #chatTemplate() {
- 
-  }
+  #chatTemplate() {}
   #chatWorkflow() {
     return new Promise<void>(async (resolve) => {
       this.#chatRef = this.#client.workflow.chat.subscribe(

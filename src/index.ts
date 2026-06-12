@@ -71,7 +71,6 @@ import {
   Text2VecToken,
   TextSplitterToken,
 } from '@shenghuabi/knowledge/knowledge';
-import { ChatService } from './service/ai/chat.service';
 import { LogToken } from '@shenghuabi/knowledge/util';
 import { ChatUtilService } from './service/util/chat.util.service';
 
@@ -107,7 +106,6 @@ import {
 import { ReRankerService } from './service/external-call/ranker/ranker.service';
 
 import { OPENAI_MODULE, OpenAIConfig } from '@shenghuabi/openai';
-import { captureException } from '@sentry/node';
 import { TTSEditorProvider } from './webview/custom-editor/tts-editor';
 import { LLMLauncherService } from './service/llm.launcher.service';
 import { isString } from 'lodash-es';
