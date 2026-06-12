@@ -5,10 +5,12 @@ import { COMMAND, CommandPrefix } from '@global';
 import { KnowledgeQueryOptions } from '../../share';
 import { WatchService } from '../fs/watch.service';
 export interface CodeChatActionOptions {
-  title: string;
+  /** agent路径 */
+  useFilePath: vscode.Uri;
   range: vscode.Range | vscode.Selection;
+  /** 文件路径 */
   filePath: string;
-  document: vscode.TextDocument;
+  tools: string[];
 }
 export class CodeActionService
   extends RootStaticInjectOptions
@@ -31,7 +33,7 @@ export class CodeActionService
       return [];
     }
     return [
-      ...(await this.#getChatList(document, range)),
+      ...(await this.#getChatList(document, range, token)),
       ...(await this.#getKnowledgeList(document, range)),
     ];
   }
@@ -79,30 +81,33 @@ export class CodeActionService
   async #getChatList(
     document: vscode.TextDocument,
     range: vscode.Range | vscode.Selection,
+    token: vscode.CancellationToken,
   ) {
-    let workflowList = (this.#watch.workflowList$() ?? []).filter(
-      (item) => item.data.options?.type === 'editor-completion',
-    );
-    return workflowList.map((item) => {
-      const codeAction = new vscode.CodeAction(
-        item.relPath,
-        vscode.CodeActionKind.Refactor,
-      );
-      (codeAction as any).isAI = true;
-      codeAction.command = {
-        command: COMMAND['call-ai-chat-editor'],
-        title: '',
-        arguments: [
-          {
-            title: item.relPath,
-            range: range,
-            filePath: document.uri.fsPath,
-            document: document,
-          } as CodeChatActionOptions,
-        ],
-      };
-      return codeAction;
-    });
+    let list = await vscode.chat.getCustomAgents(token);
+    return list
+      .filter((item) => {
+        return item.tools?.includes('wszgrcy.shenghuabi/replace-select-string');
+      })
+      .map((item) => {
+        const codeAction = new vscode.CodeAction(
+          item.name,
+          vscode.CodeActionKind.Refactor,
+        );
+        (codeAction as any).isAI = true;
+        codeAction.command = {
+          command: COMMAND['call-ai-chat-editor'],
+          title: '',
+          arguments: [
+            {
+              useFilePath: item.uri,
+              tools: item.tools!,
+              range: range,
+              filePath: document.uri.fsPath,
+            } as CodeChatActionOptions,
+          ],
+        };
+        return codeAction;
+      });
   }
   resolveCodeAction(
     codeAction: vscode.CodeAction,

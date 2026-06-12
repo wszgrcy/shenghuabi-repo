@@ -20,7 +20,8 @@
     "fileSearchProvider2",
     "aiTextSearchProvider",
     "languageModelSystem",
-    "languageModelToolSupportsModel"
+    "languageModelToolSupportsModel",
+    "chatPromptFiles"
   ],
   "activationEvents": [
     "*",

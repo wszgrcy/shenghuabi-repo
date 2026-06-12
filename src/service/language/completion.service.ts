@@ -73,13 +73,12 @@ function isEditorData(
   return location instanceof vscode.ChatRequestEditorData;
 }
 interface InlineEditorData {
-  mode: ChatMode;
-  editorInput: boolean;
-  input: {
-    selection: string;
-  };
+  /** agent路径 */
+  useFilePath: vscode.Uri;
+  mode?: ChatMode;
+  editorInput?: boolean;
   resolvedWorkflow?: ResolvedWorkflow;
-  template?: ChatMessageListInputType;
+  tools: string[];
 }
 export class CompletionService extends RootStaticInjectOptions {
   #workflowExec = inject(WorkflowExecService);
@@ -271,19 +270,30 @@ export class CompletionService extends RootStaticInjectOptions {
       'shenghuabi.chat.editor2',
       async (req, context, stream, token) => {
         let isEditor = false;
+        let systemPrompt: string | undefined;
+        let editorSupportTools: string[] = [];
         if (req.location2 instanceof vscode.ChatRequestEditorData) {
           isEditor = true;
           this.activatedChatData = { location2: req.location2, stream: stream };
-        }
-        let systemPrompt: string | undefined;
-        if (req.modeInstructions2?.uri) {
-          const data = bufferDecodeToText(
-            await vscode.workspace.fs.readFile(req.modeInstructions2.uri),
+          const filePath = req.location2.document.uri.fsPath;
+          let data = this.#selectedEditorTemplate.get(filePath)!;
+          let result = fm(
+            bufferDecodeToText(
+              await vscode.workspace.fs.readFile(data.useFilePath),
+            ),
           );
-          const result = fm(data);
           systemPrompt = result.body;
+          editorSupportTools = data.tools;
         } else {
-          systemPrompt = req.modeInstructions;
+          if (req.modeInstructions2?.uri) {
+            const data = bufferDecodeToText(
+              await vscode.workspace.fs.readFile(req.modeInstructions2.uri),
+            );
+            const result = fm(data);
+            systemPrompt = result.body;
+          } else {
+            systemPrompt = req.modeInstructions;
+          }
         }
         // 获取当前活动文件和上下文
         const activeEditor = vscode.window.activeTextEditor;
@@ -337,6 +347,12 @@ export class CompletionService extends RootStaticInjectOptions {
                 .filter((item) => {
                   if (item.name === 'replace-select-string') {
                     return isEditor;
+                  } else if (isEditor) {
+                    let name =
+                      (item.source && 'id' in item.source
+                        ? `${item.source.id}/`
+                        : '') + item.name;
+                    return editorSupportTools!.includes(name);
                   }
                   return (
                     (req.tools.has(item) && req.tools.get(item)) ||
@@ -553,8 +569,10 @@ export class CompletionService extends RootStaticInjectOptions {
               break;
             }
             case 'tool_execution_end': {
-              editToolCalled =
-                editToolCalled || event.toolName === 'replace-select-string';
+              editToolCalled = event.toolName === 'replace-select-string';
+              if (editToolCalled) {
+                result.abort();
+              }
               break;
             }
             case 'tool_execution_start': {
@@ -589,66 +607,13 @@ export class CompletionService extends RootStaticInjectOptions {
       },
     );
   }
-  /** 多选 */
-  #createCompletionListSelect(
-    list: string[],
-    stream: vscode.ChatResponseStream,
-    location2: vscode.ChatRequestEditorData,
-  ) {
-    for (const item of list) {
-      stream.button({
-        title: item,
-        command: `${CommandPrefix}.completion.select`,
-        arguments: [{ filePath: location2.document.uri.fsPath, value: item }],
-      });
-      // stream.markdown(item);
-    }
-    this.#selectSubscriptionMap
-      .get(location2.document.uri.fsPath)
-      ?.unsubscribe();
-    // todo 只支持一次,是不是不太好?
-    // 或者选完了直接关闭,或者不关闭继续选
-    this.#selectSubscriptionMap.set(
-      location2.document.uri.fsPath,
-      this.listSelect
-        .pipe(
-          take(1),
-          filter((item) => !!item.filePath),
-        )
-        .subscribe(({ value }) => {
-          const workspaceEdit = new vscode.WorkspaceEdit();
-          workspaceEdit.replace(
-            location2.document.uri,
-            location2.selection,
-            value,
-          );
-          vscode.workspace.applyEdit(workspaceEdit);
-        }),
-    );
-  }
+
   async codeActionResolve(options: CodeChatActionOptions) {
     let editorInput = false;
-    let data: Partial<InlineEditorData>;
-    const selection = options.document.getText(options.range);
-    const workflowData = await this.#workflow.get({
-      workflowName: options.title,
-    });
-    const result = this.#workflowExec.parse(workflowData);
-    if (result.error) {
-      throw result.error;
-    }
-    editorInput = !!result.editorInput;
-    data = {
-      resolvedWorkflow: result.data,
-    };
 
     this.#selectedEditorTemplate.set(options.filePath, {
-      ...data,
-      mode: ChatMode.workflow,
-      editorInput,
-      input: {
-        selection: selection,
-      },
+      useFilePath: options.useFilePath,
+      tools: options.tools,
     });
     const range = options.range;
     vscode.commands.executeCommand(`vscode.editorChat.start`, {
