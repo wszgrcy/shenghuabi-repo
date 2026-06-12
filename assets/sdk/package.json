@@ -3,7 +3,7 @@
   "version": "0.3.21",
   "peerDependencies": {},
   "dependencies": {
-    "static-injector": "6.1.2",
+    "static-injector": "6.4.0",
     "valibot": "1.4.0",
     "rxjs": "7.8.2",
     "@xyflow/react": "12.10.2",

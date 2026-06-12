@@ -1,4 +1,3 @@
-import { getSystemTemplate } from '../../const';
 import { WebviewNodeConfig } from '@shenghuabi/workflow/share';
 import { NODE_COMMON } from '../common';
 import { RAG_NODE_DEFINE } from '../rag.node.define';

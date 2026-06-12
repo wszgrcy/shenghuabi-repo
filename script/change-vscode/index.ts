@@ -129,6 +129,12 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
         },
         {
           query:
+            'property:has(>::children(0)[value*="watch-copilot"])::children(1)',
+          replace: '""',
+          description: 'copilot部分功能删除',
+        },
+        {
+          query:
             'property:has(>string[value=\\"scripts"])>object::children(-1)',
           insertAfter: true,
           replace: `,
@@ -790,6 +796,11 @@ async function getDefaultZhLanguage(userDataPath = '',) {
       path: 'build/gulpfile.vscode.ts',
       list: [
         {
+          query: `FunctionDeclaration:has(>Identifier[value=prepareCopilotRipgrepShimTask]) Block`,
+          replace: '{return async ()=>{}}',
+          description: `去掉copilot`,
+        },
+        {
           query: `VariableDeclaration:has(>[value=packageTasks]) ArrayLiteralExpression CallExpression[value^=packageTask]`,
           delete: true,
           description: `普通构建时去掉,手动调用`,
@@ -1076,6 +1087,16 @@ window.customElements.define(C_EL_NAME, CustomElement);`,
 			})
 		}`,
           description: `搜索支持`,
+        },
+      ],
+    },
+    {
+      path: 'src/vs/workbench/contrib/inlineChat/browser/inlineChatController.ts',
+      list: [
+        {
+          query: `CallExpression:like(InlineChatZoneWidget) PropertyAssignment:has(>Identifier[value=filter]) ArrowFunction`,
+          replace: `()=>{return true}`,
+          description: `内联对话显示`,
         },
       ],
     },

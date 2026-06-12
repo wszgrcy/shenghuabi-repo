@@ -12,7 +12,6 @@ import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputFormComponent } from './input/input-form/component';
 import { deepClone } from '../../util/clone';
 import {
-  AssistantChatMessageType,
   CHAT_ITEM_TYPE,
   ChatMessageListInputType,
   ChatMessageListOutputType,
@@ -96,7 +95,7 @@ export type ChatValue = {
   };
 };
 const DefaultUserTemplate = [{ role: 'user', content: [] }];
-
+// todo 可能需要删除?因为功能重复
 @Component({
   selector: 'ai-chat',
   templateUrl: './component.html',
@@ -187,7 +186,7 @@ export class ChatComponent extends BaseControl<ChatValue> {
       return lastItem.historyList;
     }
     const item = this.#lastChatResult();
-    return item?.extra!.historyList || [];
+    return [];
   });
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -234,35 +233,6 @@ export class ChatComponent extends BaseControl<ChatValue> {
     this.list$.update((list) => {
       return list.slice(0, nextIndex);
     });
-    return new Promise<void>((resolve, reject) => {
-      this.#chatRef = this.#client.ai.chat.subscribe(
-        {
-          input: input,
-          historyList: historyList,
-          modelConfigName: this.modelConfigName(),
-        },
-        {
-          onData: (data) => {
-            this.list$.update((list) => {
-              list[nextIndex] = {
-                input: input,
-                historyList: data,
-                result: data[
-                  historyList.length + 1
-                ] as AssistantChatMessageType,
-              };
-              return list.slice();
-            });
-          },
-          onComplete: () => {
-            resolve();
-          },
-          onError: () => {
-            resolve();
-          },
-        },
-      );
-    });
   };
   protected chatOneResponseFactory(resolve: any) {
     const list: WorkflowStreamData[] = [];
@@ -287,18 +257,7 @@ export class ChatComponent extends BaseControl<ChatValue> {
   }
   #chatRef?: Unsubscribable;
 
-  #chatTemplate() {
-    return new Promise<void>(async (resolve) => {
-      this.#chatRef = this.#client.ai.agentChat.subscribe(
-        {
-          context: this.value$().template!.contextValue!,
-          template: this.value$().template!.template!,
-          modelConfigName: this.modelConfigName(),
-        },
-        this.chatOneResponseFactory(resolve),
-      );
-    });
-  }
+  #chatTemplate() {}
   #chatWorkflow() {
     return new Promise<void>(async (resolve) => {
       this.#chatRef = this.#client.workflow.chat.subscribe(

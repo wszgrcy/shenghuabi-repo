@@ -27,7 +27,8 @@
     "fileSearchProvider2",
     "aiTextSearchProvider",
     "languageModelSystem",
-    "languageModelToolSupportsModel"
+    "languageModelToolSupportsModel",
+    "chatPromptFiles"
   ],
   "workspaces": [
     "./webview/main"
@@ -130,21 +131,25 @@
     "@cyia/vscode-trpc": "^1.0.8",
     "@cyia/vscode-valibot-config": "^1.0.8",
     "@cyia/zip": "1.5.5",
+    "@earendil-works/pi-agent-core": "0.79.0",
+    "@earendil-works/pi-ai": "0.79.0",
+    "@earendil-works/pi-coding-agent": "^0.79.0",
     "@emotion/css": "11.13.5",
     "@emotion/serialize": "1.3.3",
     "@fastify/cors": "^11.0.0",
+    "@napi-rs/canvas": "^0.1.87",
     "@piying/valibot-visit": "1.3.13",
-    "@piying/view-angular": "2.9.10",
-    "@piying/view-angular-core": "2.9.10",
+    "@piying/view-angular": "2.10.7",
+    "@piying/view-angular-core": "2.10.7",
     "@sentry/cli": "2.42.4",
     "@sentry/node": "^9.9.0",
-    "@shenghuabi/crunker": "1.1.47",
-    "@shenghuabi/han2number": "1.1.47",
-    "@shenghuabi/knowledge": "1.0.24",
-    "@shenghuabi/llama": "1.1.47",
-    "@shenghuabi/openai": "1.1.47",
-    "@shenghuabi/python-addon": "1.1.47",
-    "@shenghuabi/workflow": "1.1.47",
+    "@shenghuabi/crunker": "1.2.12",
+    "@shenghuabi/han2number": "1.2.12",
+    "@shenghuabi/knowledge": "1.0.26",
+    "@shenghuabi/llama": "1.2.12",
+    "@shenghuabi/openai": "1.2.12",
+    "@shenghuabi/python-addon": "1.2.12",
+    "@shenghuabi/workflow": "1.2.12",
     "@trpc/client": "11.16.0",
     "@trpc/server": "11.16.0",
     "@types/d3-color": "3.1.3",
@@ -189,8 +194,9 @@
     "mammoth": "1.12.0",
     "marked": "15.0.7",
     "mnemonist": "0.40.3",
-    "onnxruntime-node": "1.20.1",
+    "onnxruntime-node": "1.24.3",
     "openai": "6.37.0",
+    "pdfjs-dist": "5.4.449",
     "pinyin-pro": "3.26.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
@@ -199,7 +205,7 @@
     "rxjs": "7.8.2",
     "semver": "7.7.2",
     "sharp": "0.34.2",
-    "static-injector": "6.1.2",
+    "static-injector": "6.4.0",
     "tinycolor2": "1.6.0",
     "tinypool": "1.1.1",
     "tslib": "^2.8.1",
@@ -208,9 +214,7 @@
     "valibot": "1.4.0",
     "yaml": "2.8.1",
     "zod": "^3.24.1",
-    "zone.js": "~0.15.1",
-    "@napi-rs/canvas": "^0.1.87",
-    "pdfjs-dist": "~5.4.449"
+    "zone.js": "~0.15.1"
   },
   "overrides": {
     "electron": {
@@ -226,9 +230,9 @@
     },
     "@shenghuabi/knowledge": {
       "@huggingface/transformers": {
-        "onnxruntime-node": "1.20.1"
+        "onnxruntime-node": "1.24.3"
       },
-      "onnxruntime-node": "1.20.1"
+      "onnxruntime-node": "1.24.3"
     },
     "@langchain/openai": {
       "openai": "^6.37.0"

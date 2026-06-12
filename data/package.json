@@ -20,7 +20,8 @@
     "fileSearchProvider2",
     "aiTextSearchProvider",
     "languageModelSystem",
-    "languageModelToolSupportsModel"
+    "languageModelToolSupportsModel",
+    "chatPromptFiles"
   ],
   "activationEvents": [
     "*",
@@ -39,18 +40,24 @@
     ],
     "chatParticipants": [
       {
-        "id": "shenghuabi.chat.editor",
-        "name": "chat",
-        "fullName": "chat",
-        "description": "对话",
+        "id": "shenghuabi.chat.editor2",
+        "name": "shb",
+        "fullName": "生花笔",
+        "description": "使用接口/llama.cpp",
+        "modes": [
+          "agent",
+          "ask",
+          "agent"
+        ],
         "isDefault": true,
+        "isAgent": true,
         "locations": [
+          "panel",
           "editor"
         ],
         "commands": [
           {
-            "name": "default",
-            "description": "自动执行"
+            "name": "default"
           }
         ]
       }
@@ -95,11 +102,6 @@
           "title": "脑图"
         },
         {
-          "id": "shenghuabi-aiChat-bar",
-          "icon": "$(chat-editor-label-icon)",
-          "title": "对话"
-        },
-        {
           "id": "shenghuabi-knowledge-bar",
           "icon": "$(book)",
           "title": "知识库"
@@ -117,27 +119,6 @@
       ]
     },
     "views": {
-      "shenghuabi-aiChat-bar": [
-        {
-          "id": "shenghuabi.chat.tree",
-          "name": "模板列表",
-          "type": "tree",
-          "visibility": "visible",
-          "initialSize": 200
-        },
-        {
-          "id": "shenghuabi.chat.history",
-          "name": "对话历史",
-          "type": "tree",
-          "visibility": "collapsed",
-          "initialSize": 200
-        },
-        {
-          "id": "shenghuabi.aiChat",
-          "name": "AI对话",
-          "type": "webview"
-        }
-      ],
       "shenghuabi-knowledge-bar": [
         {
           "id": "shenghuabi.knowledge.create",
@@ -265,42 +246,13 @@
         "title": "同步文章"
       },
       {
-        "command": "shenghuabi.call-ai-chat-sidebar",
-        "title": "调用ai对话(侧边栏)"
-      },
-      {
         "command": "shenghuabi.call-ai-chat-editor",
         "title": "调用ai对话(编辑器)"
-      },
-      {
-        "command": "shenghuabi.chatTemplateSync",
-        "title": "同步内置模板",
-        "icon": "$(sync)"
-      },
-      {
-        "command": "shenghuabi.promptTemplateSave",
-        "title": "提示词模板保存",
-        "icon": "$(check)"
       },
       {
         "command": "shenghuabi.workflowSync",
         "title": "同步内置工作流",
         "icon": "$(sync)"
-      },
-      {
-        "command": "shenghuabi.chat.tree.item.delete",
-        "title": "删除模板",
-        "icon": "$(trash)"
-      },
-      {
-        "command": "shenghuabi.chat.tree.item.edit",
-        "title": "编辑模板",
-        "icon": "$(edit)"
-      },
-      {
-        "command": "shenghuabi.chat.tree.item.add",
-        "title": "新增模板",
-        "icon": "$(add)"
       },
       {
         "command": "shenghuabi.knowledge.delete",
@@ -505,35 +457,11 @@
           "when": "false"
         },
         {
-          "command": "shenghuabi.call-ai-chat-sidebar",
-          "when": "false"
-        },
-        {
           "command": "shenghuabi.call-ai-chat-editor",
           "when": "false"
         },
         {
-          "command": "shenghuabi.chatTemplateSync",
-          "when": "false"
-        },
-        {
-          "command": "shenghuabi.promptTemplateSave",
-          "when": "false"
-        },
-        {
           "command": "shenghuabi.workflowSync",
-          "when": "false"
-        },
-        {
-          "command": "shenghuabi.chat.tree.item.delete",
-          "when": "false"
-        },
-        {
-          "command": "shenghuabi.chat.tree.item.edit",
-          "when": "false"
-        },
-        {
-          "command": "shenghuabi.chat.tree.item.add",
           "when": "false"
         },
         {
@@ -703,16 +631,6 @@
       ],
       "view/title": [
         {
-          "command": "shenghuabi.chatTemplateSync",
-          "group": "navigation@1",
-          "when": "view == shenghuabi.chat.tree"
-        },
-        {
-          "command": "shenghuabi.promptTemplateSave",
-          "group": "navigation@2",
-          "when": "view == shenghuabi.aiChat"
-        },
-        {
           "command": "shenghuabi.workflowSync",
           "group": "navigation@1",
           "when": "view == shenghuabi.workflow.tree"
@@ -744,16 +662,6 @@
         }
       ],
       "view/item/context": [
-        {
-          "command": "shenghuabi.chat.tree.item.delete",
-          "group": "inline",
-          "when": "view == shenghuabi.chat.tree && viewItem == prompt"
-        },
-        {
-          "command": "shenghuabi.chat.tree.item.add",
-          "group": "inline",
-          "when": "view == shenghuabi.chat.tree && viewItem == codeActionList"
-        },
         {
           "command": "shenghuabi.knowledge.delete",
           "when": "view == shenghuabi.knowledge.tree && viewItem == knowledgeDirContextValue"
@@ -1360,243 +1268,359 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "name"
-            ],
             "properties": {
-              "name": {
-                "type": "string",
-                "title": "配置名"
-              },
-              "vendor": {
+              "provider": {
                 "enum": [
+                  "amazon-bedrock",
+                  "anthropic",
+                  "google",
+                  "google-vertex",
                   "openai",
-                  "360",
-                  "azure",
-                  "moonshot",
-                  "baichuan",
-                  "minimax",
-                  "mistralai",
-                  "groq",
-                  "lingyiwanwu",
-                  "stepfun",
+                  "azure-openai-responses",
+                  "openai-codex",
                   "deepseek",
-                  "together.ai",
-                  "volcengine",
-                  "novita",
-                  "siliconflow",
-                  "tongyi",
-                  "zhipu",
-                  "spark",
-                  "hunyuan",
-                  "gemini",
-                  "claude"
+                  "github-copilot",
+                  "xai",
+                  "groq",
+                  "cerebras",
+                  "openrouter",
+                  "vercel-ai-gateway",
+                  "zai",
+                  "mistral",
+                  "minimax",
+                  "minimax-cn",
+                  "moonshotai",
+                  "moonshotai-cn",
+                  "huggingface",
+                  "fireworks",
+                  "together",
+                  "opencode",
+                  "opencode-go",
+                  "kimi-coding",
+                  "cloudflare-workers-ai",
+                  "cloudflare-ai-gateway",
+                  "xiaomi",
+                  "xiaomi-token-plan-cn",
+                  "xiaomi-token-plan-ams",
+                  "xiaomi-token-plan-sgp",
+                  "ant-ling",
+                  "nvidia",
+                  "zai-coding-cn",
+                  "openai-completions",
+                  "openai-responses",
+                  "anthropic-messages"
                 ],
                 "type": "string",
-                "default": "openai",
-                "markdownDescription": "大语言模型提供的厂商",
-                "title": "对话厂商",
-                "markdownEnumDescriptions": [
-                  "如果是openai兼容的厂商,需要设置baseURL",
-                  "链接: https://ai.360.cn",
-                  "",
-                  "链接: https://api.moonshot.cn",
-                  "链接: https://api.baichuan-ai.com",
-                  "链接: https://api.minimax.chat",
-                  "链接: https://api.mistral.ai",
-                  "链接: https://api.groq.com/openai",
-                  "链接: https://api.lingyiwanwu.com",
-                  "链接: https://api.stepfun.com",
-                  "链接: https://api.deepseek.com",
-                  "链接: https://api.together.xyz",
-                  "链接: https://ark.cn-beijing.volces.com/api/v3",
-                  "链接: https://api.novita.ai/v3/openai",
-                  "链接: https://api.siliconflow.cn",
-                  "链接: https://dashscope.aliyuncs.com/compatible-mode/v1",
-                  "链接: https://open.bigmodel.cn/api/paas/v4",
-                  "链接: https://spark-api-open.xf-yun.com/v1",
-                  "链接: https://api.hunyuan.cloud.tencent.com/v1",
-                  "非openai兼容,手动适配,如果有问题欢迎报告",
-                  "非openai兼容,手动适配,如果有问题欢迎报告"
-                ],
-                "enumItemLabels": [
-                  "openai",
-                  "360",
-                  "azure",
-                  "moonshot",
-                  "baichuan",
-                  "minimax",
-                  "mistralai",
-                  "groq",
-                  "lingyiwanwu",
-                  "stepfun",
-                  "deepseek",
-                  "together.ai",
-                  "volcengine",
-                  "novita",
-                  "siliconflow",
-                  "tongyi",
-                  "zhipu",
-                  "spark",
-                  "hunyuan",
-                  "gemini",
-                  "claude"
-                ]
-              },
-              "baseURL": {
-                "type": "string",
-                "default": "http://127.0.0.1:11434/v1",
-                "title": "地址",
-                "markdownDescription": "openai兼容接口"
+                "title": "提供商",
+                "markdownDescription": "'openai-completions','openai-responses','anthropic-messages',为自定义提供商"
               },
               "model": {
                 "type": "string",
-                "default": "qwen3:8b",
-                "title": "模型",
-                "markdownDescription": "## 模型名\n### ollama模型推荐\n- `qwen3:8b`\n- `qwen3:14b`,`deepseek-r1:7b`,`deepseek-r1:14b`\n### 图片对话模型\n- `minicpm-v:8b`"
+                "title": "模型名"
+              },
+              "name": {
+                "type": "string",
+                "title": "配置名",
+                "markdownDescription": "模型的配置名称(默认为模型名)"
               },
               "apiKey": {
                 "type": "string",
-                "markdownDescription": "本地部署默认可以不填",
                 "title": "apiKey"
               },
-              "max_tokens": {
-                "type": "number",
-                "default": 8192,
-                "title": "max_tokens"
-              },
-              "top_p": {
-                "type": "number",
-                "default": 0.8,
-                "minimum": 0,
-                "maximum": 10,
-                "markdownDescription": "核采样（nucleus sampling）是温度采样的另一种替代方法，模型会考虑累积概率质量达到 top_p 的 token。例如，当 top_p 设为 0.1 时，仅考虑累积概率前 10% 的 token。\n\n我们通常建议调整 top_p 或温度参数，但不要同时调整两者。",
-                "title": "top_p"
-              },
-              "temperature": {
-                "type": "number",
-                "minimum": 0,
-                "maximum": 2,
-                "default": 0.1,
-                "markdownDescription": "采样温度应设置在0到2之间。较高的值（如0.8）会使输出更随机，而较低的值（如0.2）则会使输出更集中且确定。我们通常建议仅调整此参数或top_p，而不同时调整两者。",
-                "title": "temperature"
-              },
-              "frequency_penalty": {
-                "type": "number",
-                "minimum": -2,
-                "maximum": 2,
-                "markdownDescription": "取值范围为-2.0至2.0。正值会根据当前文本中已有标记的频率对新标记进行惩罚，从而降低模型逐字重复相同内容的概率。",
-                "title": "frequency_penalty"
-              },
-              "presence_penalty": {
-                "type": "number",
-                "minimum": -2,
-                "maximum": 2,
-                "markdownDescription": "数值介于-2.0至2.0之间。正值会基于新标记是否已在当前文本中出现，对新标记施加惩罚，从而提升模型讨论新话题的可能性。",
-                "title": "presence_penalty"
-              },
-              "seed": {
-                "type": "number",
-                "markdownDescription": "若已指定，系统将尽力确保采样具有确定性，即使用相同种子和参数的重复请求将返回相同结果。确定性无法保证，请通过 system_fingerprint 响应参数监控后端变化。",
-                "title": "seed"
-              },
-              "stop": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "maxItems": 4,
-                "markdownDescription": "最多可指定4个停止序列，API将在生成到该序列时停止，返回的文本中不包含该停止序列。",
-                "title": "stop"
-              },
-              "vendorOptions": {
+              "config": {
                 "type": "object",
-                "propertyNames": {
-                  "type": "string"
-                },
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "extraOptions": {
-                      "type": "object",
-                      "properties": {
-                        "baseURL": {
-                          "type": "string",
-                          "default": "http://127.0.0.1:11434/v1",
-                          "title": "地址",
-                          "markdownDescription": "openai兼容接口"
-                        },
-                        "model": {
-                          "type": "string",
-                          "default": "qwen3:8b",
-                          "title": "模型",
-                          "markdownDescription": "## 模型名\n### ollama模型推荐\n- `qwen3:8b`\n- `qwen3:14b`,`deepseek-r1:7b`,`deepseek-r1:14b`\n### 图片对话模型\n- `minicpm-v:8b`"
-                        },
-                        "apiKey": {
-                          "type": "string",
-                          "markdownDescription": "本地部署默认可以不填",
-                          "title": "apiKey"
-                        },
-                        "max_tokens": {
-                          "type": "number",
-                          "default": 8192,
-                          "title": "max_tokens"
-                        },
-                        "top_p": {
-                          "type": "number",
-                          "default": 0.8,
-                          "minimum": 0,
-                          "maximum": 10,
-                          "markdownDescription": "核采样（nucleus sampling）是温度采样的另一种替代方法，模型会考虑累积概率质量达到 top_p 的 token。例如，当 top_p 设为 0.1 时，仅考虑累积概率前 10% 的 token。\n\n我们通常建议调整 top_p 或温度参数，但不要同时调整两者。",
-                          "title": "top_p"
-                        },
-                        "temperature": {
-                          "type": "number",
-                          "minimum": 0,
-                          "maximum": 2,
-                          "default": 0.1,
-                          "markdownDescription": "采样温度应设置在0到2之间。较高的值（如0.8）会使输出更随机，而较低的值（如0.2）则会使输出更集中且确定。我们通常建议仅调整此参数或top_p，而不同时调整两者。",
-                          "title": "temperature"
-                        },
-                        "frequency_penalty": {
-                          "type": "number",
-                          "minimum": -2,
-                          "maximum": 2,
-                          "markdownDescription": "取值范围为-2.0至2.0。正值会根据当前文本中已有标记的频率对新标记进行惩罚，从而降低模型逐字重复相同内容的概率。",
-                          "title": "frequency_penalty"
-                        },
-                        "presence_penalty": {
-                          "type": "number",
-                          "minimum": -2,
-                          "maximum": 2,
-                          "markdownDescription": "数值介于-2.0至2.0之间。正值会基于新标记是否已在当前文本中出现，对新标记施加惩罚，从而提升模型讨论新话题的可能性。",
-                          "title": "presence_penalty"
-                        },
-                        "seed": {
-                          "type": "number",
-                          "markdownDescription": "若已指定，系统将尽力确保采样具有确定性，即使用相同种子和参数的重复请求将返回相同结果。确定性无法保证，请通过 system_fingerprint 响应参数监控后端变化。",
-                          "title": "seed"
-                        },
-                        "stop": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          },
-                          "maxItems": 4,
-                          "markdownDescription": "最多可指定4个停止序列，API将在生成到该序列时停止，返回的文本中不包含该停止序列。",
-                          "title": "stop"
-                        }
+                "properties": {
+                  "provider": {
+                    "type": "string",
+                    "default": "default",
+                    "title": "厂商",
+                    "markdownDescription": "模型提供商，如 openai / anthropic / llama"
+                  },
+                  "baseUrl": {
+                    "type": "string",
+                    "title": "基础 URL",
+                    "markdownDescription": "API 请求的基础地址"
+                  },
+                  "reasoning": {
+                    "type": "boolean",
+                    "default": false,
+                    "title": "支持推理",
+                    "markdownDescription": "该模型是否支持思考/推理模式"
+                  },
+                  "input": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "text",
+                        "image"
+                      ],
+                      "type": "string",
+                      "title": "输入类型",
+                      "markdownDescription": "支持的输入模态类型"
+                    },
+                    "title": "输入类型",
+                    "markdownDescription": "支持的输入模态类型",
+                    "default": [
+                      "text",
+                      "image"
+                    ]
+                  },
+                  "cost": {
+                    "type": "object",
+                    "properties": {
+                      "input": {
+                        "type": "number",
+                        "title": "输入单价",
+                        "markdownDescription": "每 token 输入费用"
                       },
-                      "markdownDescription": "附加配置"
+                      "output": {
+                        "type": "number",
+                        "title": "输出单价",
+                        "markdownDescription": "每 token 输出费用"
+                      },
+                      "cacheRead": {
+                        "type": "number",
+                        "title": "缓存读取单价",
+                        "markdownDescription": "从缓存读取每 token 的费用"
+                      },
+                      "cacheWrite": {
+                        "type": "number",
+                        "title": "缓存写入单价",
+                        "markdownDescription": "写入缓存每 token 的费用"
+                      }
+                    },
+                    "required": [
+                      "input",
+                      "output",
+                      "cacheRead",
+                      "cacheWrite"
+                    ],
+                    "default": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0
+                    },
+                    "title": "费用配置",
+                    "markdownDescription": "模型 token 计价标准"
+                  },
+                  "contextWindow": {
+                    "type": "number",
+                    "default": 99999999,
+                    "title": "上下文窗口",
+                    "markdownDescription": "模型支持的上下文最大 token 数"
+                  },
+                  "maxTokens": {
+                    "type": "number",
+                    "default": 99999999,
+                    "title": "最大输出 tokens",
+                    "markdownDescription": "单次请求允许的最大输出 token 数"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "title": "自定义请求头",
+                    "markdownDescription": "额外的 HTTP 请求头配置"
+                  },
+                  "compat": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "supportsStore": {
+                            "type": "boolean",
+                            "title": "支持存储",
+                            "markdownDescription": "是否支持服务端会话存储"
+                          },
+                          "supportsDeveloperRole": {
+                            "type": "boolean",
+                            "title": "支持开发者角色",
+                            "markdownDescription": "是否支持 developer 系统消息角色"
+                          },
+                          "supportsReasoningEffort": {
+                            "type": "boolean",
+                            "title": "支持推理努力",
+                            "markdownDescription": "是否支持 reasoning_effort 参数"
+                          },
+                          "supportsUsageInStreaming": {
+                            "type": "boolean",
+                            "title": "流式用量",
+                            "markdownDescription": "流式输出中是否返回 usage 信息"
+                          },
+                          "maxTokensField": {
+                            "enum": [
+                              "max_completion_tokens",
+                              "max_tokens"
+                            ],
+                            "type": "string",
+                            "title": "最大 token 字段名",
+                            "markdownDescription": "指定最大 token 参数使用的是哪个字段名"
+                          },
+                          "requiresToolResultName": {
+                            "type": "boolean",
+                            "title": "需要工具结果名称",
+                            "markdownDescription": "是否要求工具结果消息包含 name 字段"
+                          },
+                          "requiresAssistantAfterToolResult": {
+                            "type": "boolean",
+                            "title": "需要助手回复",
+                            "markdownDescription": "工具结果后是否需要助手消息跟进"
+                          },
+                          "requiresThinkingAsText": {
+                            "type": "boolean",
+                            "title": "思考转文本",
+                            "markdownDescription": "是否将思考过程作为普通文本发送"
+                          },
+                          "requiresReasoningContentOnAssistantMessages": {
+                            "type": "boolean",
+                            "title": "推理内容在助手消息中",
+                            "markdownDescription": "是否在助手消息中包含推理内容"
+                          },
+                          "thinkingFormat": {
+                            "enum": [
+                              "openai",
+                              "openrouter",
+                              "deepseek",
+                              "together",
+                              "zai",
+                              "qwen",
+                              "qwen-chat-template",
+                              "string-thinking",
+                              "ant-ling"
+                            ],
+                            "type": "string",
+                            "title": "思考格式",
+                            "markdownDescription": "指定 thinking 标签的序列化格式"
+                          },
+                          "openRouterRouting": {
+                            "title": "OpenRouter 路由",
+                            "markdownDescription": "自定义 OpenRouter 的路由配置"
+                          },
+                          "vercelGatewayRouting": {
+                            "title": "Vercel Gateway 路由",
+                            "markdownDescription": "自定义 Vercel AI Gateway 的路由配置"
+                          },
+                          "zaiToolStream": {
+                            "type": "boolean",
+                            "title": "ZAI 工具流式",
+                            "markdownDescription": "是否启用 ZAI 平台工具调用的流式输出"
+                          },
+                          "supportsStrictMode": {
+                            "type": "boolean",
+                            "title": "严格模式",
+                            "markdownDescription": "是否支持工具的 JSON Schema 严格校验"
+                          },
+                          "cacheControlFormat": {
+                            "const": "anthropic",
+                            "title": "缓存控制格式",
+                            "markdownDescription": "指定缓存控制的语法格式"
+                          },
+                          "sendSessionAffinityHeaders": {
+                            "type": "boolean",
+                            "title": "发送会话亲和标头",
+                            "markdownDescription": "是否在请求中携带会话亲和性标头"
+                          },
+                          "supportsLongCacheRetention": {
+                            "type": "boolean",
+                            "title": "长期缓存保留",
+                            "markdownDescription": "是否支持长期缓存保留策略"
+                          }
+                        },
+                        "required": [],
+                        "title": "OpenAI Completions 兼容配置",
+                        "markdownDescription": "针对 OpenAI Completions API 的兼容性覆写选项"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "supportsDeveloperRole": {
+                            "type": "boolean",
+                            "title": "支持开发者角色",
+                            "markdownDescription": "是否支持 developer 系统消息角色"
+                          },
+                          "sendSessionIdHeader": {
+                            "type": "boolean",
+                            "title": "发送会话 ID 标头",
+                            "markdownDescription": "是否在请求中携带 X-Session-ID 标头"
+                          },
+                          "supportsLongCacheRetention": {
+                            "type": "boolean",
+                            "title": "长期缓存保留",
+                            "markdownDescription": "是否支持长期缓存保留策略"
+                          }
+                        },
+                        "required": [],
+                        "title": "OpenAI Responses 兼容配置",
+                        "markdownDescription": "针对 OpenAI Responses API 的兼容性覆写选项"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "supportsEagerToolInputStreaming": {
+                            "type": "boolean",
+                            "title": " eagerly 工具流式",
+                            "markdownDescription": "是否支持工具调用的 eager 模式流式输出"
+                          },
+                          "supportsLongCacheRetention": {
+                            "type": "boolean",
+                            "title": "长期缓存保留",
+                            "markdownDescription": "是否支持长期缓存保留策略"
+                          },
+                          "sendSessionAffinityHeaders": {
+                            "type": "boolean",
+                            "title": "发送会话亲和标头",
+                            "markdownDescription": "是否在请求中携带会话亲和性标头"
+                          },
+                          "supportsCacheControlOnTools": {
+                            "type": "boolean",
+                            "title": "工具缓存控制",
+                            "markdownDescription": "是否支持在 tool_use 消息中使用 cache_control"
+                          },
+                          "supportsTemperature": {
+                            "type": "boolean",
+                            "title": "支持温度参数",
+                            "markdownDescription": "模型/接口是否支持 temperature 参数"
+                          },
+                          "forceAdaptiveThinking": {
+                            "type": "boolean",
+                            "title": "强制自适应思考",
+                            "markdownDescription": "是否强制启用 adaptive thinking 模式"
+                          },
+                          "allowEmptySignature": {
+                            "type": "boolean",
+                            "title": "允许空签名",
+                            "markdownDescription": "是否允许工具调用不指定签名(sha256)"
+                          }
+                        },
+                        "required": [],
+                        "title": "Anthropic Messages 兼容配置",
+                        "markdownDescription": "针对 Anthropic Messages API 的兼容性覆写选项"
+                      }
+                    ],
+                    "title": "兼容配置",
+                    "markdownDescription": "API 兼容性覆写选项",
+                    "default": {
+                      "supportsDeveloperRole": false
                     }
                   }
                 },
-                "markdownDescription": "## 通用参数\n- `extraOptions`字段用于覆盖默认字段\n```json\n{\"厂商名(与vendor字段相同)\":{ \"extraOptions\":{\"temperature\":0.1,\"topP\":0.8,\"maxTokens\":8192,\"baseURL\":\"http://127.0.0.1:11434/v1\",\"apiKey\":\" \"} }\n```\n",
-                "title": "厂商额外配置"
+                "required": [
+                  "baseUrl"
+                ],
+                "title": "模型定义",
+                "markdownDescription": "pi-ai 模型的核心配置结构，包含模型标识、API 参数、费用及兼容性设置"
               }
-            }
-          },
-          "markdownDescription": "对话模型列表,目前用于切换使用"
+            },
+            "required": [
+              "provider",
+              "model"
+            ]
+          }
         },
         "shenghuabi.download": {
           "type": "object",
@@ -9159,7 +9183,7 @@
   },
   "dependencies": {
     "sharp": "0.34.2",
-    "onnxruntime-node": "1.20.1",
+    "onnxruntime-node": "1.24.3",
     "lightningcss": "1.29.3",
     "@types/node": "^22.0.0",
     "@reflink/reflink": "0.1.19",

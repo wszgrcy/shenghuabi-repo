@@ -60,34 +60,9 @@ async function main() {
       command: `syncArticle`,
       title: '同步文章',
     },
-    { command: `call-ai-chat-sidebar`, title: '调用ai对话(侧边栏)' },
     { command: `call-ai-chat-editor`, title: '调用ai对话(编辑器)' },
-    {
-      command: `chatTemplateSync`,
-      title: '同步内置模板',
-      icon: '$(sync)',
-      display: {
-        menus: {
-          'view/title': {
-            group: 'navigation@1',
-            when: 'view == shenghuabi.chat.tree',
-          },
-        },
-      },
-    },
-    {
-      command: `promptTemplateSave`,
-      title: '提示词模板保存',
-      icon: '$(check)',
-      display: {
-        menus: {
-          'view/title': {
-            group: 'navigation@2',
-            when: 'view == shenghuabi.aiChat',
-          },
-        },
-      },
-    },
+
+
 
     {
       command: `workflowSync`,
@@ -116,45 +91,9 @@ async function main() {
     //     },
     //   },
     // },
-    {
-      command: 'chat.tree.item.delete',
-      title: '删除模板',
-      icon: '$(trash)',
-      display: {
-        menus: {
-          'view/item/context': {
-            when: 'view == shenghuabi.chat.tree && viewItem == prompt',
-            group: 'inline',
-          },
-        },
-      },
-    },
-    {
-      command: 'chat.tree.item.edit',
-      title: '编辑模板',
-      icon: '$(edit)',
-      // display: {
-      //   menus: {
-      //     'view/item/context': {
-      //       when: 'view == shenghuabi.chat.tree && viewItem == prompt',
-      //       group: 'inline',
-      //     },
-      //   },
-      // },
-    },
-    {
-      command: 'chat.tree.item.add',
-      title: '新增模板',
-      icon: '$(add)',
-      display: {
-        menus: {
-          'view/item/context': {
-            when: 'view == shenghuabi.chat.tree && viewItem == codeActionList',
-            group: 'inline',
-          },
-        },
-      },
-    },
+
+
+
     // webview用或者
     // {
     //   command: 'knowledge.add.default',

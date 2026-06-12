@@ -5,6 +5,7 @@ import {
   createInjector,
   inject,
   signal,
+  untracked,
 } from 'static-injector';
 import { ExtensionConfig } from '../config.service';
 import { InstallStatus, RunningStatus } from './type';
@@ -47,15 +48,17 @@ export class Text2VecService extends RootStaticInjectOptions {
 
   #initDefault = computed(() => {
     const modelConfig = ExtensionConfig.text2vec()!;
-    this.#runningService = this.#create({
-      type: modelConfig.startupType,
-      baseURL: modelConfig.baseURL,
-      dtype: modelConfig.dtype,
-      device: modelConfig.device,
-      size: modelConfig.embeddingLength,
-      model: modelConfig.modelName,
+    untracked(() => {
+      this.#runningService = this.#create({
+        type: modelConfig.startupType,
+        baseURL: modelConfig.baseURL,
+        dtype: modelConfig.dtype,
+        device: modelConfig.device,
+        size: modelConfig.embeddingLength,
+        model: modelConfig.modelName,
+      });
+      this.type = modelConfig.startupType;
     });
-    this.type = modelConfig.startupType;
   });
 
   check() {

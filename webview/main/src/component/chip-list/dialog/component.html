@@ -26,6 +26,14 @@
   >
     <span class="material-icons">download</span>
   </button>
-  <button [disabled]="downloading$()" class="btn btn-error" mat-dialog-close>关闭</button>
-  <button [disabled]="downloading$()" class="btn btn-soft btn-primary" (click)="close()">提交</button>
+  <button [disabled]="downloading$()" class="btn btn-error" mat-dialog-close>
+    关闭
+  </button>
+  <button
+    [disabled]="downloading$()"
+    class="btn btn-soft btn-primary"
+    (click)="close()"
+  >
+    提交
+  </button>
 </mat-dialog-actions>

@@ -1,22 +1,10 @@
-import { Injectable, Injector } from '@angular/core';
-import {
-  _PiResolvedCommonViewFieldConfig,
-  CoreSchemaHandle,
-  FormBuilder,
-} from '@piying/view-angular-core';
-import { SchemaOrPipe } from '@piying/valibot-visit';
-import { convert } from '@piying/view-angular-core';
-@Injectable()
-class TestFormBuilder extends FormBuilder<any> {}
-class NoViewSchemaHandle extends CoreSchemaHandle<any, any> {
-  override end() {
-    this.type = 'mock';
-    this.wrappers = [];
-    this.hooks = undefined;
-  }
-}
+import { Injector } from '@angular/core';
+import { _PiResolvedCommonViewFieldConfig } from '@piying/view-angular-core';
+import { convertToField } from '@piying/view-angular';
+import * as v from 'valibot';
+
 export function createNoViewPiying(
-  obj: SchemaOrPipe,
+  obj: v.BaseSchema<any, any, any>,
   injector: Injector,
   options?: {
     context?: any;
@@ -27,19 +15,13 @@ export function createNoViewPiying(
     builder?: any;
   },
 ) {
-  const MockType = { type: Symbol() } as any;
-  const result = convert(obj, {
-    injector: injector as any,
-    builder: options?.builder ?? TestFormBuilder,
-    context: options?.context,
-    handle: options?.handle ?? NoViewSchemaHandle,
-    environments: options?.environments,
-    fieldGlobalConfig: {
-      types: {
-        mock: MockType as any,
-      },
-      wrappers: {},
-    },
-  });
+  const result = convertToField(
+    () => obj,
+    injector,
+    () => ({
+      context: options?.context,
+      environments: options?.environments,
+    }),
+  );
   return result as _PiResolvedCommonViewFieldConfig;
 }

@@ -9,7 +9,7 @@ import {
   RunningStatus,
 } from '../service/external-call/type';
 import { Text2VecService } from '../service/external-call/text2vec.service';
-import { ChatService } from '../service/ai/chat.service';
+
 import { ChannelService } from '../service/channel.service';
 import { ConfigurationTarget } from 'vscode';
 import * as vscode from 'vscode';
@@ -31,6 +31,8 @@ import { ReRankerService } from '../service/external-call/ranker/ranker.service'
 import { createAsyncGeneratorAdapter } from '../share';
 import { QdrantServerService } from '@shenghuabi/knowledge/qdrant';
 import { LanguageMap } from '@shenghuabi/python-addon/define';
+import { createChatStream } from '@shenghuabi/openai';
+import { ChatService } from '../service/ai/chat.service';
 
 export const EnvironmentConfigurationRouter = t.router({
   saveDefaultDir: t.procedure
@@ -57,30 +59,7 @@ export const EnvironmentConfigurationRouter = t.router({
           ctx.injector.get(WorkflowTree).refresh();
         } catch (error) {}
         // 提示词复制
-        {
-          const presetFilePath = workspace.formatPath(
-            `{{extensionFolder}}/data/prompt/common_prompt.yml`,
-          );
-          try {
-            await vscode.workspace.fs.copy(
-              vscode.Uri.file(presetFilePath),
-              vscode.Uri.file(workspace.dir[FolderName.commonPromptDir]()),
-              { overwrite: true },
-            );
-          } catch (error) {}
-        }
-        {
-          const presetFilePath = workspace.formatPath(
-            `{{extensionFolder}}/data/prompt/selection_prompt.yml`,
-          );
-          try {
-            await vscode.workspace.fs.copy(
-              vscode.Uri.file(presetFilePath),
-              vscode.Uri.file(workspace.dir[FolderName.selectionPromptDir]()),
-              { overwrite: true },
-            );
-          } catch (error) {}
-        }
+
         ctx.injector.get(QdrantServerService).startup();
         ctx.injector.get(Text2VecService).check();
       }
@@ -91,9 +70,10 @@ export const EnvironmentConfigurationRouter = t.router({
 
   getConfiguration: t.procedure.query(async ({ input, ctx }) => {
     const workspace = ctx.injector.get(WorkspaceService);
+    const chatService = ctx.injector.get(ChatService);
     const rerankerConfig = ExtensionConfig.reranker();
 
-    const modelConfig = ExtensionConfig.chatModelList()[0];
+    const modelConfig = chatService.modelList$$()[0];
     return {
       download: {
         direct: ExtensionConfig.download.direct(),
@@ -127,7 +107,7 @@ export const EnvironmentConfigurationRouter = t.router({
           modelName: modelConfig?.model,
         },
       },
-      chatModelList: ExtensionConfig.chatModelList(),
+      chatModelList: chatService.modelList$$(),
     };
   }),
 
@@ -168,19 +148,7 @@ export const EnvironmentConfigurationRouter = t.router({
       };
     });
     await ExtensionConfig['llama.startup'].set(input.llm.startup);
-    if (input.llm.startup) {
-      const HOST = ExtensionConfig['llama.listen']();
-      ExtensionConfig.chatModelList.update((list) => {
-        list = list.slice() ?? [];
-        list[0] = {
-          ...list[0],
-          name: list[0]?.name ?? 'default',
-          model: input.llm.llamaConfig.modelName,
-          baseURL: `http://${HOST}/v1`,
-        };
-        return list;
-      });
-    }
+
     await ExtensionConfig['llama.dir'].set(input.llm.llamaConfig.dir);
     await ExtensionConfig['llama.config'].update((config) => {
       return {
@@ -192,7 +160,7 @@ export const EnvironmentConfigurationRouter = t.router({
       };
     });
     // 对话
-    ExtensionConfig.chatModelList.set(input.chatModelList);
+    await ExtensionConfig.chatModelList.set(input.chatModelList);
   }),
   toggleEmbedding: t.procedure.input(v.any()).query(async ({ input, ctx }) => {
     const text2vecService = ctx.injector.get(Text2VecService);
@@ -457,11 +425,9 @@ export const EnvironmentConfigurationRouter = t.router({
   chat: t.router({
     //对话应该是直接测试就ok了不需要太多
     test: t.procedure.input(v.any()).subscription(async ({ input, ctx }) => {
-      const service = ctx.injector.get(ChatService);
-
-      const result = await (
-        await service.chat()
-      ).stream({
+      const list = ExtensionConfig.chatModelList();
+      const chatStream = createChatStream(list[0]);
+      const result = chatStream({
         messages: [
           {
             role: 'user',
@@ -477,7 +443,19 @@ export const EnvironmentConfigurationRouter = t.router({
       return observable<string>((ob) => {
         (async () => {
           for await (const item of result) {
-            ob.next(item.content);
+            let textPart;
+            if (
+              item.type === 'text_delta' &&
+              (textPart = item.partial.content.find(
+                (item) => item.type === 'text',
+              ))
+            ) {
+              ob.next(textPart.text);
+            } else if (item.type === 'done') {
+              ob.next(
+                item.message.content.find((item) => item.type === 'text')!.text,
+              );
+            }
           }
           ob.complete();
         })();

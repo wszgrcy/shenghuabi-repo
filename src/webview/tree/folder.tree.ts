@@ -56,21 +56,7 @@ export class FolderTree
             },
           ],
         },
-        {
-          label: `对话模板`,
-          children: [
-            {
-              label: `选中处理位置`,
-              value: FolderName.selectionPromptDir,
-              isFile: true,
-            },
-            {
-              label: `通用位置`,
-              value: FolderName.commonPromptDir,
-              isFile: true,
-            },
-          ],
-        },
+
         {
           label: `工作流`,
           children: [

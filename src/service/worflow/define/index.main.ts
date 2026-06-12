@@ -12,4 +12,3 @@ export * from './template/main';
 // export * from './condition/main';
 // export * from './workflow-run/main';
 export * from './parse-to-tts/main';
-export * from './chat-vl/main';

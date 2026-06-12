@@ -1,0 +1,19 @@
+<div class="card bg-base-100 shadow-sm">
+  <div class="card-body">
+    <h2 class="card-title">
+      @if (props$$()['title']; as title) {
+        <div class="text-center flex-1">
+          {{ title }}
+        </div>
+      }
+      <button class="btn btn-circle btn-sm btn-ghost btn-error">
+        <span class="material-icons" (click)="reset()">redo</span>
+      </button>
+    </h2>
+    @for (child of children$$(); track $index) {
+      <ng-container
+        *ngTemplateOutlet="fieldTemplateRef; context: { $implicit: child }"
+      ></ng-container>
+    }
+  </div>
+</div>

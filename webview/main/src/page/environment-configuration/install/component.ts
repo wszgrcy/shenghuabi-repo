@@ -32,8 +32,8 @@ import {
   FileLineDefine,
   createProgress,
 } from '../const';
-import { ChatParamsListDefine } from '@shenghuabi/openai/define';
 import { InstallSchemaHandle } from '@fe/form/schema-handle/chat.schema-handle';
+import { ModelConfigDefine } from '@shenghuabi/openai/define';
 const device = [
   { label: 'cpu', value: 'cpu' },
   { label: 'dml', value: 'dml', description: 'windows directml' },
@@ -534,7 +534,15 @@ const Define = v.pipe(
         ),
         v.pipe(
           v.object({
-            chatModelList: v.pipe(v.optional(ChatParamsListDefine)),
+            chatModelList: v.pipe(
+              v.optional(v.array(ModelConfigDefine)),
+              setComponent('label-chip-array'),
+              v.description('对话模型列表,目前用于切换使用'),
+              actions.inputs.patch({
+                displayKey: 'name',
+                placeholder: '请添加配置',
+              }),
+            ),
           }),
           v.title('模型配置列表'),
         ),
@@ -790,7 +798,7 @@ export class InstallConfigurationComponent implements OnInit {
     });
     this.#checkUpdate();
     this.#client.environment.getConfiguration.query().then((data) => {
-      this.model$.set(data);
+      this.model$.set(data as any);
     });
   }
 

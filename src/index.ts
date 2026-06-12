@@ -20,9 +20,6 @@ import {
 } from './token';
 import { HanyuService } from './service/language';
 import { CommandService } from './service/command.service';
-import { AiChatProvider } from './webview/custom-sidebar/ai-chat.service';
-import { PromptTree } from './webview/custom-sidebar/prompt.tree';
-import { ChatHistoryTree } from './webview/custom-sidebar/chat/chat.history.tree';
 import { MindEditorProvider } from './webview/custom-editor/mind-editor2';
 import { KnowledgeCreateProvider } from './webview/custom-sidebar/knowledge/knowledge-create.service';
 import { KnowledgeTree } from './webview/custom-sidebar/knowledge/knowledge.tree';
@@ -74,7 +71,6 @@ import {
   Text2VecToken,
   TextSplitterToken,
 } from '@shenghuabi/knowledge/knowledge';
-import { ChatService } from './service/ai/chat.service';
 import { LogToken } from '@shenghuabi/knowledge/util';
 import { ChatUtilService } from './service/util/chat.util.service';
 
@@ -110,7 +106,6 @@ import {
 import { ReRankerService } from './service/external-call/ranker/ranker.service';
 
 import { OPENAI_MODULE, OpenAIConfig } from '@shenghuabi/openai';
-import { captureException } from '@sentry/node';
 import { TTSEditorProvider } from './webview/custom-editor/tts-editor';
 import { LLMLauncherService } from './service/llm.launcher.service';
 import { isString } from 'lodash-es';
@@ -118,7 +113,6 @@ import { deepClone } from '@cyia/util';
 import { createMessage2Log } from '@cyia/dl';
 import { DownloadService } from './service/download.service';
 import {
-  ChatServiceToken,
   InlineNodeService,
   NodeRunnerBase,
   WORKFLOW_MODULE,
@@ -158,7 +152,6 @@ export async function activate(context: vscode.ExtensionContext) {
       // 工作流相关
       ...WORKFLOW_MODULE.provider,
       WorkflowNativeSelectService,
-      { provide: ChatServiceToken, useClass: ChatService },
       {
         provide: WorkflowConfigToken,
         useFactory: () => {
@@ -190,7 +183,8 @@ export async function activate(context: vscode.ExtensionContext) {
             if (!setResult) {
               return { content: '[[工作流未选择]]' };
             }
-            const workflow = await editorWorkflowService.getWorkflow('image-parser');
+            const workflow =
+              await editorWorkflowService.getWorkflow('image-parser');
             const result = await workflowExec.exec(
               workflow,
               {
@@ -284,13 +278,6 @@ export async function activate(context: vscode.ExtensionContext) {
                     });
                   }
                   return;
-                },
-                captureException(error) {
-                  captureException(error);
-                },
-                history: {
-                  enable: ExtensionConfig.chatHistory.enable(),
-                  dir: workspace.dir[FolderName.chatHistory](),
                 },
               }) as OpenAIConfig,
           );
@@ -490,13 +477,7 @@ export async function activate(context: vscode.ExtensionContext) {
     },
   );
   // ai对话
-  vscode.window.registerWebviewViewProvider(
-    AiChatProvider.viewType,
-    injector.get(AiChatProvider),
-    {
-      webviewOptions: { retainContextWhenHidden: true },
-    },
-  );
+
   // 知识库创建
   vscode.window.registerWebviewViewProvider(
     KnowledgeCreateProvider.viewType,
@@ -533,14 +514,11 @@ export async function activate(context: vscode.ExtensionContext) {
     injector.get(KnowledgeQueryResultTree),
   );
   // 提示词模板
-  vscode.window.registerTreeDataProvider(
-    PromptTree.viewId,
-    injector.get(PromptTree),
-  );
-  vscode.window.registerTreeDataProvider(
-    ChatHistoryTree.viewId,
-    injector.get(ChatHistoryTree),
-  );
+
+  // vscode.window.registerTreeDataProvider(
+  //   ChatHistoryTree.viewId,
+  //   injector.get(ChatHistoryTree),
+  // );
   vscode.window.registerTreeDataProvider(
     WorkflowTree.viewType,
     injector.get(WorkflowTree),
@@ -640,7 +618,6 @@ export async function activate(context: vscode.ExtensionContext) {
               root: {
                 injector,
                 FileParserToken,
-                ChatService,
                 FileParserService,
                 KnowledgeManagerService: CustomKnowledgeManagerService,
                 OCRService,
