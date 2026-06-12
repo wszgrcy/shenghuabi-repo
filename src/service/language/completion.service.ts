@@ -257,14 +257,16 @@ export class CompletionService extends RootStaticInjectOptions {
           isEditor = true;
           this.activatedChatData = { location2: req.location2, stream: stream };
           const filePath = req.location2.document.uri.fsPath;
-          const data = this.#selectedEditorTemplate.get(filePath)!;
-          const result = fm(
-            bufferDecodeToText(
-              await vscode.workspace.fs.readFile(data.useFilePath),
-            ),
-          );
-          systemPrompt = result.body;
-          editorSupportTools = data.tools;
+          const data = this.#selectedEditorTemplate.get(filePath);
+          if (data) {
+            const result = fm(
+              bufferDecodeToText(
+                await vscode.workspace.fs.readFile(data.useFilePath),
+              ),
+            );
+            systemPrompt = result.body;
+            editorSupportTools = data.tools;
+          }
         } else {
           if (req.modeInstructions2?.uri) {
             const data = bufferDecodeToText(
