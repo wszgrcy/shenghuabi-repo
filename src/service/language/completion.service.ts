@@ -476,13 +476,10 @@ export class CompletionService extends RootStaticInjectOptions {
         token.onCancellationRequested((e) => {
           result.abort();
         });
-        let lastEvent: AgentMessage[] | undefined;
-        let editToolCalled = false;
         result.subscribe((event) => {
           // console.log(event);
           switch (event.type) {
             case 'agent_end': {
-              lastEvent = event.messages;
               break;
             }
             case 'agent_start': {
@@ -552,8 +549,7 @@ export class CompletionService extends RootStaticInjectOptions {
               break;
             }
             case 'tool_execution_end': {
-              editToolCalled = event.toolName === 'replace-select-string';
-              if (editToolCalled) {
+              if (event.toolName === 'replace-select-string') {
                 result.abort();
               }
               break;
@@ -573,19 +569,7 @@ export class CompletionService extends RootStaticInjectOptions {
           }
         });
         await result.prompt(req.prompt);
-        if (isEditor && !editToolCalled && lastEvent) {
-          const text = lastEvent
-            .find((item) => item.role === 'assistant')
-            ?.content.find((item) => item.type === 'text')?.text;
-          if (text) {
-            await vscode.lm.invokeTool('inline_chat_exit', {
-              toolInvocationToken: req.toolInvocationToken,
-              input: {
-                response: text,
-              },
-            });
-          }
-        }
+
         return;
       },
     );

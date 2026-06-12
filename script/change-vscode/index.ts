@@ -128,7 +128,8 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
           replace: '"cd build && npm run typecheck"',
         },
         {
-          query: 'property:has(>::children(0)[value*="watch-copilot"])::children(1)',
+          query:
+            'property:has(>::children(0)[value*="watch-copilot"])::children(1)',
           replace: '""',
           description: 'copilot部分功能删除',
         },
@@ -1086,6 +1087,16 @@ window.customElements.define(C_EL_NAME, CustomElement);`,
 			})
 		}`,
           description: `搜索支持`,
+        },
+      ],
+    },
+    {
+      path: 'src/vs/workbench/contrib/inlineChat/browser/inlineChatController.ts',
+      list: [
+        {
+          query: `CallExpression:like(InlineChatZoneWidget) PropertyAssignment:has(>Identifier[value=filter]) ArrowFunction`,
+          replace: `()=>{return true}`,
+          description: `内联对话显示`,
         },
       ],
     },
