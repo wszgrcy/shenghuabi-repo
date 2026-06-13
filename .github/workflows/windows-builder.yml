@@ -60,11 +60,11 @@ jobs:
       - run: pnpm i
         env:
           ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
-      - name: MSVC
-        uses: ilammy/msvc-dev-cmd@v1.13.0
-        with:
-          arch: x64
-          vsversion: '2022'
+      # - name: MSVC
+      #   uses: ilammy/msvc-dev-cmd@v1.13.0
+      #   with:
+      #     arch: x64
+      #     vsversion: '2022'
       - name: init
         run: |
           git config --global user.name "wszgrcy"
