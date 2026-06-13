@@ -28,6 +28,15 @@ export async function main() {
     (async () => {
       console.log('准备修改VSCODE源码');
       if (!isCI) {
+        // 在这里安装依赖,因为lint需要提前安装
+        await $({
+          stdio: 'inherit',
+          cwd: vscodeCWD,
+          env: ENV,
+          extendEnv: true,
+          shell: enableShell,
+        })(`npm`, ['install']);
+        console.log('依赖安装完成');
         await $({
           stdio: 'inherit',
           cwd: vscodeCWD,
@@ -65,15 +74,7 @@ export async function main() {
         ['--cwd', vscodeCWD, './script/change-vscode/index.ts'],
       );
       console.log('准备安装依赖');
-      // 在这里安装依赖,因为lint需要提前安装
-      await $({
-        stdio: 'inherit',
-        cwd: vscodeCWD,
-        env: ENV,
-        extendEnv: true,
-        shell: enableShell,
-      })(`npm`, ['install']);
-      console.log('依赖安装完成');
+
       await $({ stdio: 'inherit', shell: enableShell })(`tsx`, [
         './script/change-vscode/remove-unuse-import.ts',
       ]);
