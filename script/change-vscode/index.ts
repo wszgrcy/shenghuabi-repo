@@ -122,11 +122,11 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
     {
       path: './package.json',
       list: [
-        {
-          query:
-            'property:has(>string[value*="update-build-ts-version"])::children(1)',
-          replace: '"cd build && npm run typecheck"',
-        },
+        // {
+        //   query:
+        //     'property:has(>string[value*="update-build-ts-version"])::children(1)',
+        //   replace: '"cd build && npm run typecheck"',
+        // },
         {
           query:
             'property:has(>::children(0)[value*="watch-copilot"])::children(1)',
