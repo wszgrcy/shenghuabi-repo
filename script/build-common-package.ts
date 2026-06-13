@@ -48,14 +48,14 @@ export async function main() {
           env: ENV,
         })(`git`, [`clean`, `-f`]);
       }
-      console.log('依赖安装');
-      await $({
-        stdio: 'inherit',
-        cwd: vscodeCWD,
-        env: ENV,
-        extendEnv: true,
-        shell: enableShell,
-      })(`npm`, ['ci']);
+      // console.log('依赖安装');
+      // await $({
+      //   stdio: 'inherit',
+      //   cwd: vscodeCWD,
+      //   env: ENV,
+      //   extendEnv: true,
+      //   shell: enableShell,
+      // })(`npm`, ['ci']);
       console.log('移除hooks');
 
       await $({
