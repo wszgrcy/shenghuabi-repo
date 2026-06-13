@@ -44,7 +44,7 @@ jobs:
     env:
       PUBLISH_VERSION: ${{ needs.check-version-branch.outputs.version }}
     if: ${{ needs.check-version-branch.outputs.should-build == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/setup-python@v5
         with:
