@@ -6,6 +6,7 @@ import {
   CreateKnowledgeWithType,
   DictImportConfigWithType,
   EdgeAttr,
+  KnowledgeCommonEditDefine,
   KnowledgeEditType,
   KnowledgeQueryOptions,
   NodeAttr,
@@ -318,21 +319,20 @@ export const KnowledgeRouter = t.router({
     subject.next(input);
     return;
   }),
-  getKnowledgeConfig: t.procedure
-    .input(v.any())
-    .query(async ({ input, ctx }) => {
-      const service = ctx.injector.get(KnowledgeConfigService);
-      const config = service.originConfig$$()[(ctx as any)['name']];
-      return {
-        graphIndex: config.graphIndex,
-        nameSuffix: '',
-        collection: config.collectionList.find(
-          (item) => item.collectionName === config.activateCollection,
-        )!,
-        activateCollection: config.activateCollection,
-        collectionList: config.collectionList,
-      };
-    }),
+  getKnowledgeConfig: t.procedure.query(async ({ input, ctx }) => {
+    const service = ctx.injector.get(KnowledgeConfigService);
+    const config = service.originConfig$$()[(ctx as any)['name']];
+    return {
+      graphIndex: config.graphIndex,
+      nameSuffix: '',
+      collection: config.collectionList.find(
+        (item) => item.collectionName === config.activateCollection,
+      )!,
+      activateCollection: config.activateCollection,
+      collectionList: config.collectionList,
+      description: config.description,
+    };
+  }),
   updateKnowledgeVector: t.procedure
     .input(v.custom<KnowledgeEditType>(Boolean))
     .query(async ({ input, ctx }) => {
@@ -378,6 +378,16 @@ export const KnowledgeRouter = t.router({
         activateCollection: config.activateCollection,
         collectionList: config.collectionList,
       };
+    }),
+  changeKnowledgeCommonData: t.procedure
+    .input(KnowledgeCommonEditDefine)
+    .query(async ({ input, ctx }) => {
+      const name = (ctx as any)['name'];
+      const service = contextDynamicInject(
+        ctx.injector,
+        CustomKnowledgeManagerService,
+      );
+      return service.changeKnowledgeCommonData(name, input);
     }),
   deletCollectionItem: t.procedure
     .input(v.string())

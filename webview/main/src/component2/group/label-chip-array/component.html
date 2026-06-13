@@ -20,16 +20,15 @@
         </mat-chip-row>
       }
     </div>
-    <mat-form-field appearance="outline">
-      <input
-        matInput
-        [placeholder]="placeholder()!"
-        [matChipInputFor]="chipGrid"
-        [matChipInputSeparatorKeyCodes]="list"
-        [matChipInputAddOnBlur]="true"
-        (matChipInputTokenEnd)="add($event)"
-      />
-    </mat-form-field>
+    <input
+      type="text"
+      class="input input-sm"
+      [placeholder]="placeholder()!"
+      [matChipInputFor]="chipGrid"
+      [matChipInputSeparatorKeyCodes]="list"
+      [matChipInputAddOnBlur]="true"
+      (matChipInputTokenEnd)="add($event)"
+    />
   </div>
 </mat-chip-grid>
 

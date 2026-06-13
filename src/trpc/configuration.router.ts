@@ -33,6 +33,7 @@ import { QdrantServerService } from '@shenghuabi/knowledge/qdrant';
 import { LanguageMap } from '@shenghuabi/python-addon/define';
 import { createChatStream } from '@shenghuabi/openai';
 import { ChatService } from '../service/ai/chat.service';
+import { ModelConfigDefine } from '@shenghuabi/openai/define';
 
 export const EnvironmentConfigurationRouter = t.router({
   saveDefaultDir: t.procedure
@@ -107,7 +108,7 @@ export const EnvironmentConfigurationRouter = t.router({
           modelName: modelConfig?.model,
         },
       },
-      chatModelList: chatService.modelList$$(),
+      chatModelList: ExtensionConfig.chatModelList(),
     };
   }),
 
@@ -424,43 +425,45 @@ export const EnvironmentConfigurationRouter = t.router({
 
   chat: t.router({
     //对话应该是直接测试就ok了不需要太多
-    test: t.procedure.input(v.any()).subscription(async ({ input, ctx }) => {
-      const list = ExtensionConfig.chatModelList();
-      const chatStream = createChatStream(list[0]);
-      const result = chatStream({
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: `/no_think 根据上下文对提出的问题返回答案及相关信息\n上下文:本软件是AI加持的文本编辑器,支持脑图,对话,知识库,工作流,补全,ocr,tts等功能,名叫生花笔,官方论坛 https://bbs.shenghuabi.site \n问题:请问这是什么软件?`,
-              },
-            ],
-          },
-        ],
-      });
-      return observable<string>((ob) => {
-        (async () => {
-          for await (const item of result) {
-            let textPart;
-            if (
-              item.type === 'text_delta' &&
-              (textPart = item.partial.content.find(
-                (item) => item.type === 'text',
-              ))
-            ) {
-              ob.next(textPart.text);
-            } else if (item.type === 'done') {
-              ob.next(
-                item.message.content.find((item) => item.type === 'text')!.text,
-              );
+    test: t.procedure
+      .input(v.custom<v.InferOutput<typeof ModelConfigDefine>>(Boolean))
+      .subscription(async ({ input, ctx }) => {
+        const chatStream = createChatStream(input);
+        const result = chatStream({
+          messages: [
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: `/no_think 根据上下文对提出的问题返回答案及相关信息\n上下文:本软件是AI加持的文本编辑器,支持脑图,对话,知识库,工作流,补全,ocr,tts等功能,名叫生花笔,官方论坛 https://bbs.shenghuabi.site \n问题:请问这是什么软件?`,
+                },
+              ],
+            },
+          ],
+        });
+        return observable<string>((ob) => {
+          (async () => {
+            for await (const item of result) {
+              let textPart;
+              if (
+                item.type === 'text_delta' &&
+                (textPart = item.partial.content.find(
+                  (item) => item.type === 'text',
+                ))
+              ) {
+                ob.next(textPart.text);
+              } else if (item.type === 'done') {
+                ob.next(
+                  item.message.content.find((item) => item.type === 'text')!
+                    .text,
+                );
+              }
             }
-          }
-          ob.complete();
-        })();
-      });
-    }),
+            ob.complete();
+          })();
+        });
+      }),
   }),
   showChannel: t.procedure.input(v.string()).query(async ({ input, ctx }) => {
     const channel = ctx.injector.get(ChannelService);

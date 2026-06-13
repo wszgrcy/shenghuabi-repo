@@ -483,15 +483,13 @@ export const CONFIG = v.object({
       ),
       // 把原版也加上
       huggingfaceModelMirror: v.pipe(
-        v.optional(v.string(), 'hg-model.tbontop.top'),
+        v.optional(v.string(), 'hf-mirror.com'),
         v.description(
           [
             `原始: huggingface.co`,
             `huggingface模型下载镜像:`,
             `- hf-mirror: hf-mirror.com`,
             `- hf-mirror: alpha.hf-mirror.com`,
-            `- cloudflare镜像: hg-model.tbontop.top`,
-            `- edgeone镜像: hg-model2.tbontop.top`,
           ].join('\n'),
         ),
       ),

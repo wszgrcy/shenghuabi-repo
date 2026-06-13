@@ -39,6 +39,11 @@ import {
 } from '@earendil-works/pi-coding-agent';
 import { getModelConfig } from '@shenghuabi/openai';
 import { ChatService } from '../ai/chat.service';
+const KnowledgeMap = {
+  dict: '字典',
+  knowledge: '普通知识库',
+  article: '文章',
+};
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -47,10 +52,27 @@ export function isChatStream(
   );
 }
 
-function isEditorData(
-  location: vscode.ChatRequest['location2'],
-): location is vscode.ChatRequestEditorData {
-  return location instanceof vscode.ChatRequestEditorData;
+function formatSkillsForSystemPrompt(
+  skills: readonly vscode.ChatSkill[],
+): string {
+  const visibleSkills = skills.filter((skill) => !skill.disableModelInvocation);
+  if (visibleSkills.length === 0) return '';
+  const lines = [
+    `以下技能仅当输入内容明确匹配某个技能/指令的描述时，才允许读取文件。绝对禁止扫描、预加载或一次性读取所有文件。禁止重复性读取文件`,
+    '',
+    '<可用技能>',
+  ];
+
+  for (const skill of visibleSkills) {
+    lines.push('  <技能>');
+    lines.push(`    <名字>${skill.name}</名字>`);
+    lines.push(`    <描述>${skill.description}</描述>`);
+    lines.push(`    <位置>${skill.uri.fsPath}</位置>`);
+    lines.push('  </技能>');
+  }
+
+  lines.push('</可用技能>');
+  return lines.join('\n');
 }
 interface InlineEditorData {
   /** agent路径 */
@@ -156,9 +178,9 @@ export class CompletionService extends RootStaticInjectOptions {
                     };
                   }
                 }
-                if (!context.valibotAction.type) {
-                  console.log(context.valibotAction);
-                }
+                // if (!context.valibotAction.type) {
+                //   console.log(context.valibotAction);
+                // }
                 return context.jsonSchema;
               },
             })
@@ -255,10 +277,10 @@ export class CompletionService extends RootStaticInjectOptions {
     });
     // todo
     const list = this.#chat.modelList$$();
-
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor2',
       async (req, context, stream, token) => {
+        let list2 = await vscode.chat.getSkills(token);
         let lastReq = context.history.findLast(
           (item) => item instanceof vscode.ChatRequestTurn,
         );
@@ -336,105 +358,112 @@ export class CompletionService extends RootStaticInjectOptions {
           const selection = location2.document.getText(location2.selection);
           fileContextParts.push(`<选中内容>${selection}</选中内容>`);
         }
+        fileContextParts.push(formatSkillsForSystemPrompt(list2));
         const model = list.find((item) => item.name === req.model.id)!;
         const modelConfig = getModelConfig(model);
+        let knowledgeList = [];
+        const tools = [
+          ...vscode.lm.tools
+            .filter((item) => {
+              if (item.name === 'replace-select-string') {
+                return isEditor;
+              } else if (isEditor) {
+                const name =
+                  (item.source && 'id' in item.source
+                    ? `${item.source.id}/`
+                    : '') + item.name;
+                return editorSupportTools!.includes(name);
+              }
+              let toolEnable =
+                (req.tools.has(item) && req.tools.get(item)) ||
+                req.modeInstructions2?.toolReferences?.some(
+                  (item2) => item.name === item2.name,
+                ) ||
+                req.toolReferences?.some((item2) => item.name === item2.name);
+              if (item.name === 'knowledge') {
+                knowledgeList = this.#knowledgeConfig
+                  .originConfigList$()
+                  .map((item) => {
+                    return `<知识库><名字>${item.name}</名字><描述>${item.description ?? ''}</描述><类型>${item.graphIndex ? '索引知识库' : KnowledgeMap[item.type]}</类型></知识库>`;
+                  });
+                fileContextParts.push(
+                  `<可用知识库>${knowledgeList.join('')}</可用知识库>`,
+                );
+              }
+              return toolEnable;
+            })
+            .map((item) => {
+              return {
+                label: '',
+                parameters: item.inputSchema ?? toJsonSchema(v.object({})),
+                description: item.description,
+                name: item.name,
+                execute: async (id, params, signal, onUpdate) => {
+                  const result = await vscode.lm.invokeTool(item.name, {
+                    input: params as any,
+                    toolInvocationToken: req.toolInvocationToken,
+                  });
+
+                  const textList = result.content.filter((item) => {
+                    return item instanceof vscode.LanguageModelTextPart;
+                  });
+                  if (textList.length) {
+                    return {
+                      content: result.content
+                        .filter((item) => {
+                          return item instanceof vscode.LanguageModelTextPart;
+                        })
+                        .map((item) => {
+                          return { text: item.value, type: 'text' };
+                        }),
+                      details: '',
+                    };
+                  }
+                  const dataList = result.content.filter((item) => {
+                    return item instanceof vscode.LanguageModelDataPart;
+                  });
+                  if (dataList.length) {
+                    const imageList = dataList.filter((item) =>
+                      item.mimeType.startsWith('image'),
+                    );
+                    if (imageList.length) {
+                      return {
+                        content: imageList.map((item) => {
+                          return {
+                            type: 'image',
+                            data: bufferToImageBase64({
+                              type: item.mimeType,
+                              buffer: item.data,
+                            }),
+                            mimeType: item.mimeType,
+                          };
+                        }),
+                        details: '',
+                      };
+                    }
+                  }
+                  return {
+                    content: [{ type: 'text', text: '当前仅支持图片或文本' }],
+                    details: '',
+                  };
+                },
+              } satisfies AgentTool;
+            }),
+          createReadTool(this.#workspace.nFolder(), {
+            autoResizeImages: false,
+          }),
+          createWriteTool(this.#workspace.nFolder()),
+          createEditTool(this.#workspace.nFolder()),
+          createLsTool(this.#workspace.nFolder()),
+          createGrepTool(this.#workspace.nFolder()),
+          // createFindTool(this.#workspace.nFolder()),
+        ];
         const result = new Agent({
           initialState: {
             systemPrompt: systemPrompt
               ? `${currentAgentName}\n${systemPrompt.trim()}`
               : undefined,
-            tools: [
-              ...vscode.lm.tools
-                .filter((item) => {
-                  if (item.name === 'replace-select-string') {
-                    return isEditor;
-                  } else if (isEditor) {
-                    const name =
-                      (item.source && 'id' in item.source
-                        ? `${item.source.id}/`
-                        : '') + item.name;
-                    return editorSupportTools!.includes(name);
-                  }
-                  return (
-                    (req.tools.has(item) && req.tools.get(item)) ||
-                    req.modeInstructions2?.toolReferences?.some(
-                      (item2) => item.name === item2.name,
-                    ) ||
-                    req.toolReferences?.some(
-                      (item2) => item.name === item2.name,
-                    )
-                  );
-                })
-                .map((item) => {
-                  return {
-                    label: '',
-                    parameters: item.inputSchema ?? toJsonSchema(v.object({})),
-                    description: item.description,
-                    name: item.name,
-                    execute: async (id, params, signal, onUpdate) => {
-                      const result = await vscode.lm.invokeTool(item.name, {
-                        input: params as any,
-                        toolInvocationToken: req.toolInvocationToken,
-                      });
-
-                      const textList = result.content.filter((item) => {
-                        return item instanceof vscode.LanguageModelTextPart;
-                      });
-                      if (textList.length) {
-                        return {
-                          content: result.content
-                            .filter((item) => {
-                              return (
-                                item instanceof vscode.LanguageModelTextPart
-                              );
-                            })
-                            .map((item) => {
-                              return { text: item.value, type: 'text' };
-                            }),
-                          details: '',
-                        };
-                      }
-                      const dataList = result.content.filter((item) => {
-                        return item instanceof vscode.LanguageModelDataPart;
-                      });
-                      if (dataList.length) {
-                        const imageList = dataList.filter((item) =>
-                          item.mimeType.startsWith('image'),
-                        );
-                        if (imageList.length) {
-                          return {
-                            content: imageList.map((item) => {
-                              return {
-                                type: 'image',
-                                data: bufferToImageBase64({
-                                  type: item.mimeType,
-                                  buffer: item.data,
-                                }),
-                                mimeType: item.mimeType,
-                              };
-                            }),
-                            details: '',
-                          };
-                        }
-                      }
-                      return {
-                        content: [
-                          { type: 'text', text: '当前仅支持图片或文本' },
-                        ],
-                        details: '',
-                      };
-                    },
-                  } satisfies AgentTool;
-                }),
-              createReadTool(this.#workspace.nFolder(), {
-                autoResizeImages: false,
-              }),
-              createWriteTool(this.#workspace.nFolder()),
-              createEditTool(this.#workspace.nFolder()),
-              createLsTool(this.#workspace.nFolder()),
-              createGrepTool(this.#workspace.nFolder()),
-              // createFindTool(this.#workspace.nFolder()),
-            ],
+            tools: tools,
             messages: [
               {
                 role: 'user',

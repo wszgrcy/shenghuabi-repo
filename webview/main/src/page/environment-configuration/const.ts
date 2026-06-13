@@ -56,9 +56,6 @@ export function createProgress(inputs: {
   return v.pipe(
     NFCSchema,
     setComponent('progress'),
-    actions.inputs.set({
-      color: 'primary',
-    }),
     actions.inputs.patchAsync({
       info: inputs.info,
     }),

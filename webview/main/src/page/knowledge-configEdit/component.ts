@@ -13,10 +13,17 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 
-import { PiyingView, PiViewConfig } from '@piying/view-angular';
+import { PiyingView, PiViewConfig, actions } from '@piying/view-angular';
 
-import { KnowledgeEditFormDefine, KnowledgeEditType } from '@bridge/share';
+import {
+  deepClone,
+  KnowledgeCommonEditDefine,
+  KnowledgeEditFormDefine,
+  KnowledgeEditType,
+} from '@bridge/share';
 import { DefaultFormTypes, Wrappers } from '@fe/form/default-type-config';
+import * as v from 'valibot';
+import { filter } from 'rxjs';
 const FieldGlobalConfig = {
   types: DefaultFormTypes,
   wrappers: {
@@ -45,6 +52,23 @@ export default class KnowledgeCreate {
   extraPanelSet = new Set<string>();
 
   // 模型名 相关
+  commonSchema = v.pipe(
+    KnowledgeCommonEditDefine,
+    actions.hooks.merge({
+      allFieldsResolved: (field) => {
+        let rootControl = field.form.root;
+        rootControl.valueChanges
+          .pipe(
+            filter(() => {
+              return rootControl.touched || rootControl.dirty;
+            }),
+          )
+          .subscribe((value) => {
+            this.#trpc.knowledge.changeKnowledgeCommonData.query(value);
+          });
+      },
+    }),
+  );
   schema = KnowledgeEditFormDefine;
   options = {
     fieldGlobalConfig: FieldGlobalConfig,
@@ -53,9 +77,10 @@ export default class KnowledgeCreate {
   activateCollection$$ = computed(() => {
     return this.model().activateCollection;
   });
-  constructor() {}
+  commonModel = signal<any>(undefined);
   ngOnInit(): void {
-    this.#trpc.knowledge.getKnowledgeConfig.query(undefined).then((value) => {
+    this.#trpc.knowledge.getKnowledgeConfig.query().then((value) => {
+      this.commonModel.set(deepClone(value));
       this.model.set(value);
     });
   }

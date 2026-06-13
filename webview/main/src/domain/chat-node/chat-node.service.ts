@@ -205,7 +205,6 @@ export class ChatNodeService {
       ];
     },
     getUsageOutputs: async (value: any) => {
-      console.log('getUsageOutputs', value);
       return EntryList.find((item) => item.id === value)?.list ?? [];
     },
   };

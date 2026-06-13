@@ -67,7 +67,6 @@ export class ValidatePanelComponent {
   }
 
   reset(clear: boolean) {
-    console.log('充值?', clear);
     this.stopSignal.set({ clear });
   }
 }

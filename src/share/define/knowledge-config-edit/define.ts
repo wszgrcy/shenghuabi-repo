@@ -8,7 +8,11 @@ import {
   disableWhen,
   setComponent,
 } from '@piying/view-angular-core';
-import { ChunkSizeSchema, GroupIndexSchema } from '../knowledge/define';
+import {
+  ChunkSizeSchema,
+  DescriptionSchema,
+  GroupIndexSchema,
+} from '../knowledge/define';
 import { EmbeddingFormDefine } from '../embedding/define';
 import { map } from 'rxjs';
 
@@ -73,3 +77,7 @@ export const KnowledgeConfigItem = v.intersect([
   v.object({ name: v.string(), type }),
 ]);
 export type KnowledgeEditType = v.InferOutput<typeof KnowledgeEditFormDefine>;
+
+export const KnowledgeCommonEditDefine = v.object({
+  description: DescriptionSchema,
+});

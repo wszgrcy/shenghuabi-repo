@@ -3,18 +3,25 @@
 ## 使用指南
 
 - 软件的功能都是基于工作区实现, 请<command-button command="workbench.action.files.openFolder" check="workspace">选择/新建一个文件夹</command-button>
+
   > 未选择文件夹时部分功能将受到限制
+
 - 第一次使用时，建议使用<command-button command="open-environment-configuration" prefix check="configuration">环境配置页面</command-button>进行快速配置
+
   > 环境配置页面可以将ai部分配置快速的修改和安装
+
 - [版本更新日志](https://bbs.shenghuabi.site/c/9-category/9)
+- <command-button command="write-agent-file" prefix >写入全局代理文件(Agent)</command-button><command-button command="open-agent-dir" prefix >打开全局代理文件夹</command-button>
 
 ## 关于本软件
 
 - 网站唯一官网[生花笔](https://shenghuabi.top)
 - [交流论坛](https://bbs.shenghuabi.site)
+- [源码仓库](https://github.com/wszgrcy/shenghuabi-repo)
 - 本软件基于VSCode进行二次开发，融合AI对话,TTS,OCR,知识库与字典,脑图,使其对写作更加友好
 - 所有需要额外下载的工具都可以在国内网络环境下进行下载,只要按照顺序进行下载即可成功安装
-> 如果下载模型异常,则为huggingface限制,需要[设置token](https://bbs.shenghuabi.site/t/topic/309)
+  > 如果下载模型异常,则为huggingface限制,需要[设置token](https://bbs.shenghuabi.site/t/topic/309)
+
 ## 所有配置
 
 - 打开<command-button command="workbench.action.openWorkspaceSettingsFile" options='{"openToSide":true,"query":"shenghuabi"}'>设置文件</command-button>
@@ -388,7 +395,6 @@ let result = fetchEventSource('http://127.0.0.1:1127/workflow/stream', {
 ---
 
 ## 联系我
-
 
 - 官网 [https://shenghuabi.top](https://shenghuabi.top)
   > 目前仅提供下载用途

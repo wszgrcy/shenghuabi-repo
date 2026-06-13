@@ -5,6 +5,7 @@ import {
   GroupIndexSchema,
   NameSchema,
   GraphRagOptionsDefine,
+  DescriptionSchema,
 } from './define';
 import { EmbeddingTemplateObjectDefine } from '../knowledge-create/embeding-template';
 import { EmbeddingDefine, EmbeddingSizeSchema } from '../embedding/define';
@@ -33,6 +34,7 @@ export const KnowledgeTypeDefine = v.optional(
 export const KnowledgeItemDefine = v.intersect([
   v.object({
     name: NameSchema,
+    description: DescriptionSchema,
     type: KnowledgeTypeDefine,
     options: v.optional(DictOptionsDefine),
     /** 知识库索引 */

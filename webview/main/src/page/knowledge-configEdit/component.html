@@ -1,3 +1,12 @@
+<div>
+  <piying-view
+    [schema]="commonSchema"
+    [model]="commonModel()"
+    class="grid gap-2"
+    [options]="options"
+  ></piying-view>
+</div>
+
 @let columenList = ['select', 'collectionName', 'config', 'delete'];
 <mat-radio-group
   [value]="activateCollection$$()"

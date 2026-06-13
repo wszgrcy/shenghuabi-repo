@@ -1,8 +1,6 @@
-import { Component, input } from '@angular/core';
-import {
-  MatProgressBarModule,
-  ProgressBarMode,
-} from '@angular/material/progress-bar';
+import { Component, computed, input } from '@angular/core';
+import { MergeClassPipe } from '@piying-lib/angular-core';
+
 export interface ProgressInfo {
   message?: string;
   value?: number;
@@ -11,10 +9,22 @@ export interface ProgressInfo {
 @Component({
   selector: 'app-process',
   templateUrl: './component.html',
-  imports: [MatProgressBarModule],
+  imports: [MergeClassPipe],
 })
 export class ProgressComponent {
-  color = input<string>();
-  mode = input<ProgressBarMode>('buffer');
   info = input<ProgressInfo | undefined>();
+  color = computed(() => {
+    let type = this.info()?.type;
+    if (!type) {
+      return 'info';
+    } else if (type === 'error') {
+      return 'error';
+    } else if (type === 'end') {
+      return 'success';
+    }
+    return 'info';
+  });
+  colorClass$$ = computed(() => {
+    return `progress-${this.color()}`;
+  });
 }
