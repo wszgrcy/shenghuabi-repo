@@ -797,7 +797,7 @@ async function getDefaultZhLanguage(userDataPath = '',) {
       list: [
         {
           query: `FunctionDeclaration:has(>Identifier[value=prepareCopilotRipgrepShimTask]) Block`,
-          replace: '{return async ()=>{}}',
+          replace: '{return async ()=>{platform;arch;destinationFolderName}}',
           description: `去掉copilot`,
         },
         {
