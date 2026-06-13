@@ -86,6 +86,14 @@ export async function main() {
         `"构建时间:${new Date().toLocaleString('zh-cn')}"`,
       ]);
       console.log(`---VSCODE源码修改完成---`);
+      console.log('依赖安装');
+      await $({
+        stdio: 'inherit',
+        cwd: vscodeCWD,
+        env: ENV,
+        extendEnv: true,
+        shell: enableShell,
+      })(`npm`, ['ci']);
     })(),
   ]);
 

@@ -82,12 +82,15 @@ jobs:
         run: npm run build:vscode-output
       - name: 检查并处理parcel文件夹
         run: |
-          PARCEL_DIR="../VSCode-linux-x64/resources/app/node_modules/@parcel"
+          ls -lh ./node_modules
+          ls -lh ./node_modules/@parcel
+          ls -lh ./node_modules/@parcel/watcher-linux-x64-musl
+          PARCEL_DIR="../VSCode-linux-x64"
           if [ -d "$PARCEL_DIR" ]; then
-            echo "Parcel目录存在，列出内容："
+            echo "目录存在，列出内容："
             ls -la "$PARCEL_DIR"
           else
-            echo "Parcel目录不存在"
+            echo "目录不存在"
           fi
           
           WATCHER_MUSL="$PARCEL_DIR/watcher-linux-x64-musl"
