@@ -9,7 +9,7 @@ export async function removeUnuseImport() {
   console.log('准备移除未使用导入');
   // src/vs/workbench/contrib/debug/browser/debug.contribution.ts
   let VSCODE_REL_PATH = './lib/vscode';
-  let cwd = join(process.cwd(), VSCODE_REL_PATH, `/src/vs`);
+  let cwd = join(process.cwd(), VSCODE_REL_PATH);
 
   let instance = new ESLint({
     cwd,
@@ -50,12 +50,6 @@ export async function removeUnuseImport() {
 
   let fixCount = list.filter((result) => result.output).length;
   console.log(`已修复 ${fixCount} 个文件中的未使用导入`);
-
-  // 删除 extensions/copilot 文件夹
-  let copilotPath = join(process.cwd(), VSCODE_REL_PATH, 'extensions/copilot');
-  console.log(`准备删除文件夹: ${copilotPath}`);
-  await rm(copilotPath, { recursive: true, force: true });
-  console.log('已删除 extensions/copilot 文件夹');
 }
 
 removeUnuseImport();

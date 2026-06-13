@@ -22,7 +22,7 @@ export async function main() {
   let isCI = !!process.env['CI'];
   console.log('运行在集成环境', isCI);
 
-  const VSCODE_REL_PATH =  './lib/vscode';
+  const VSCODE_REL_PATH = './lib/vscode';
   let vscodeCWD = join(process.cwd(), VSCODE_REL_PATH);
   await Promise.all([
     (async () => {
@@ -54,6 +54,10 @@ export async function main() {
         env: ENV,
         extendEnv: true,
       })(`rimraf`, [path.join(vscodeCWD, `.git/hooks/pre-commit`)]);
+      console.log('移除拓展');
+      await $({ stdio: 'inherit', shell: enableShell })(`tsx`, [
+        './script/change-vscode/remove-copilot-extension.ts',
+      ]);
       console.log('修改代码');
       // await $({ stdio: 'inherit' })(`npm`, ['run', 'change:vscode']);
       await $({ stdio: 'inherit', shell: enableShell, env: ENV })(

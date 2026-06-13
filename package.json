@@ -50,7 +50,7 @@
     "vs-publish": "vsce publish --skip-license",
     "copy-assets": "rimraf ./build && node ./script/build.js && cpx \"dist/**/*\" ./build/dist && cpx \"webview/main-view/dist/**/*\" ./build/webview/main-view/dist && cpx ./LICENSE ./build && cpx \"package.nls.*\" ./build && cpx ./README.md ./build && cpx \"./l10n/**/*\" ./build/l10n && cpx \"docs/icon/**/*\" ./build/docs/icon",
     "build:contributes": "tsx ./script/build-contributes.ts && node ./.contributes-dist/index.mjs",
-    "change:vscode": "code-recycle --cwd ./lib/vscode ./script/change-vscode/index.ts && tsx ./script/change-vscode/remove-unuse-import.ts",
+    "change:vscode": "tsx ./script/change-vscode/remove-copilot-extension.ts && code-recycle --cwd ./lib/vscode ./script/change-vscode/index.ts && tsx ./script/change-vscode/remove-unuse-import.ts",
     "update:product": "tsx ./script/update-product.ts",
     "build:extension": "tsx ./script/build-extension",
     "build:common-package": "tsx ./script/build-common-package.ts",
