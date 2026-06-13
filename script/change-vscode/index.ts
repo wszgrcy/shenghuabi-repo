@@ -139,10 +139,10 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
           insertAfter: true,
           replace: `,
 
-    "build:common:win32":"npm run update-build-ts-version && npm run gulp vscode-win32-x64-min",
+    "build:common:win32":"npm run gulp vscode-win32-x64-min",
     "build:user:win32-x64":"npm run gulp vscode-win32-x64-inno-updater && npm run gulp vscode-win32-x64-user-setup",
     "build:system:win32-x64":"npm run gulp vscode-win32-x64-inno-updater && npm run gulp vscode-win32-x64-system-setup",
-    "build:linux":"npm run update-build-ts-version && npm run gulp vscode-linux-x64-min",
+    "build:linux":"npm run gulp vscode-linux-x64-min",
     "package:linux:deb":"npm run gulp vscode-linux-x64-prepare-deb && npm run gulp vscode-linux-x64-build-deb"`,
         },
         {
