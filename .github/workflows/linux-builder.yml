@@ -82,6 +82,7 @@ jobs:
         run: |
            ls ./node_modules
            ls ./node_modules/@parcel
+           rm -rf ./node_modules/@parcel/watcher-linux-x64-musl
         working-directory: './lib/vscode'
 
 
