@@ -80,27 +80,7 @@ jobs:
 
       - name: 通用output
         run: npm run build:vscode-output
-      - name: 检查并处理parcel文件夹
-        run: |
-          ls -lh ./node_modules
-          ls -lh ./node_modules/@parcel
-          ls -lh ./node_modules/@parcel/watcher-linux-x64-musl
-          PARCEL_DIR="../VSCode-linux-x64"
-          if [ -d "$PARCEL_DIR" ]; then
-            echo "目录存在，列出内容："
-            ls -la "$PARCEL_DIR"
-          else
-            echo "目录不存在"
-          fi
-          
-          WATCHER_MUSL="$PARCEL_DIR/watcher-linux-x64-musl"
-          if [ -d "$WATCHER_MUSL" ]; then
-            echo "watcher-linux-x64-musl存在，正在删除..."
-            rm -rf "$WATCHER_MUSL"
-            echo "删除成功"
-          else
-            echo "watcher-linux-x64-musl不存在"
-          fi
+
       - name: 构建
         run: npm run move:extension
       - name: 构建deb
