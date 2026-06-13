@@ -29,14 +29,7 @@ export async function main() {
       console.log('准备修改VSCODE源码');
       if (!isCI) {
         // 在这里安装依赖,因为lint需要提前安装
-        await $({
-          stdio: 'inherit',
-          cwd: vscodeCWD,
-          env: ENV,
-          extendEnv: true,
-          shell: enableShell,
-        })(`npm`, ['install']);
-        console.log('依赖安装完成');
+
         await $({
           stdio: 'inherit',
           cwd: vscodeCWD,
@@ -55,6 +48,14 @@ export async function main() {
           env: ENV,
         })(`git`, [`clean`, `-f`]);
       }
+      console.log('依赖安装');
+      await $({
+        stdio: 'inherit',
+        cwd: vscodeCWD,
+        env: ENV,
+        extendEnv: true,
+        shell: enableShell,
+      })(`npm`, ['install']);
       console.log('移除hooks');
 
       await $({

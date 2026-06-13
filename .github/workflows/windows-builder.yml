@@ -42,7 +42,7 @@ jobs:
       BUILD_SOURCEVERSION: ${{ needs.check-version-branch.outputs.version }}
       VSCODE_QUALITY: stable
     if: ${{ needs.check-version-branch.outputs.should-build == 'true' }}
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - uses: actions/setup-python@v5
         with:
@@ -68,7 +68,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1.13.0
         with:
           arch: x64
-          vsversion: '18'
+          vsversion: '2022'
       - name: init
         run: |
           git config --global user.name "wszgrcy"
