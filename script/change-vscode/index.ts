@@ -799,6 +799,12 @@ async function getDefaultZhLanguage(userDataPath = '',) {
           replace: '{return async ()=>{platform;arch;destinationFolderName}}',
           description: `去掉copilot`,
         },
+        {
+          query: `CallExpression:has(>Identifier[value=createAsar])>SyntaxList::children(4)::children(-1)`,
+          insertBefore: true,
+          description: `去掉@parcel/watcher-linux-x64-musl`,
+          replace: `,'**/@parcel/watcher-linux-x64-musl/**/*.node'`,
+        },
         // {
         //   query: `VariableDeclaration:has(>[value=packageTasks]) ArrayLiteralExpression CallExpression[value^=packageTask]`,
         //   delete: true,
@@ -810,19 +816,19 @@ async function getDefaultZhLanguage(userDataPath = '',) {
         //   delete: true,
         //   description: `普通构建时去掉,手动调用`,
         // },
-    //     {
-    //       query: `CallExpression[value^=BUILD_TARGETS] IfStatement:has(>[value^=platform])`,
-    //       replace: `let outputList = [packageTask(platform, arch, sourceFolderName, destinationFolderName, opts),
-		// 	prepareCopilotRipgrepShimTask(platform, arch, destinationFolderName)]
-		// if (platform === 'win32') {
-		// 	outputList.push(patchWin32DependenciesTask(destinationFolderName))
-		// }
-		// const vscodeOutputTask = task.define(\`vscode-output\${dashed(platform)}\${dashed(arch)}\`,
-		// 	task.series(...outputList)
-		// );
-    // task.task(vscodeOutputTask);`,
-    //       description: `普通构建时去掉,手动调用`,
-    //     },
+        //     {
+        //       query: `CallExpression[value^=BUILD_TARGETS] IfStatement:has(>[value^=platform])`,
+        //       replace: `let outputList = [packageTask(platform, arch, sourceFolderName, destinationFolderName, opts),
+        // 	prepareCopilotRipgrepShimTask(platform, arch, destinationFolderName)]
+        // if (platform === 'win32') {
+        // 	outputList.push(patchWin32DependenciesTask(destinationFolderName))
+        // }
+        // const vscodeOutputTask = task.define(\`vscode-output\${dashed(platform)}\${dashed(arch)}\`,
+        // 	task.series(...outputList)
+        // );
+        // task.task(vscodeOutputTask);`,
+        //       description: `普通构建时去掉,手动调用`,
+        //     },
       ],
     },
     {
