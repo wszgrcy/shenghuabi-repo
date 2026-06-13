@@ -47,10 +47,27 @@ export function isChatStream(
   );
 }
 
-function isEditorData(
-  location: vscode.ChatRequest['location2'],
-): location is vscode.ChatRequestEditorData {
-  return location instanceof vscode.ChatRequestEditorData;
+function formatSkillsForSystemPrompt(
+  skills: readonly vscode.ChatSkill[],
+): string {
+  const visibleSkills = skills.filter((skill) => !skill.disableModelInvocation);
+  if (visibleSkills.length === 0) return '';
+  const lines = [
+    `以下技能仅当输入内容明确匹配某个技能/指令的描述时，才允许读取文件。绝对禁止扫描、预加载或一次性读取所有文件。禁止重复性读取文件`,
+    '',
+    '<可用技能>',
+  ];
+
+  for (const skill of visibleSkills) {
+    lines.push('  <技能>');
+    lines.push(`    <名字>${skill.name}</名字>`);
+    lines.push(`    <描述>${skill.description}</描述>`);
+    lines.push(`    <位置>${skill.uri.fsPath}</位置>`);
+    lines.push('  </技能>');
+  }
+
+  lines.push('</可用技能>');
+  return lines.join('\n');
 }
 interface InlineEditorData {
   /** agent路径 */
@@ -255,10 +272,10 @@ export class CompletionService extends RootStaticInjectOptions {
     });
     // todo
     const list = this.#chat.modelList$$();
-
     vscode.chat.createChatParticipant(
       'shenghuabi.chat.editor2',
       async (req, context, stream, token) => {
+        let list2 = await vscode.chat.getSkills(token);
         let lastReq = context.history.findLast(
           (item) => item instanceof vscode.ChatRequestTurn,
         );
@@ -336,6 +353,7 @@ export class CompletionService extends RootStaticInjectOptions {
           const selection = location2.document.getText(location2.selection);
           fileContextParts.push(`<选中内容>${selection}</选中内容>`);
         }
+        fileContextParts.push(formatSkillsForSystemPrompt(list2));
         const model = list.find((item) => item.name === req.model.id)!;
         const modelConfig = getModelConfig(model);
         const result = new Agent({
