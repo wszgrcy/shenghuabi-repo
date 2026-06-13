@@ -78,8 +78,8 @@ jobs:
       - name: vscode构建
         run: npm run build:common-package
 
-      - name: 通用output
-        run: npm run build:vscode-output
+      # - name: 通用output
+      #   run: npm run build:vscode-output
 
       - name: 构建
         run: npm run move:extension

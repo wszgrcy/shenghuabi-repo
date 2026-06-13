@@ -93,8 +93,8 @@ jobs:
           # git init
           git add .
           git commit -m '1'
-      - name: 通用output
-        run: npm run build:vscode-output
+      # - name: 通用output
+      #   run: npm run build:vscode-output
       - name: 构建
         run: npm run move:extension
       - name: user打包

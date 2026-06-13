@@ -142,7 +142,6 @@ const fn: ScriptFunction = async (util, rule, host, injector) => {
     "build:common:win32":"npm run update-build-ts-version && npm run gulp vscode-win32-x64-min",
     "build:user:win32-x64":"npm run gulp vscode-win32-x64-inno-updater && npm run gulp vscode-win32-x64-user-setup",
     "build:system:win32-x64":"npm run gulp vscode-win32-x64-inno-updater && npm run gulp vscode-win32-x64-system-setup",
-    "build:output":"npm run gulp vscode-output-${platform()}-${arch()}",
     "build:linux":"npm run update-build-ts-version && npm run gulp vscode-linux-x64-min",
     "package:linux:deb":"npm run gulp vscode-linux-x64-prepare-deb && npm run gulp vscode-linux-x64-build-deb"`,
         },
@@ -800,30 +799,30 @@ async function getDefaultZhLanguage(userDataPath = '',) {
           replace: '{return async ()=>{platform;arch;destinationFolderName}}',
           description: `去掉copilot`,
         },
-        {
-          query: `VariableDeclaration:has(>[value=packageTasks]) ArrayLiteralExpression CallExpression[value^=packageTask]`,
-          delete: true,
-          description: `普通构建时去掉,手动调用`,
-          offset: [0, 1],
-        },
-        {
-          query: `VariableDeclaration:has(>[value=packageTasks]) ArrayLiteralExpression CallExpression[value^=prepareCopilotRipgrepShimTask]`,
-          delete: true,
-          description: `普通构建时去掉,手动调用`,
-        },
-        {
-          query: `CallExpression[value^=BUILD_TARGETS] IfStatement:has(>[value^=platform])`,
-          replace: `let outputList = [packageTask(platform, arch, sourceFolderName, destinationFolderName, opts),
-			prepareCopilotRipgrepShimTask(platform, arch, destinationFolderName)]
-		if (platform === 'win32') {
-			outputList.push(patchWin32DependenciesTask(destinationFolderName))
-		}
-		const vscodeOutputTask = task.define(\`vscode-output\${dashed(platform)}\${dashed(arch)}\`,
-			task.series(...outputList)
-		);
-    task.task(vscodeOutputTask);`,
-          description: `普通构建时去掉,手动调用`,
-        },
+        // {
+        //   query: `VariableDeclaration:has(>[value=packageTasks]) ArrayLiteralExpression CallExpression[value^=packageTask]`,
+        //   delete: true,
+        //   description: `普通构建时去掉,手动调用`,
+        //   offset: [0, 1],
+        // },
+        // {
+        //   query: `VariableDeclaration:has(>[value=packageTasks]) ArrayLiteralExpression CallExpression[value^=prepareCopilotRipgrepShimTask]`,
+        //   delete: true,
+        //   description: `普通构建时去掉,手动调用`,
+        // },
+    //     {
+    //       query: `CallExpression[value^=BUILD_TARGETS] IfStatement:has(>[value^=platform])`,
+    //       replace: `let outputList = [packageTask(platform, arch, sourceFolderName, destinationFolderName, opts),
+		// 	prepareCopilotRipgrepShimTask(platform, arch, destinationFolderName)]
+		// if (platform === 'win32') {
+		// 	outputList.push(patchWin32DependenciesTask(destinationFolderName))
+		// }
+		// const vscodeOutputTask = task.define(\`vscode-output\${dashed(platform)}\${dashed(arch)}\`,
+		// 	task.series(...outputList)
+		// );
+    // task.task(vscodeOutputTask);`,
+    //       description: `普通构建时去掉,手动调用`,
+    //     },
       ],
     },
     {
