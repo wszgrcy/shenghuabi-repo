@@ -535,7 +535,34 @@ const Define = v.pipe(
         v.pipe(
           v.object({
             chatModelList: v.pipe(
-              v.optional(v.array(ModelConfigDefine)),
+              v.optional(
+                v.array(
+                  v.pipe(
+                    v.intersect([
+                      ModelConfigDefine,
+                      v.object({
+                        __test: v.pipe(
+                          NFCSchema,
+                          setComponent('button'),
+                          actions.inputs.set({
+                            content: '测试',
+                          }),
+                          actions.inputs.patchAsync({
+                            clicked: (field) => {
+                              return () => {
+                                field.context['chatTest'](
+                                  field.parent.form.control!.value,
+                                );
+                              };
+                            },
+                          }),
+                        ),
+                      }),
+                    ]),
+                    asVirtualGroup(),
+                  ),
+                ),
+              ),
               setComponent('label-chip-array'),
               v.description('对话模型列表,目前用于切换使用'),
               actions.inputs.patch({
@@ -552,19 +579,6 @@ const Define = v.pipe(
     ),
     v.pipe(
       v.object({
-        __test: v.pipe(
-          NFCSchema,
-          setComponent('button'),
-          actions.inputs.set({
-            // type: 'flat',
-            content: '测试',
-          }),
-          actions.inputs.patchAsync({
-            clicked: (field) => {
-              return () => field.context['chatTest']();
-            },
-          }),
-        ),
         __testProgress: createProgress({
           info: (field) => field.context['testMessage$'],
         }),
@@ -748,17 +762,17 @@ export class InstallConfigurationComponent implements OnInit {
     return this.#client.fs.openFolder.query(filePath);
   }
 
-  chatTest() {
+  chatTest(config: v.InferOutput<typeof ModelConfigDefine>) {
     return new Promise<void>((resolve, reject) => {
-      let lastValue: string | undefined;
-      this.qdrantDownloadProgress$.set(StartDownloadMessage);
-      this.#client.environment.chat.test.subscribe(undefined, {
+      this.testMessage$.set({ message: '开始请求' });
+      let lastData: string | undefined;
+      this.#client.environment.chat.test.subscribe(config, {
         onData: (data) => {
+          lastData = data;
           this.testMessage$.set({ message: data });
-          lastValue = data;
         },
         onComplete: () => {
-          this.testMessage$.set(EndDownloadMessage);
+          this.testMessage$.set({ ...EndDownloadMessage, message: lastData });
           resolve();
         },
         onError: reject,
