@@ -107,7 +107,7 @@ export const EnvironmentConfigurationRouter = t.router({
           modelName: modelConfig?.model,
         },
       },
-      chatModelList: chatService.modelList$$(),
+      chatModelList: ExtensionConfig.chatModelList(),
     };
   }),
 
