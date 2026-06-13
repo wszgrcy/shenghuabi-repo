@@ -19,6 +19,8 @@ jobs:
   check-version-branch:
     runs-on: ubuntu-latest
     steps:
+      - run: cat /etc/os-release && echo "---" && uname -a
+
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:

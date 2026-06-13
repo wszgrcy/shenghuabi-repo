@@ -55,7 +55,7 @@ export async function main() {
         env: ENV,
         extendEnv: true,
         shell: enableShell,
-      })(`npm`, ['install']);
+      })(`npm`, ['ci']);
       console.log('移除hooks');
 
       await $({
