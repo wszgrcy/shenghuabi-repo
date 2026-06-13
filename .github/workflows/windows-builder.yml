@@ -3,15 +3,15 @@ run-name: shb-windows-builder
 on:
   push:
     branches:
-      - 'master'
+      - "master"
 
 permissions:
   contents: write
 env:
-  VSCODE_VERSION: '1.122.0'
+  VSCODE_VERSION: "1.122.0"
   ACTIONS_STEP_DEBUG: true
-  __platform: 'win32'
-  __arch: 'x64'
+  __platform: "win32"
+  __arch: "x64"
   SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
   channel: stable
 jobs:
@@ -21,14 +21,14 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
       - name: install-pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: '11.5.0'
+          version: "11.5.0"
       - run: pnpm i
         env:
-          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+          ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
       - id: check
         run: |
           npm run check-version
@@ -46,20 +46,20 @@ jobs:
     steps:
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
       - name: install-pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: '11.5.0'
+          version: "11.5.0"
 
       - run: pnpm i
         env:
-          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+          ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
       - run: |
           Get-ChildItem "C:\Program Files (x86)\Microsoft Visual Studio"
           Get-ChildItem "C:\Program Files\Microsoft Visual Studio"
@@ -68,7 +68,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1.13.0
         with:
           arch: x64
-          vsversion: '2022'
+          vsversion: "2022"
       - name: init
         run: |
           git config --global user.name "wszgrcy"
@@ -78,8 +78,8 @@ jobs:
         # if: ${{ steps.commonPackage.outputs.exist=='false' }}
         uses: actions/checkout@v6
         with:
-          repository: 'microsoft/vscode'
-          path: './lib/vscode'
+          repository: "microsoft/vscode"
+          path: "./lib/vscode"
           ref: ${{env.VSCODE_VERSION}}
 
       - name: vscode构建
@@ -101,16 +101,16 @@ jobs:
         shell: powershell
         run: |
           npm run build:user:win32-x64
-        working-directory: './lib/vscode'
+        working-directory: "./lib/vscode"
       - name: 查看vscode构建
         run: |
           tree /f .build/win32-x64
-        working-directory: './lib/vscode'
+        working-directory: "./lib/vscode"
       - name: github发行
         uses: softprops/action-gh-release@v3
         with:
           fail_on_unmatched_files: true
-          files: './lib/vscode/.build/win32-x64/**/*.{exe,deb,tar.gz}'
+          files: "./lib/vscode/.build/win32-x64/**/*.{exe,deb,tar.gz}"
           tag_name: ${{env.PUBLISH_VERSION}}
           name: ${{env.PUBLISH_VERSION}}
           draft: false
