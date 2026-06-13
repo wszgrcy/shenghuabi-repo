@@ -1653,8 +1653,8 @@
             },
             "huggingfaceModelMirror": {
               "type": "string",
-              "default": "hg-model.tbontop.top",
-              "markdownDescription": "原始: huggingface.co\nhuggingface模型下载镜像:\n- hf-mirror: hf-mirror.com\n- hf-mirror: alpha.hf-mirror.com\n- cloudflare镜像: hg-model.tbontop.top\n- edgeone镜像: hg-model2.tbontop.top"
+              "default": "hf-mirror.com",
+              "markdownDescription": "原始: huggingface.co\nhuggingface模型下载镜像:\n- hf-mirror: hf-mirror.com\n- hf-mirror: alpha.hf-mirror.com"
             },
             "strategy": {
               "type": "object",
