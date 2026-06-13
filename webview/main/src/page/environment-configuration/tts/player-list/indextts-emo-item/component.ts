@@ -53,7 +53,6 @@ export class IndexTTSEmoConfigComponent implements OnInit {
     return this.#client.environment.pythonAddon.getPlayerIdList
       .query(undefined)
       .then((a) => {
-        console.log('1', a);
         return a;
       });
   }
@@ -61,7 +60,6 @@ export class IndexTTSEmoConfigComponent implements OnInit {
     return this.#client.environment.pythonAddon.getEmoPlayerIdList
       .query(undefined)
       .then((a) => {
-        console.log('2', a);
         return a;
       });
   }

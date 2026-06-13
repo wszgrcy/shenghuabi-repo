@@ -33,6 +33,11 @@ export const NameSchema = v.pipe(
   v.title('知识库名'),
   layout({ keyPath: ['#'] }),
 );
+export const DescriptionSchema = v.pipe(
+  v.optional(v.string()),
+  v.title('描述'),
+  layout({ keyPath: ['#'] }),
+);
 
 export const DictOptionsDefine = v.pipe(
   v.object({

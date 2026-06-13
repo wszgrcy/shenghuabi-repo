@@ -44,6 +44,7 @@ import {
   deepClone,
   DictImportConfigWithType,
   FullKnowledgeCreateParseDefine,
+  KnowledgeCommonEditDefine,
 } from '../../share';
 import { parse, stringify } from 'yaml';
 import { deepEqual } from 'fast-equals';
@@ -389,6 +390,14 @@ export class CustomKnowledgeManagerService extends KnowledgeManagerService {
       writeConfig.collectionList.splice(index, 1);
     }
     return writeConfig;
+  }
+  async changeKnowledgeCommonData(
+    name: string,
+    data: v.InferOutput<typeof KnowledgeCommonEditDefine>,
+  ) {
+    let writeConfig = deepClone(this.#knowledgeConfig.originConfig$$()![name]);
+    writeConfig = { ...writeConfig, ...data };
+    await this.#writeConfig(writeConfig);
   }
   override async destroy(name: string): Promise<void> {
     await super.destroy(name);

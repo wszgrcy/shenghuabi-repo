@@ -39,6 +39,11 @@ import {
 } from '@earendil-works/pi-coding-agent';
 import { getModelConfig } from '@shenghuabi/openai';
 import { ChatService } from '../ai/chat.service';
+const KnowledgeMap = {
+  dict: '字典',
+  knowledge: '普通知识库',
+  article: '文章',
+};
 export function isChatStream(
   data: WorkflowStreamData,
 ): data is LLMWorkflowData {
@@ -173,9 +178,9 @@ export class CompletionService extends RootStaticInjectOptions {
                     };
                   }
                 }
-                if (!context.valibotAction.type) {
-                  console.log(context.valibotAction);
-                }
+                // if (!context.valibotAction.type) {
+                //   console.log(context.valibotAction);
+                // }
                 return context.jsonSchema;
               },
             })
@@ -356,103 +361,109 @@ export class CompletionService extends RootStaticInjectOptions {
         fileContextParts.push(formatSkillsForSystemPrompt(list2));
         const model = list.find((item) => item.name === req.model.id)!;
         const modelConfig = getModelConfig(model);
+        let knowledgeList = [];
+        const tools = [
+          ...vscode.lm.tools
+            .filter((item) => {
+              if (item.name === 'replace-select-string') {
+                return isEditor;
+              } else if (isEditor) {
+                const name =
+                  (item.source && 'id' in item.source
+                    ? `${item.source.id}/`
+                    : '') + item.name;
+                return editorSupportTools!.includes(name);
+              }
+              let toolEnable =
+                (req.tools.has(item) && req.tools.get(item)) ||
+                req.modeInstructions2?.toolReferences?.some(
+                  (item2) => item.name === item2.name,
+                ) ||
+                req.toolReferences?.some((item2) => item.name === item2.name);
+              if (item.name === 'knowledge') {
+                knowledgeList = this.#knowledgeConfig
+                  .originConfigList$()
+                  .map((item) => {
+                    return `<知识库><名字>${item.name}</名字><描述>${item.description ?? ''}</描述><类型>${item.graphIndex ? '索引知识库' : KnowledgeMap[item.type]}</类型></知识库>`;
+                  });
+                fileContextParts.push(
+                  `<可用知识库>${knowledgeList.join('')}</可用知识库>`,
+                );
+              }
+              return toolEnable;
+            })
+            .map((item) => {
+              return {
+                label: '',
+                parameters: item.inputSchema ?? toJsonSchema(v.object({})),
+                description: item.description,
+                name: item.name,
+                execute: async (id, params, signal, onUpdate) => {
+                  const result = await vscode.lm.invokeTool(item.name, {
+                    input: params as any,
+                    toolInvocationToken: req.toolInvocationToken,
+                  });
+
+                  const textList = result.content.filter((item) => {
+                    return item instanceof vscode.LanguageModelTextPart;
+                  });
+                  if (textList.length) {
+                    return {
+                      content: result.content
+                        .filter((item) => {
+                          return item instanceof vscode.LanguageModelTextPart;
+                        })
+                        .map((item) => {
+                          return { text: item.value, type: 'text' };
+                        }),
+                      details: '',
+                    };
+                  }
+                  const dataList = result.content.filter((item) => {
+                    return item instanceof vscode.LanguageModelDataPart;
+                  });
+                  if (dataList.length) {
+                    const imageList = dataList.filter((item) =>
+                      item.mimeType.startsWith('image'),
+                    );
+                    if (imageList.length) {
+                      return {
+                        content: imageList.map((item) => {
+                          return {
+                            type: 'image',
+                            data: bufferToImageBase64({
+                              type: item.mimeType,
+                              buffer: item.data,
+                            }),
+                            mimeType: item.mimeType,
+                          };
+                        }),
+                        details: '',
+                      };
+                    }
+                  }
+                  return {
+                    content: [{ type: 'text', text: '当前仅支持图片或文本' }],
+                    details: '',
+                  };
+                },
+              } satisfies AgentTool;
+            }),
+          createReadTool(this.#workspace.nFolder(), {
+            autoResizeImages: false,
+          }),
+          createWriteTool(this.#workspace.nFolder()),
+          createEditTool(this.#workspace.nFolder()),
+          createLsTool(this.#workspace.nFolder()),
+          createGrepTool(this.#workspace.nFolder()),
+          // createFindTool(this.#workspace.nFolder()),
+        ];
         const result = new Agent({
           initialState: {
             systemPrompt: systemPrompt
               ? `${currentAgentName}\n${systemPrompt.trim()}`
               : undefined,
-            tools: [
-              ...vscode.lm.tools
-                .filter((item) => {
-                  if (item.name === 'replace-select-string') {
-                    return isEditor;
-                  } else if (isEditor) {
-                    const name =
-                      (item.source && 'id' in item.source
-                        ? `${item.source.id}/`
-                        : '') + item.name;
-                    return editorSupportTools!.includes(name);
-                  }
-                  return (
-                    (req.tools.has(item) && req.tools.get(item)) ||
-                    req.modeInstructions2?.toolReferences?.some(
-                      (item2) => item.name === item2.name,
-                    ) ||
-                    req.toolReferences?.some(
-                      (item2) => item.name === item2.name,
-                    )
-                  );
-                })
-                .map((item) => {
-                  return {
-                    label: '',
-                    parameters: item.inputSchema ?? toJsonSchema(v.object({})),
-                    description: item.description,
-                    name: item.name,
-                    execute: async (id, params, signal, onUpdate) => {
-                      const result = await vscode.lm.invokeTool(item.name, {
-                        input: params as any,
-                        toolInvocationToken: req.toolInvocationToken,
-                      });
-
-                      const textList = result.content.filter((item) => {
-                        return item instanceof vscode.LanguageModelTextPart;
-                      });
-                      if (textList.length) {
-                        return {
-                          content: result.content
-                            .filter((item) => {
-                              return (
-                                item instanceof vscode.LanguageModelTextPart
-                              );
-                            })
-                            .map((item) => {
-                              return { text: item.value, type: 'text' };
-                            }),
-                          details: '',
-                        };
-                      }
-                      const dataList = result.content.filter((item) => {
-                        return item instanceof vscode.LanguageModelDataPart;
-                      });
-                      if (dataList.length) {
-                        const imageList = dataList.filter((item) =>
-                          item.mimeType.startsWith('image'),
-                        );
-                        if (imageList.length) {
-                          return {
-                            content: imageList.map((item) => {
-                              return {
-                                type: 'image',
-                                data: bufferToImageBase64({
-                                  type: item.mimeType,
-                                  buffer: item.data,
-                                }),
-                                mimeType: item.mimeType,
-                              };
-                            }),
-                            details: '',
-                          };
-                        }
-                      }
-                      return {
-                        content: [
-                          { type: 'text', text: '当前仅支持图片或文本' },
-                        ],
-                        details: '',
-                      };
-                    },
-                  } satisfies AgentTool;
-                }),
-              createReadTool(this.#workspace.nFolder(), {
-                autoResizeImages: false,
-              }),
-              createWriteTool(this.#workspace.nFolder()),
-              createEditTool(this.#workspace.nFolder()),
-              createLsTool(this.#workspace.nFolder()),
-              createGrepTool(this.#workspace.nFolder()),
-              // createFindTool(this.#workspace.nFolder()),
-            ],
+            tools: tools,
             messages: [
               {
                 role: 'user',

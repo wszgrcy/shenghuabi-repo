@@ -6,6 +6,7 @@ import {
   GraphRagFormOptionsDefine,
   DictOptionsDefine,
   CreateGraphRagOptionsDefine,
+  DescriptionSchema,
 } from '../knowledge/define';
 import {
   KnowledgeItemDefine,
@@ -18,6 +19,7 @@ import { actions, valueChange } from '@piying/view-angular-core';
 export const CreateKnowledgeFormDefine = v.intersect([
   v.object({
     name: NameSchema,
+    description: DescriptionSchema,
   }),
   v.pipe(
     v.object({
@@ -40,6 +42,7 @@ export const CreateKnowledgeFormDefine = v.intersect([
 
 export const CreateKnowledgeParseDefine = v.object({
   name: NameSchema,
+  description: DescriptionSchema,
   graphIndex: GroupIndexSchema,
   chunkSize: v.pipe(ChunkSizeSchema),
   ...v.partial(CreateGraphRagOptionsDefine).entries,
