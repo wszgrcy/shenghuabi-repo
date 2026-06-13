@@ -48,16 +48,8 @@ export async function main() {
           env: ENV,
         })(`git`, [`clean`, `-f`]);
       }
-      // console.log('依赖安装');
-      // await $({
-      //   stdio: 'inherit',
-      //   cwd: vscodeCWD,
-      //   env: ENV,
-      //   extendEnv: true,
-      //   shell: enableShell,
-      // })(`npm`, ['ci']);
-      console.log('移除hooks');
 
+      console.log('移除hooks');
       await $({
         stdio: 'inherit',
         shell: enableShell,
@@ -74,8 +66,7 @@ export async function main() {
         `code-recycle`,
         ['--cwd', vscodeCWD, './script/change-vscode/index.ts'],
       );
-      console.log('准备安装依赖');
-
+      console.log('移除未使用import');
       await $({ stdio: 'inherit', shell: enableShell })(`tsx`, [
         './script/change-vscode/remove-unuse-import.ts',
       ]);
@@ -86,7 +77,7 @@ export async function main() {
         `"构建时间:${new Date().toLocaleString('zh-cn')}"`,
       ]);
       console.log(`---VSCODE源码修改完成---`);
-      console.log('依赖安装');
+      console.log('准备安装依赖');
       await $({
         stdio: 'inherit',
         cwd: vscodeCWD,

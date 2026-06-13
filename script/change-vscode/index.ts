@@ -1100,6 +1100,17 @@ window.customElements.define(C_EL_NAME, CustomElement);`,
         },
       ],
     },
+    {
+      path: 'build/npm/dirs.ts',
+      list: [
+        {
+          query: `StringLiteral[value="'extensions/copilot'"]`,
+          delete: true,
+          offset: [0, 1],
+          description: `copilot删除`,
+        },
+      ],
+    },
     // {
     //   path: 'build/lib/optimize.ts',
     //   list: [
