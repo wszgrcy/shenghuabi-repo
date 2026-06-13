@@ -93,7 +93,7 @@ export async function main() {
         env: ENV,
         extendEnv: true,
         shell: enableShell,
-      })(`npm`, ['ci']);
+      })(`npm`, ['i']);
     })(),
   ]);
 
